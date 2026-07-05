@@ -1,0 +1,21 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /login
+Disallow: /login/
+Disallow: /cart
+Disallow: /cart/
+Disallow: /wishlist
+Disallow: /wishlist/
+Disallow: /account
+Disallow: /account/
+Disallow: /reset-password
+Disallow: /reset-password/
+Disallow: /order-summary
+Disallow: /order-summary/
+Disallow: /payment
+Disallow: /payment/
+
+Sitemap: https://posterealm.com/sitemap.xml
