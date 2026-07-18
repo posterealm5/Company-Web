@@ -9,6 +9,7 @@ import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
 import { getOptimizedImageUrl } from '../utils/imageUtils';
 import { downloadInvoice } from '../utils/invoiceGenerator';
+import { getSizeDisplayLabel } from '../utils/sizeHelper';
 
 const Timeline: React.FC<{ status: string; deliveryMethod?: 'local' | 'courier' }> = ({ status, deliveryMethod = 'courier' }) => {
   const steps = deliveryMethod === 'local'
@@ -445,7 +446,7 @@ export default function UserOrders() {
                     <div className="flex-grow text-left">
                       <p className="font-black uppercase text-xs">{item.name}</p>
                       <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-                        {item.selected_size || item.size} • {item.selected_material || item.material} • Qty: {item.quantity}
+                        {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
                       </p>
                     </div>
                     <div className="text-right">

@@ -815,7 +815,7 @@ export default function Payment() {
 
               <div className="bg-white comic-border p-6 text-center">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Need Help?</p>
-                <p className="text-sm font-black uppercase">support@posterealm.com</p>
+                <p className="text-sm font-black uppercase">posterealm5@gmail.com</p>
               </div>
             </div>
           </div>

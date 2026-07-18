@@ -17,11 +17,11 @@ serve(async (req) => {
   let rzp_signature = "";
 
   try {
-    const secret = Deno.env.get("RAZORPAY_SECRET_KEY")?.trim()
+    const secret = Deno.env.get("RAZORPAY_KEY_SECRET")?.trim()
     const supabaseUrl = Deno.env.get("SUPABASE_URL")
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
 
-    if (!secret) throw new Error("RAZORPAY_SECRET_KEY not found")
+    if (!secret) throw new Error("RAZORPAY_KEY_SECRET not found")
     if (!supabaseUrl || !supabaseServiceKey) throw new Error("Supabase credentials not found")
 
     const payload = await req.json()

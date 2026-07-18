@@ -74,8 +74,8 @@ export default function HowItWorks() {
              />
              <Step 
                icon={<Maximize size={32} />} 
-               title="Select Dimensions" 
-               desc="From compact A5 desk prints to massive A2 feature walls, we offer standard A-series and fully custom sizing options."
+               title="Select Poster Size" 
+               desc="From compact A5 desk prints to massive A2 feature walls, we offer standard A-series sizing options to perfectly fit your space."
                delay={0.3}
              />
              <Step 
@@ -134,15 +134,15 @@ export default function HowItWorks() {
                 <h2 className="text-5xl font-black uppercase mb-6">SIZING <span className="text-brand-red">GUIDE</span></h2>
                 <p className="text-gray-400 mb-10 text-lg">
                   Unsure which size fits your space? We've standardized our sizing 
-                  to match common frame dimensions worldwide, but our Flagship XL 
+                  to match common frame sizes worldwide, but our Flagship XL 
                   is designed specifically for maximum impact.
                 </p>
                 <div className="space-y-4">
                    {[
-                     { l: 'A5 (5.8" x 8.3")', d: 'Perfect for gallery walls and desk spaces.' },
-                     { l: 'A4 (8.3" x 11.7")', d: 'Standard document size, great for detail.' },
-                     { l: 'A3 (11.7" x 16.5")', d: 'Classic poster dimensions for any room.' },
-                     { l: 'A2 (16.5" x 23.4")', d: 'Impactful feature for major wall real estate.' }
+                     { l: 'A5 (5.8" × 8.3")', d: 'Perfect for gallery walls and desk spaces.' },
+                     { l: 'A4 (8.3" × 11.7")', d: 'Standard document size, great for detail.' },
+                     { l: 'A3 (11.7" × 16.5")', d: 'Classic poster size for any room.' },
+                     { l: 'A2 (16" × 23")', d: 'Impactful feature for major wall real estate.' }
                    ].map((sz, i) => (
                      <div key={i} className="flex items-center gap-4 group">
                         <div className="w-2 h-2 bg-brand-red group-hover:scale-150 transition-transform"></div>
@@ -157,10 +157,10 @@ export default function HowItWorks() {
              <div className="bg-white/5 p-4 md:p-12 border border-white/10 relative overflow-hidden w-full">
                 <div className="flex items-end justify-center gap-3 md:gap-6 h-60 md:h-80 border-b border-white/20 pb-0 w-full">
                    {[
-                     { name: 'A5', w: 'w-7 md:w-10', h: 'h-11 md:h-16', dim: '5.8"x8.3"', color: 'bg-brand-red/40' },
-                     { name: 'A4', w: 'w-10 md:w-14', h: 'h-16 md:h-24', dim: '8.3"x11.7"', color: 'bg-brand-red/60' },
-                     { name: 'A3', w: 'w-14 md:w-20', h: 'h-24 md:h-36', dim: '11.7"x16.5"', color: 'bg-brand-red/80' },
-                     { name: 'A2', w: 'w-20 md:w-28', h: 'h-40 md:h-56', dim: '16.5"x23.4"', color: 'bg-brand-red' }
+                     { name: 'A5', w: 'w-7 md:w-10', h: 'h-11 md:h-16', dim: '5.8" × 8.3"', color: 'bg-brand-red/40' },
+                     { name: 'A4', w: 'w-10 md:w-14', h: 'h-16 md:h-24', dim: '8.3" × 11.7"', color: 'bg-brand-red/60' },
+                     { name: 'A3', w: 'w-14 md:w-20', h: 'h-24 md:h-36', dim: '11.7" × 16.5"', color: 'bg-brand-red/80' },
+                     { name: 'A2', w: 'w-20 md:w-28', h: 'h-40 md:h-56', dim: '16" × 23"', color: 'bg-brand-red' }
                    ].map((sz, i) => (
                      <div key={i} className="flex flex-col items-center gap-2">
                         <span className="text-[9px] md:text-[10px] font-mono text-gray-500">{sz.dim}</span>

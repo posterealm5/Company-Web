@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import type { Order } from '../types/database';
+import { getSizeDisplayLabel } from './sizeHelper';
 
 interface LoadedImage {
   dataUrl: string;
@@ -243,7 +244,7 @@ export const downloadInvoice = async (order: Order, options?: { isTaxInvoice?: b
     const isCustomSize = (item.width && item.width > 0) && (item.height && item.height > 0);
     const sizeVal = isCustomSize 
       ? `Custom (${item.width}" x ${item.height}")` 
-      : (item.selected_size || item.size || 'N/A');
+      : getSizeDisplayLabel(item.selected_size || item.size || 'N/A');
     
     const materialVal = item.selected_material || item.material || 'N/A';
     const qtyVal = item.quantity.toString();
@@ -382,7 +383,7 @@ export const downloadInvoice = async (order: Order, options?: { isTaxInvoice?: b
   doc.setFont(fontFamily, 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(subtleGrey[0], subtleGrey[1], subtleGrey[2]);
-  doc.text('For assistance: support@posterealm.com', 20, footerY + 4);
+  doc.text('For assistance: posterealm5@gmail.com', 20, footerY + 4);
 
   // Footer right info (Website & Social handle)
   doc.setFont(fontFamily, 'bold');

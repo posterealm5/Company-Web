@@ -5,20 +5,9 @@
 export const getOptimizedImageUrl = (url: string, width?: number, height?: number): string => {
   if (!url) return '';
   
-  // If it's a Supabase storage URL, we can rewrite it to use the rendering service
+  // If it's a Supabase storage URL, return the original public URL as-is
   if (url.includes('/storage/v1/object/public/')) {
-    const optimizedUrl = url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
-    const params: string[] = [];
-    if (width) params.push(`width=${width}`);
-    if (height) params.push(`height=${height}`);
-    
-    // Only apply cover cropping if both dimensions are provided
-    if (width && height) {
-      params.push('resize=cover');
-    }
-    
-    const separator = optimizedUrl.includes('?') ? '&' : '?';
-    return `${optimizedUrl}${separator}${params.join('&')}`;
+    return url;
   }
   
   // If it's an Unsplash URL, modify the search parameters

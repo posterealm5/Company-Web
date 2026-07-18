@@ -24,7 +24,7 @@ serve(async (req) => {
     }
 
     const key_id = Deno.env.get("RAZORPAY_KEY_ID")
-    const key_secret = Deno.env.get("RAZORPAY_SECRET_KEY")
+    const key_secret = Deno.env.get("RAZORPAY_KEY_SECRET")
 
     if (!key_id || !key_secret) {
       console.error("Razorpay credentials missing in environment")

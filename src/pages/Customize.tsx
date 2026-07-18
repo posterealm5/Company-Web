@@ -8,20 +8,14 @@ import { useAuth } from '../context/AuthContext';
 import { AuthModal } from '../components/auth/AuthModal';
 
 import { RippleWrapper } from '../components/ui/RippleWrapper';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, calculateCustomPosterPrice, calculateCustomPosterBasePrice, calculateSinglePosterPrice } from '../config/pricing';
+import { POSTER_PRICING, FLAGSHIP_PREMIUM, calculateSinglePosterPrice } from '../config/pricing';
 import { SEO } from '../components/SEO';
 import { getCustomizeMetadata } from '../services/metadata';
 import { StructuredData } from '../components/StructuredData';
 import { getCustomizeSchema } from '../services/structuredData';
 import { getOptimizedImageUrl } from '../utils/imageUtils';
 
-const SIZES = [
-  { id: 'a5', name: 'A5', dimensions: '5.8" x 8.3"', price: POSTER_PRICING.A5 },
-  { id: 'a4', name: 'A4', dimensions: '8.3" x 11.7"', price: POSTER_PRICING.A4 },
-  { id: 'a3', name: 'A3', dimensions: '11.7" x 16.5"', price: POSTER_PRICING.A3 },
-  { id: 'a2', name: 'A2', dimensions: '16.5" x 23.4"', price: POSTER_PRICING.A2 },
-  { id: 'custom', name: 'Custom', dimensions: 'Your choice', price: 0 },
-];
+import { SIZES, getSizeDisplayLabel } from '../utils/sizeHelper';
 
 const MATERIALS = [
   { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
@@ -31,8 +25,6 @@ const MATERIALS = [
 
 export default function Customize() {
   const [selectedSize, setSelectedSize] = useState(SIZES[1]);
-  const [customLength, setCustomLength] = useState('24');
-  const [customWidth, setCustomWidth] = useState('36');
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [selectedMaterial, setSelectedMaterial] = useState(MATERIALS[0]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -63,10 +55,7 @@ export default function Customize() {
     setIsUploading(true);
     
     try {
-      
-      
       const { url, error } = await uploadCustomDesign(file);
-      
       
       if (error) {
         console.error(`Error details:`, error);
@@ -84,20 +73,8 @@ export default function Customize() {
           triggerNotification("Upload failed: " + error);
         }
       } else if (url) {
-        
         setImagePreview(url);
       }
-
-      // Logging status for other hypothetical inserts
-      
-      
-      
-      
-      
-      
-      
-      
-
     } catch (err) {
       console.error('Upload error:', err);
       triggerNotification("An unexpected error occurred during upload.");
@@ -140,64 +117,7 @@ export default function Customize() {
     }
   };
 
-  const isCustom = selectedSize.id === 'custom';
-
-  const hasLength = customLength.trim() !== '';
-  const hasWidth = customWidth.trim() !== '';
-  const bothEntered = hasLength && hasWidth;
-
-  const lengthVal = parseFloat(customLength);
-  const widthVal = parseFloat(customWidth);
-  const bothNumeric = !isNaN(lengthVal) && !isNaN(widthVal);
-
-  const positiveValues = bothNumeric && lengthVal > 0 && widthVal > 0;
-  const minSizeValid = bothNumeric && lengthVal >= 5.8 && widthVal >= 8.3;
-  const maxSizeValid = bothNumeric && lengthVal <= 50;
-
-  const isCustomSizeValid = bothEntered && bothNumeric && positiveValues && minSizeValid && maxSizeValid;
-
-  let lengthError = '';
-  let widthError = '';
-
-  if (isCustom && bothEntered && bothNumeric) {
-    if (lengthVal <= 0) {
-      lengthError = 'Length must be greater than 0.';
-    } else if (lengthVal < 5.8) {
-      lengthError = 'Length must be at least 5.8 inches.';
-    } else if (lengthVal > 50) {
-      lengthError = 'Length cannot exceed 50 inches.';
-    }
-
-    if (widthVal <= 0) {
-      widthError = 'Width must be greater than 0.';
-    } else if (widthVal < 8.3) {
-      widthError = 'Width must be at least 8.3 inches.';
-    }
-  }
-
-  const width = lengthVal;
-  const height = widthVal;
-  
-  const exceedsA2 = isCustom && isCustomSizeValid &&
-    (Math.min(lengthVal, widthVal) > 16.5 || Math.max(lengthVal, widthVal) > 23.4);
-
-  const shouldCalculatePrice = !isCustom || isCustomSizeValid;
-
-  const totalPrice = shouldCalculatePrice
-    ? (isCustom
-        ? calculateCustomPosterPrice(width, height, selectedMaterial.id)
-        : calculateSinglePosterPrice(selectedSize.name, selectedMaterial.id))
-    : null;
-
-  const handleLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    const num = parseFloat(val);
-    if (num > 50) {
-      setCustomLength('50');
-    } else {
-      setCustomLength(val);
-    }
-  };
+  const totalPrice = calculateSinglePosterPrice(selectedSize.name, selectedMaterial.id);
 
   const handleAddToBag = () => {
     if (!imagePreview) {
@@ -205,13 +125,8 @@ export default function Customize() {
       return;
     }
     
-    if (isCustom && !isCustomSizeValid) {
-      triggerNotification("Please enter valid custom dimensions before adding to cart.");
-      return;
-    }
-    
-    const finalSizeName = isCustom ? `${customLength}"x${customWidth}"` : selectedSize.name;
-    const finalPrice = totalPrice || 0;
+    const finalSizeName = selectedSize.name;
+    const finalPrice = totalPrice;
     
     addToCart({
       id: Date.now(), // Generate a unique ID for custom design
@@ -224,13 +139,7 @@ export default function Customize() {
       selected_size: finalSizeName,
       selected_material: selectedMaterial.name,
       unit_price: finalPrice,
-      line_total: finalPrice,
-      ...(isCustom ? {
-        width,
-        height,
-        area: width * height,
-        custom_price: calculateCustomPosterBasePrice(width, height)
-      } : {})
+      line_total: finalPrice
     });
     navigate('/cart');
   };
@@ -297,7 +206,7 @@ export default function Customize() {
                 Material: {selectedMaterial.name}
               </div>
               <div className="absolute bottom-12 left-12 bg-brand-red text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest -rotate-6 z-10">
-                Size: {selectedSize.id === 'custom' ? `${customLength}" x ${customWidth}"` : selectedSize.name}
+                Size: {getSizeDisplayLabel(selectedSize.name)}
               </div>
             </div>
             
@@ -308,11 +217,10 @@ export default function Customize() {
                   {totalPrice !== null ? `₹${totalPrice.toLocaleString()}` : '—'}
                 </p>
               </div>
-              <RippleWrapper delay={2} disabled={isCustom && !isCustomSizeValid}>
+              <RippleWrapper delay={2}>
                 <button 
                   onClick={handleAddToBag}
-                  disabled={isCustom && !isCustomSizeValid}
-                  className="px-8 py-4 bg-brand-red text-white hover:bg-white hover:text-brand-red transition-all font-display text-2xl uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand-red disabled:hover:text-white"
+                  className="px-8 py-4 bg-brand-red text-white hover:bg-white hover:text-brand-red transition-all font-display text-2xl uppercase tracking-widest"
                 >
                   Add to Cart
                 </button>
@@ -414,9 +322,9 @@ export default function Customize() {
 
               <h3 className="text-3xl font-black uppercase flex items-center gap-3 pt-6">
                 <span className="w-10 h-10 bg-brand-red text-white rounded-full flex items-center justify-center text-xl">3</span>
-                Select Size
+                Select Poster Size
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {SIZES.map((size) => (
                   <button
                     key={size.id}
@@ -427,77 +335,11 @@ export default function Customize() {
                   >
                     <p className={`text-2xl font-black uppercase tracking-tighter ${selectedSize.id === size.id ? 'text-white' : 'text-brand-black'}`}>{size.name}</p>
                     <p className={`text-[10px] font-bold mt-1 ${selectedSize.id === size.id ? 'text-brand-red' : 'text-gray-400'}`}>
-                      {size.id === 'custom' ? 'Choose Size' : size.dimensions}
+                      {size.dimensions}
                     </p>
                   </button>
                 ))}
               </div>
-
-              {selectedSize.id === 'custom' && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="p-6 bg-brand-black text-white rounded-2xl space-y-4"
-                >
-                  <p className="text-xs font-black uppercase tracking-widest text-brand-red">Custom Dimensions (Inches)</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-gray-400">Length (inches)</label>
-                      <input 
-                        type="number"
-                        value={customLength}
-                        onChange={handleLengthChange}
-                        placeholder="Length"
-                        className="w-full bg-white text-brand-black p-4 font-black text-lg comic-border focus:outline-none"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] uppercase font-bold text-gray-400">Width (inches)</label>
-                      <input 
-                        type="number"
-                        value={customWidth}
-                        onChange={(e) => setCustomWidth(e.target.value)}
-                        placeholder="Width"
-                        className="w-full bg-white text-brand-black p-4 font-black text-lg comic-border focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Validation Messages */}
-                  {(lengthError || widthError) && (
-                    <div className="space-y-1 text-xs font-bold uppercase tracking-wider">
-                      {lengthError && (
-                        <p className="text-brand-red flex items-center gap-1.5">
-                          <Info size={14} className="shrink-0" /> {lengthError}
-                        </p>
-                      )}
-                      {widthError && (
-                        <p className="text-brand-red flex items-center gap-1.5">
-                          <Info size={14} className="shrink-0" /> {widthError}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  <p className="text-xs text-gray-400">Enter your desired dimensions in inches. Our system will automatically check for scaling compatibility.</p>
-
-                  {/* Info Notice Card if exceeds A2 */}
-                  {exceedsA2 && (
-                    <div className="p-4 bg-gray-50 border border-gray-200 text-brand-black rounded-xl flex gap-3 text-left">
-                      <Info className="text-brand-red shrink-0 w-5 h-5 mt-0.5" />
-                      <div className="space-y-1.5">
-                        <p className="font-bold text-brand-black uppercase text-[10px] tracking-widest">Important</p>
-                        <p className="text-xs text-gray-700 font-semibold leading-relaxed">
-                          Custom posters larger than A2 are produced in multiple precision-aligned panels to maintain print quality and safe shipping.
-                        </p>
-                        <p className="text-xs text-gray-700 font-semibold leading-relaxed">
-                          Once installed, the panels align seamlessly to recreate the complete artwork with minimal visible joins.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              )}
             </div>
 
             {/* Step 4: Material */}

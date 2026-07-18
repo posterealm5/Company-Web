@@ -13,16 +13,11 @@ import { getProductDisplayName } from '../utils/productUrls';
 
 import { EmptyState } from '../components/ui/EmptyState';
 
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice, calculateCustomPosterPrice, getMajoritySizeAndMaterial, SHIPPING_CHARGE } from '../config/pricing';
+import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice, getMajoritySizeAndMaterial, SHIPPING_CHARGE } from '../config/pricing';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
 
-const SIZES = [
-  { id: 'a5', name: 'A5', price: POSTER_PRICING.A5 },
-  { id: 'a4', name: 'A4', price: POSTER_PRICING.A4 },
-  { id: 'a3', name: 'A3', price: POSTER_PRICING.A3 },
-  { id: 'a2', name: 'A2', price: POSTER_PRICING.A2 },
-];
+import { SIZES, getSizeDimension, getSizeDisplayLabel } from '../utils/sizeHelper';
 
 const MATERIALS = [
   { id: 'matte', name: 'Matte', premium: 0 },
@@ -118,10 +113,6 @@ export default function Cart() {
   }, [allProducts]);
 
   const getEditingItemPrice = (item: CartItem) => {
-    const isCustom = item.size.toLowerCase().includes('x') || item.size === 'Custom';
-    if (isCustom && item.width && item.height) {
-      return calculateCustomPosterPrice(item.width, item.height, item.material);
-    }
     return calculateSinglePosterPrice(item.size, item.material);
   };
 
@@ -136,13 +127,7 @@ export default function Cart() {
     const itemsList: { id: number; price: number }[] = [];
     selectedItems.forEach(item => {
       if (item.isFreeItem) return;
-      const isCustom = item.size.toLowerCase().includes('x') || item.size === 'Custom';
-      let unitPrice = 0;
-      if (isCustom && item.width && item.height) {
-        unitPrice = calculateCustomPosterPrice(item.width, item.height, item.material);
-      } else {
-        unitPrice = calculateSinglePosterPrice(item.size, item.material);
-      }
+      const unitPrice = calculateSinglePosterPrice(item.size, item.material);
       for (let i = 0; i < item.quantity; i++) {
         itemsList.push({ id: item.id, price: unitPrice });
       }
@@ -283,7 +268,7 @@ export default function Cart() {
                   
                   <div className="flex flex-wrap gap-4 mb-6">
                     <div className="bg-gray-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200">
-                      Size: {item.size}
+                      Size: {getSizeDisplayLabel(item.size)}
                     </div>
                     <div className="bg-gray-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200">
                       Material: {item.material}
@@ -771,7 +756,7 @@ export default function Cart() {
                           ? 'Size (Custom)' 
                           : BUNDLE_OPTIONS.some(opt => opt.name === editingItem.size)
                             ? 'Bundle Option'
-                            : 'Select Size'
+                            : 'Select Poster Size'
                       }
                     </p>
                     {(editingItem.size.toLowerCase().includes('x') || editingItem.size === 'Custom') ? (
@@ -844,7 +829,7 @@ export default function Cart() {
                           >
                             <p className="font-black text-sm uppercase">{size.name}</p>
                             <p className={`text-[10px] font-bold ${editingItem.size === size.name ? 'text-brand-red' : 'text-gray-400'}`}>
-                              {size.name === 'A5' ? '5.8" x 8.3"' : size.name === 'A4' ? '8.3" x 11.7"' : size.name === 'A3' ? '11.7" x 16.5"' : '16.5" x 23.4"'}
+                              {getSizeDimension(size.name)}
                             </p>
                           </button>
                         ))}
@@ -1050,12 +1035,7 @@ export default function Cart() {
   );
 }
 
-const RECOMMENDATION_SIZES = [
-  { id: 'a5', name: 'A5', dimensions: '5.8" x 8.3"', price: POSTER_PRICING.A5 },
-  { id: 'a4', name: 'A4', dimensions: '8.3" x 11.7"', price: POSTER_PRICING.A4 },
-  { id: 'a3', name: 'A3', dimensions: '11.7" x 16.5"', price: POSTER_PRICING.A3 },
-  { id: 'a2', name: 'A2', dimensions: '16.5" x 23.4"', price: POSTER_PRICING.A2 },
-];
+const RECOMMENDATION_SIZES = SIZES;
 
 const RECOMMENDATION_MATERIALS = [
   { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
@@ -1279,7 +1259,7 @@ const CartRecommendations = () => {
                   {/* Size Selection */}
                   <div className="space-y-4">
                     <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-red flex items-center gap-2">
-                      <Maximize2 size={14} /> {isBundle ? 'Select Bundle Option' : 'Select Size'}
+                      <Maximize2 size={14} /> {isBundle ? 'Select Bundle Option' : 'Select Poster Size'}
                     </p>
                     {isBundle ? (
                       <div className="grid grid-cols-1 gap-2">

@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { ErrorState } from '../../components/ui/ErrorState';
+import { calculateTotalRevenue } from '../../services';
+
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
@@ -29,7 +31,7 @@ const AdminDashboard: React.FC = () => {
     setError(false);
     try {
       // Fetch Orders count and revenue
-      const { data: orders, error: ordersErr } = await supabase.from('orders').select('total, status');
+      const { data: orders, error: ordersErr } = await supabase.from('orders').select('total, status, payment_method, payment_status');
       if (ordersErr) throw ordersErr;
       
       // Fetch Products count
@@ -41,7 +43,7 @@ const AdminDashboard: React.FC = () => {
       if (userErr) throw userErr;
 
       if (orders) {
-        const revenue = orders.reduce((acc, order) => acc + (order.total || 0), 0);
+        const revenue = calculateTotalRevenue(orders);
         const pending = orders.filter(o => o.status === 'pending').length;
         
         setStats({

@@ -1,5 +1,5 @@
 import { CartItem } from '../context/CartContext';
-import { getPosterBasePrice, getMaterialPremium, calculateSinglePosterPrice, calculateCustomPosterPrice } from './pricing';
+import { getPosterBasePrice, getMaterialPremium, calculateSinglePosterPrice } from './pricing';
 
 export interface Coupon {
   id?: number; // Optional database ID
@@ -27,12 +27,7 @@ export function getCartItemUnitPrice(item: CartItem): number {
   const selectedSize = item.selected_size || item.size;
   const selectedMaterial = item.selected_material || item.material;
 
-  const isCustom = (selectedSize || '').toLowerCase().includes('x') || selectedSize === 'Custom';
-  if (isCustom && item.width && item.height) {
-    return calculateCustomPosterPrice(item.width, item.height, selectedMaterial);
-  } else {
-    return calculateSinglePosterPrice(selectedSize, selectedMaterial);
-  }
+  return calculateSinglePosterPrice(selectedSize, selectedMaterial);
 }
 
 export const COUPONS: Coupon[] = [

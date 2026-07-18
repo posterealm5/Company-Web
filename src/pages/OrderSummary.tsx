@@ -9,6 +9,7 @@ import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
 import { getOptimizedImageUrl } from '../utils/imageUtils';
 import { SHIPPING_CHARGE } from '../config/pricing';
+import { getSizeDisplayLabel } from '../utils/sizeHelper';
 
 export default function OrderSummary() {
   const { user } = useAuth();
@@ -116,7 +117,7 @@ export default function OrderSummary() {
                     <div className="flex-grow text-left">
                       <p className="font-black uppercase text-sm">{item.name}</p>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        {item.selected_size || item.size} • {item.selected_material || item.material} • Qty: {item.quantity}
+                        {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
                       </p>
                     </div>
                     <div className="text-right">

@@ -28,12 +28,7 @@ const RecentlyViewed = lazy(() => import('../components/home/RecentlyViewed'));
 
 
 
-const SIZES = [
-  { id: 'a5', name: 'A5', dimensions: '5.8" x 8.3"', price: POSTER_PRICING.A5 },
-  { id: 'a4', name: 'A4', dimensions: '8.3" x 11.7"', price: POSTER_PRICING.A4 },
-  { id: 'a3', name: 'A3', dimensions: '11.7" x 16.5"', price: POSTER_PRICING.A3 },
-  { id: 'a2', name: 'A2', dimensions: '16.5" x 23.4"', price: POSTER_PRICING.A2 },
-];
+import { SIZES } from '../utils/sizeHelper';
 
 const MATERIALS = [
   { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },

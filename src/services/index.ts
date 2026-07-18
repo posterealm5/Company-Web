@@ -16,4 +16,6 @@ export * from './showcase';
 export * from './recentProducts';
 export * from './addresses';
 export * from './coupons';
+export * from './dashboard';
+
 

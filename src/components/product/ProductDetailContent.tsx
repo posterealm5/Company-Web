@@ -115,7 +115,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             {/* Size Selection */}
             <div className="space-y-4">
               <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-red flex items-center gap-2">
-                <Maximize2 size={14} /> {isBundle ? 'Select Bundle Option' : 'Select Size'}
+                <Maximize2 size={14} /> {isBundle ? 'Select Bundle Option' : 'Select Poster Size'}
               </p>
               {isBundle ? (
                 <div className="grid grid-cols-1 gap-3">
@@ -265,7 +265,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           {/* Size Selection */}
           <div className="space-y-4">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-red flex items-center gap-2">
-              <Maximize2 size={14} /> {isBundle ? 'Select Bundle Option' : 'Select Size'}
+              <Maximize2 size={14} /> {isBundle ? 'Select Bundle Option' : 'Select Poster Size'}
             </p>
             {isBundle ? (
               <div className="grid grid-cols-1 gap-2">

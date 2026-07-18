@@ -25,6 +25,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { useSearchParams } from 'react-router-dom';
 import { triggerOrderStatusNotification, generateWhatsAppLink } from '../../services/notifications';
+import { getSizeDisplayLabel } from '../../utils/sizeHelper';
 
 const Timeline: React.FC<{ status: string; deliveryMethod?: 'local' | 'courier' }> = ({ status, deliveryMethod = 'courier' }) => {
   const steps = deliveryMethod === 'local'
@@ -766,7 +767,7 @@ const AdminOrders: React.FC = () => {
                               {item.image && <img src={item.image} alt={item.name} className="w-12 h-16 object-cover comic-border border-gray-200" />}
                               <div className="flex-grow text-left">
                                 <p className="font-black uppercase text-xs">{item.name || 'Unknown Item'}</p>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.selected_size || item.size} • {item.selected_material || item.material} • Qty: {item.quantity}</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}</p>
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mt-1">
                                   Unit Price: ₹{item.unit_price || item.price}
                                 </span>
@@ -797,7 +798,7 @@ const AdminOrders: React.FC = () => {
                                   </span>
                                   {item.name || 'Unknown Item'}
                                 </p>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.selected_size || item.size} • {item.selected_material || item.material} • Qty: {item.quantity}</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}</p>
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mt-1">
                                   Unit Price: ₹0
                                 </span>
