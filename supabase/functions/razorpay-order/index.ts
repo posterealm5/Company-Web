@@ -115,9 +115,49 @@ serve(async (req) => {
       },
     )
   } catch (error) {
-    console.error("Order Creation Error:", error.message)
+    const err = error as any;
+    console.error("Complete error object:", err);
+    console.error("error:", err);
+    console.error("error.message:", err?.message);
+    console.error("error.error:", err?.error);
+    console.error("error.description:", err?.description);
+    console.error("error.statusCode:", err?.statusCode);
+    console.error("error.status:", err?.status);
+    console.error("error.code:", err?.code);
+    console.error("error.stack:", err?.stack);
+
+    // If the error contains a response body from Razorpay, log that entire response.
+    if (err && typeof err === 'object') {
+      if (err.response) {
+        console.error("Razorpay response (error.response):", err.response);
+      }
+      if (err.responseBody) {
+        console.error("Razorpay response body (error.responseBody):", err.responseBody);
+      }
+      if (err.data) {
+        console.error("Razorpay response data (error.data):", err.data);
+      }
+      if (err.body) {
+        console.error("Razorpay response body (error.body):", err.body);
+      }
+      if (err.error && typeof err.error === 'object') {
+        console.error("Razorpay error details (error.error):", err.error);
+      }
+    }
+
+    const errorResponse = err && typeof err === 'object' ? {
+      message: err.message,
+      error: err.error,
+      description: err.description,
+      statusCode: err.statusCode,
+      status: err.status,
+      code: err.code,
+      stack: err.stack,
+      ...err
+    } : err;
+
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorResponse }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400 
