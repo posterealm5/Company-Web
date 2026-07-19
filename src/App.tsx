@@ -23,6 +23,7 @@ const UserOrders = lazy(() => import('./pages/UserOrders'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const OrderSummary = lazy(() => import('./pages/OrderSummary'));
 const Payment = lazy(() => import('./pages/Payment'));
+const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const Login = lazy(() => import('./pages/Login'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -265,6 +266,16 @@ function AppContent() {
                 <ProtectedRoute>
                   <ErrorBoundary>
                     <Payment />
+                  </ErrorBoundary>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/payment/success" 
+              element={
+                <ProtectedRoute>
+                  <ErrorBoundary>
+                    <PaymentSuccess />
                   </ErrorBoundary>
                 </ProtectedRoute>
               } 

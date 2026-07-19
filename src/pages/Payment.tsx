@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { createOrder, buildOrderFromCart, createRazorpayOrder, verifyRazorpayPayment, updateOrderStatus, getUserOrders, getOrderById } from '../services/orders';
+import { createOrder, buildOrderFromCart, createRazorpayOrder, verifyRazorpayPayment } from '../services/orders';
 import { incrementRedemptionCount } from '../services/coupons';
 import { RippleWrapper } from '../components/ui/RippleWrapper';
 import { SEO } from '../components/SEO';
@@ -21,24 +21,6 @@ declare global {
   interface Window {
     Razorpay: any;
   }
-}
-
-// Helper to check if the cart items in the database order match the current selected cart items
-function isSameCart(orderItems: any[], selectedCartItems: any[]) {
-  if (!Array.isArray(orderItems) || orderItems.length !== selectedCartItems.length) {
-    return false;
-  }
-  for (const cartItem of selectedCartItems) {
-    const matchingOrderItem = orderItems.find(
-      (oi: any) => 
-        String(oi.product_id) === String(cartItem.id) &&
-        String(oi.selected_size || oi.size) === String(cartItem.selected_size || cartItem.size) &&
-        String(oi.selected_material || oi.material) === String(cartItem.selected_material || cartItem.material) &&
-        Number(oi.quantity) === Number(cartItem.quantity)
-    );
-    if (!matchingOrderItem) return false;
-  }
-  return true;
 }
 
 export default function Payment() {
@@ -101,13 +83,11 @@ export default function Payment() {
   const processingRef = useRef(false);
 
   const handleOnlinePayment = async () => {
-    // If a payment flow is already active, ignore subsequent clicks immediately
     if (processingRef.current) return;
     processingRef.current = true;
     setIsProcessing(true);
 
     const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
-    
     if (!razorpayKey) {
       triggerNotification("Razorpay Key ID is missing. Please check your configuration.");
       processingRef.current = false;
@@ -116,117 +96,46 @@ export default function Payment() {
     }
 
     try {
-      // 1. Check if a pending order already exists for this checkout session / current cart
-      let dbOrder = null;
-      let rzpOrder = null;
+      const itemsPayload = selectedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        size: item.selected_size || item.size,
+        material: item.selected_material || item.material,
+        price: item.unit_price || item.price,
+        quantity: item.quantity,
+        image: item.image,
+        selected_size: item.selected_size || item.size,
+        selected_material: item.selected_material || item.material,
+        unit_price: item.unit_price || item.price,
+        line_total: item.line_total || (item.price * item.quantity),
+        width: item.width || null,
+        height: item.height || null,
+        area: item.area || null,
+        custom_price: item.custom_price || null,
+        isFreeItem: item.isFreeItem || null,
+        couponCode: item.couponCode || appliedCouponCode || null
+      }));
 
-      // Check for user-specific pending order matching current cart
-      if (user?.id) {
-        const userOrders = await getUserOrders(user.id);
-        const matchingPendingOrder = userOrders.find((order: any) => {
-          const isPending = order.status === 'pending';
-          const isSame = isSameCart(order.items, selectedItems);
-          const isNotExpired = new Date().getTime() - new Date(order.created_at).getTime() < 24 * 60 * 60 * 1000;
-          return isPending && isSame && isNotExpired;
-        });
+      const customerInfo = {
+        name: addressForm.fullName,
+        email: addressForm.email,
+        phone: addressForm.contactNumber,
+        address: `${addressForm.address}${addressForm.nearestLandmark ? ` (Landmark: ${addressForm.nearestLandmark})` : ''}`
+      };
 
-        if (matchingPendingOrder) {
-          dbOrder = matchingPendingOrder;
-        }
+      // 1. Create Razorpay order on backend (does not insert order to DB yet)
+      const rzpOrder = await createRazorpayOrder({
+        cartItems: itemsPayload,
+        couponCode: appliedCouponCode,
+        customerInfo,
+        userId: user?.id || null
+      });
+
+      if (!rzpOrder || !rzpOrder.id) {
+        throw new Error("Failed to create Razorpay order");
       }
 
-      // If not found (or guest checkout), check sessionStorage for pending order ID
-      if (!dbOrder) {
-        const pendingOrderIdStr = sessionStorage.getItem('pending_order_id');
-        if (pendingOrderIdStr) {
-          const pendingOrderId = Number(pendingOrderIdStr);
-          if (!isNaN(pendingOrderId)) {
-            const order = await getOrderById(pendingOrderId);
-            if (order && order.status === 'pending') {
-              const isSame = isSameCart(order.items, selectedItems);
-              const isNotExpired = new Date().getTime() - new Date(order.created_at).getTime() < 24 * 60 * 60 * 1000;
-              if (isSame && isNotExpired) {
-                dbOrder = order;
-              }
-            }
-          }
-        }
-      }
-
-      if (dbOrder) {
-        
-        // Save back to sessionStorage in case it wasn't there
-        sessionStorage.setItem('pending_order_id', dbOrder.id.toString());
-        
-        // Reuse Razorpay order if already exists on the recovered database order
-        if (dbOrder.razorpay_order_id) {
-          
-          rzpOrder = {
-            id: dbOrder.razorpay_order_id,
-            amount: Math.round(dbOrder.total * 100),
-            currency: 'INR'
-          };
-        }
-      } else {
-        // Build and create a new order in database
-        const orderData = buildOrderFromCart(
-          selectedItems.map(item => ({
-            product_id: item.id,
-            name: item.name,
-            size: item.size,
-            material: item.material,
-            price: item.price,
-            quantity: item.quantity,
-            image: item.image,
-            selected_size: item.selected_size || item.size,
-            selected_material: item.selected_material || item.material,
-            unit_price: item.unit_price || item.price,
-            line_total: item.line_total || (item.price * item.quantity),
-            width: item.width || null,
-            height: item.height || null,
-            area: item.area || null,
-            custom_price: item.custom_price || null,
-            isFreeItem: item.isFreeItem || null,
-            couponCode: item.couponCode || appliedCouponCode || null
-          }) as any),
-          {
-            name: addressForm.fullName,
-            email: addressForm.email,
-            phone: addressForm.contactNumber,
-            address: `${addressForm.address}${addressForm.nearestLandmark ? ` (Landmark: ${addressForm.nearestLandmark})` : ''}`
-          },
-          subtotal,
-          shipping,
-          total,
-          user?.id,
-          {
-            method: 'ONLINE',
-            id: '',
-            status: 'Pending'
-          },
-          'pending',
-          appliedCouponCode,
-          couponDiscount
-        );
-
-        dbOrder = await createOrder(orderData);
-        if (!dbOrder) {
-          throw new Error("Failed to create initial order");
-        }
-        sessionStorage.setItem('pending_order_id', dbOrder.id.toString());
-      }
-
-      // 2. Create Razorpay order if not reused
-      if (!rzpOrder) {
-        rzpOrder = await createRazorpayOrder(total, dbOrder.id.toString());
-        if (!rzpOrder || !rzpOrder.id) {
-          throw new Error("Failed to create Razorpay order");
-        }
-        // Locally set it so we have it in this closure
-        dbOrder.razorpay_order_id = rzpOrder.id;
-      }
-
-      // 3. Load Razorpay SDK
+      // 2. Load Razorpay SDK
       const res = await loadRazorpay();
       if (!res) {
         triggerNotification("Razorpay SDK failed to load. Are you online?");
@@ -244,13 +153,12 @@ export default function Payment() {
         order_id: rzpOrder.id,
         image: 'https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/assets/logo.png',
         handler: async function (response: any) {
-          await handlePaymentSuccess(response, dbOrder.id);
+          await handlePaymentSuccess(response, itemsPayload, customerInfo);
         },
         modal: {
           ondismiss: function() {
             processingRef.current = false;
             setIsProcessing(false);
-            updateOrderStatus(dbOrder.id, 'cancelled');
             triggerNotification("Payment cancelled. You can try again.");
           }
         },
@@ -261,7 +169,6 @@ export default function Payment() {
         },
         notes: {
           address: addressForm.address,
-          order_id: dbOrder.id.toString()
         },
         theme: {
           color: '#FF0000',
@@ -274,7 +181,6 @@ export default function Payment() {
         console.error('Payment failed:', response.error);
         processingRef.current = false;
         setIsProcessing(false);
-        updateOrderStatus(dbOrder.id, 'failed');
         triggerNotification(`Payment failed: ${response.error.description}`);
       });
 
@@ -361,53 +267,33 @@ export default function Payment() {
     }
   };
 
-  const handlePaymentSuccess = async (response: any, orderId: number) => {
+  const handlePaymentSuccess = async (response: any, itemsPayload: any[], customerInfo: any) => {
     setIsProcessing(true);
-    
-    
-    
-    
     try {
-      // Verify signature on backend
-      
+      // Verify signature on backend and create database order
       const result = await verifyRazorpayPayment({
         razorpay_order_id: response.razorpay_order_id,
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature,
-        order_id: orderId
+        cartItems: itemsPayload,
+        customerInfo: customerInfo,
+        couponCode: appliedCouponCode,
+        userId: user?.id || null
       });
-
-      
 
       if (result && result.success) {
         setIsSuccess(true);
-        if (appliedCouponCode) {
-          try {
-            await incrementRedemptionCount(appliedCouponCode);
-          } catch (err) {
-            console.error("Failed to increment redemption count:", err);
-          }
-        }
         triggerNotification("Order placed successfully!");
         sessionStorage.removeItem('checkout_details');
-        sessionStorage.removeItem('pending_order_id');
-        setTimeout(() => {
-          clearCart();
-          navigate('/orders');
-        }, 3000);
+        clearCart();
+        navigate('/payment/success', { state: { orderId: result.order_id } });
       } else {
         const errorMsg = result?.error || "Payment verification failed";
-        console.error("%c[VERIFY] FAILED", "color: #ef4444; font-weight: bold;");
-        console.error("Error Message:", errorMsg);
-        if (result?.stack) {
-          console.error("Backend Stack Trace:\n", result.stack);
-        }
-        await updateOrderStatus(orderId, 'failed');
+        console.error("Payment verification failed:", errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error: any) {
-      console.error("%c[VERIFY] EXCEPTION", "color: #ef4444; font-weight: bold;");
-      console.error("Full Exception Details:", error);
+      console.error("Payment verification exception:", error);
       triggerNotification(`Verification failed: ${error.message || "Please contact support"}`);
     } finally {
       setIsProcessing(false);

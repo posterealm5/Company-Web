@@ -183,11 +183,16 @@ export function buildOrderFromCart(
  * Backend Razorpay Order Creation
  * Invokes Supabase Edge Function to create order securely
  */
-export async function createRazorpayOrder(amount: number, receipt: string) {
+export async function createRazorpayOrder(payload: {
+  cartItems: any[];
+  couponCode: string | null;
+  customerInfo: { name: string; email: string; phone: string; address: string };
+  userId?: string | null;
+}) {
   if (!isSupabaseConfigured()) return null;
 
   const { data, error } = await supabase.functions.invoke('razorpay-order', {
-    body: { amount, receipt }
+    body: payload
   });
 
   if (error) {
@@ -200,13 +205,16 @@ export async function createRazorpayOrder(amount: number, receipt: string) {
 
 /** 
  * Backend Razorpay Payment Verification
- * Invokes Supabase Edge Function to verify signature and update status
+ * Invokes Supabase Edge Function to verify signature, validate order and create it in DB
  */
 export async function verifyRazorpayPayment(payload: {
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
-  order_id: number;
+  cartItems: any[];
+  customerInfo: { name: string; email: string; phone: string; address: string };
+  couponCode: string | null;
+  userId?: string | null;
 }) {
   if (!isSupabaseConfigured()) return null;
 
@@ -214,15 +222,11 @@ export async function verifyRazorpayPayment(payload: {
     body: payload
   });
 
-  
-
   if (response.error) {
     console.error("VERIFY FUNCTION ERROR:", response.error);
   }
 
-  
-
-  return response.data || { success: false, error: response.error?.message };
+  return response.data || { success: false, error: response.error?.message || "Verification request failed" };
 }
 
 /** 

@@ -7,6 +7,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const POSTER_PRICING: Record<string, number> = { A5: 89, A4: 220, A3: 299, A2: 390 };
+const FLAGSHIP_PREMIUM = 100;
+const SHIPPING_CHARGE = 150;
+
+function getPosterBasePrice(size: string): number {
+  const sz = (size || '').toUpperCase();
+  return POSTER_PRICING[sz] || POSTER_PRICING.A5;
+}
+
+function getMaterialPremium(material: string): number {
+  const mat = (material || '').toLowerCase();
+  return mat.includes('flagship') ? FLAGSHIP_PREMIUM : 0;
+}
+
+function calculateSinglePosterPrice(size: string, material: string): number {
+  return getPosterBasePrice(size) + getMaterialPremium(material);
+}
+
 serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -15,19 +33,19 @@ serve(async (req) => {
 
   try {
     const body = await req.json()
-    console.log("Order Creation Payload:", JSON.stringify(body, null, 2))
-    
-    const { amount, currency = "INR", receipt } = body
+    console.log("[razorpay-order] Incoming Request Payload:", JSON.stringify(body, null, 2))
 
-    if (!amount) {
-      throw new Error("Amount is required")
+    const { cartItems, couponCode, customerInfo, userId } = body
+
+    if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+      throw new Error("Cart items are required")
     }
 
     const key_id = Deno.env.get("RAZORPAY_KEY_ID")
     const key_secret = Deno.env.get("RAZORPAY_KEY_SECRET")
 
     if (!key_id || !key_secret) {
-      console.error("Razorpay credentials missing in environment")
+      console.error("[razorpay-order] Razorpay credentials missing in environment")
       throw new Error("Server configuration error: Razorpay keys missing")
     }
 
@@ -35,129 +53,174 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error("Supabase credentials missing in environment")
+      console.error("[razorpay-order] Supabase credentials missing in environment")
       throw new Error("Server configuration error: Supabase keys missing")
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Check if the order already has a Razorpay order ID to prevent duplicate creations
-    if (receipt) {
-      const { data: orderData, error: fetchError } = await supabase
-        .from('orders')
-        .select('status, razorpay_order_id')
-        .eq('id', receipt)
-        .maybeSingle()
+    // Calculate subtotal from products in cart using backend-defined single poster pricing rules
+    let calculatedSubtotal = 0;
+    const paidItems = cartItems.filter(item => !item.isFreeItem);
+    const totalPaidQuantity = paidItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
-      if (fetchError) {
-        console.error("Error fetching order from database:", fetchError.message)
+    for (const item of paidItems) {
+      // Validate product existence and active status in DB for non-custom items
+      if (item.id && Number(item.id) < 1000000000000) {
+        const { data: product, error: productError } = await supabase
+          .from('products')
+          .select('id, is_active')
+          .eq('id', item.id)
+          .maybeSingle();
+
+        if (productError) {
+          console.error(`[razorpay-order] Database error looking up product ${item.id}:`, productError);
+        }
+
+        if (!product || !product.is_active) {
+          throw new Error(`Product not found or is currently inactive: ${item.name || item.id}`);
+        }
       }
 
-      if (orderData) {
-        if (orderData.razorpay_order_id) {
-          console.warn(`Razorpay order already exists for database order ID ${receipt}: ${orderData.razorpay_order_id}`)
-          return new Response(
-            JSON.stringify({ error: "Razorpay order already exists for this database order" }),
-            { 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-              status: 400 
-            },
-          )
+      const unitPrice = calculateSinglePosterPrice(item.size, item.material);
+      calculatedSubtotal += unitPrice * (item.quantity || 1);
+    }
+
+    let calculatedDiscount = 0;
+
+    // Validate Coupon if present
+    if (couponCode) {
+      const { data: coupon, error: couponError } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', couponCode.toUpperCase().trim())
+        .maybeSingle();
+
+      if (couponError) {
+        console.error("[razorpay-order] Database error fetching coupon:", couponError);
+      }
+
+      if (coupon) {
+        const now = new Date();
+        let couponValid = true;
+
+        if (!coupon.is_active) {
+          couponValid = false;
+          console.warn(`[razorpay-order] Coupon ${couponCode} is inactive`);
         }
 
-        if (orderData.status !== 'pending') {
-          console.warn(`Database order ID ${receipt} status is not pending: ${orderData.status}`)
-          return new Response(
-            JSON.stringify({ error: `Cannot initiate payment. Order status is already '${orderData.status}'` }),
-            { 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-              status: 400 
-            },
-          )
+        if (coupon.start_date && now < new Date(coupon.start_date)) {
+          couponValid = false;
+          console.warn(`[razorpay-order] Coupon ${couponCode} is not active yet`);
         }
+
+        if (coupon.end_date && now > new Date(coupon.end_date)) {
+          couponValid = false;
+          console.warn(`[razorpay-order] Coupon ${couponCode} has expired`);
+        }
+
+        if (coupon.max_redemptions !== null && (coupon.current_redemptions || 0) >= coupon.max_redemptions) {
+          couponValid = false;
+          console.warn(`[razorpay-order] Coupon ${couponCode} max redemptions reached`);
+        }
+
+        if (couponValid) {
+          if (coupon.type === 'percentage' || coupon.type === 'percentage_discount') {
+            const pct = coupon.value || coupon.discount_percent || 0;
+            calculatedDiscount = Math.round(calculatedSubtotal * (pct / 100));
+          } else if (coupon.type === 'fixed') {
+            calculatedDiscount = coupon.value || 0;
+          } else if (coupon.type === 'buy_x_get_y') {
+            // Find majority size and material of paid items
+            const sizeCounts: Record<string, number> = {};
+            const materialCounts: Record<string, number> = {};
+
+            paidItems.forEach(item => {
+              const qty = item.quantity || 1;
+              const sz = item.size || 'A3';
+              const mat = item.material || 'Matte';
+              sizeCounts[sz] = (sizeCounts[sz] || 0) + qty;
+              materialCounts[mat] = (materialCounts[mat] || 0) + qty;
+            });
+
+            let majoritySize = 'A3';
+            let maxSizeCount = 0;
+            for (const [size, count] of Object.entries(sizeCounts)) {
+              if (count > maxSizeCount) {
+                maxSizeCount = count;
+                majoritySize = size;
+              } else if (count === maxSizeCount) {
+                if (getPosterBasePrice(size) < getPosterBasePrice(majoritySize)) {
+                  majoritySize = size;
+                }
+              }
+            }
+
+            let majorityMaterial = 'Matte';
+            let maxMatCount = 0;
+            for (const [material, count] of Object.entries(materialCounts)) {
+              if (count > maxMatCount) {
+                maxMatCount = count;
+                majorityMaterial = material;
+              } else if (count === maxMatCount) {
+                if (getMaterialPremium(material) < getMaterialPremium(majorityMaterial)) {
+                  majorityMaterial = material;
+                }
+              }
+            }
+
+            const buyQty = coupon.buy_qty || 1;
+            const freeQty = coupon.free_qty || 0;
+            const freeCount = Math.min(Math.max(totalPaidQuantity - buyQty, 0), freeQty);
+            const freeItemUnitPrice = calculateSinglePosterPrice(majoritySize, majorityMaterial);
+            calculatedDiscount = freeCount * freeItemUnitPrice;
+          }
+        }
+      } else {
+        console.warn(`[razorpay-order] Coupon ${couponCode} not found in database`);
       }
     }
 
+    const calculatedNetSubtotal = Math.max(0, calculatedSubtotal - calculatedDiscount);
+    const calculatedTotal = Math.max(0, calculatedNetSubtotal + SHIPPING_CHARGE);
+
+    console.log(`[razorpay-order] Calculated Subtotal: ₹${calculatedSubtotal}, Discount: ₹${calculatedDiscount}, Shipping: ₹${SHIPPING_CHARGE}, Total: ₹${calculatedTotal}`);
+
+    // Create Razorpay Order
     const razorpay = new Razorpay({
       key_id,
       key_secret,
     });
 
-    console.log(`Creating Razorpay order for amount: ${amount}, receipt: ${receipt}`)
+    // Convert to paise EXACTLY ONCE
+    const amountInPaise = Math.round(calculatedTotal * 100);
 
-    const order = await razorpay.orders.create({
-      amount: Math.round(amount * 100), // convert to paise
-      currency,
-      receipt,
+    console.log(`[razorpay-order] Creating Razorpay order. Amount in paise: ${amountInPaise}`);
+
+    const razorpayOrder = await razorpay.orders.create({
+      amount: amountInPaise,
+      currency: "INR",
+      receipt: `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
     });
 
-    console.log("Razorpay Order Created:", JSON.stringify(order, null, 2))
-
-    // Save the razorpay_order_id back to the database order immediately
-    if (receipt) {
-      const { error: updateError } = await supabase
-        .from('orders')
-        .update({ razorpay_order_id: order.id })
-        .eq('id', receipt)
-
-      if (updateError) {
-        console.error(`Failed to update order with razorpay_order_id: ${updateError.message}`)
-        throw new Error(`Database association failed: ${updateError.message}`)
-      }
-      console.log(`Successfully associated Razorpay order ${order.id} with database order ${receipt}`)
-    }
+    console.log("[razorpay-order] Razorpay Order Created Successfully:", JSON.stringify(razorpayOrder, null, 2))
 
     return new Response(
-      JSON.stringify(order),
+      JSON.stringify({
+        id: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        calculatedTotal: calculatedTotal
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 
       },
     )
   } catch (error) {
-    const err = error as any;
-    console.error("Complete error object:", err);
-    console.error("error:", err);
-    console.error("error.message:", err?.message);
-    console.error("error.error:", err?.error);
-    console.error("error.description:", err?.description);
-    console.error("error.statusCode:", err?.statusCode);
-    console.error("error.status:", err?.status);
-    console.error("error.code:", err?.code);
-    console.error("error.stack:", err?.stack);
-
-    // If the error contains a response body from Razorpay, log that entire response.
-    if (err && typeof err === 'object') {
-      if (err.response) {
-        console.error("Razorpay response (error.response):", err.response);
-      }
-      if (err.responseBody) {
-        console.error("Razorpay response body (error.responseBody):", err.responseBody);
-      }
-      if (err.data) {
-        console.error("Razorpay response data (error.data):", err.data);
-      }
-      if (err.body) {
-        console.error("Razorpay response body (error.body):", err.body);
-      }
-      if (err.error && typeof err.error === 'object') {
-        console.error("Razorpay error details (error.error):", err.error);
-      }
-    }
-
-    const errorResponse = err && typeof err === 'object' ? {
-      message: err.message,
-      error: err.error,
-      description: err.description,
-      statusCode: err.statusCode,
-      status: err.status,
-      code: err.code,
-      stack: err.stack,
-      ...err
-    } : err;
-
+    console.error("[razorpay-order] Order Creation Step Failed:", error);
     return new Response(
-      JSON.stringify({ error: errorResponse }),
+      JSON.stringify({ error: error.message || "Order creation failed" }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400 
