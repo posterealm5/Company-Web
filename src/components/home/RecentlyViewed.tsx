@@ -4,7 +4,7 @@ import { ShoppingCart, Maximize2, Layers, X } from 'lucide-react';
 import { getRecentlyViewedProducts } from '../../services/recentProducts';
 import { getProductDisplayName } from '../../utils/productUrls';
 import { getOptimizedImageUrl } from '../../utils/imageUtils';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS } from '../../config/pricing';
+import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing';
 import { useCart } from '../../context/CartContext';
 import { RippleWrapper } from '../ui/RippleWrapper';
 import type { Product } from '../../types/database';
@@ -61,7 +61,8 @@ export default function RecentlyViewed() {
   const handleQuickAdd = () => {
     if (!selectedProduct) return;
 
-    const finalPrice = selectedSize.price + selectedMaterial.price;
+    const isBundle = selectedProduct.genre?.toLowerCase() === 'bundle';
+    const finalPrice = isBundle ? selectedSize.price : calculateSinglePosterPrice(selectedSize.name, selectedMaterial.name);
     addToCart({
       id: selectedProduct.id,
       name: getProductDisplayName(selectedProduct),
@@ -278,7 +279,7 @@ export default function RecentlyViewed() {
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
                     <p className="text-4xl font-black text-brand-red leading-none">
-                      ₹{((selectedSize?.price || 0) + (selectedMaterial?.price || 0))}
+                      ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
                     </p>
                   </div>
                   <RippleWrapper delay={2} className="flex-1">

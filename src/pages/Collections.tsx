@@ -296,7 +296,7 @@ export default function Collections() {
   const handleQuickAdd = useCallback(() => {
     if (!selectedProduct) return;
     
-    const finalPrice = selectedSize.price + selectedMaterial.price;
+    const finalPrice = isBundle ? selectedSize.price : calculateSinglePosterPrice(selectedSize.name, selectedMaterial.name);
     addToCart({
       id: selectedProduct.id,
       name: getProductDisplayName(selectedProduct),
@@ -312,7 +312,7 @@ export default function Collections() {
     });
     
     setSelectedProduct(null);
-  }, [selectedProduct, selectedSize, selectedMaterial, addToCart]);
+  }, [selectedProduct, selectedSize, selectedMaterial, isBundle, addToCart]);
 
 
   return (

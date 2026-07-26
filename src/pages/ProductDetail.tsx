@@ -9,7 +9,7 @@ import { getProductMetadata } from '../services/metadata';
 import { StructuredData } from '../components/StructuredData';
 import { getProductSchema, getBreadcrumbSchema } from '../services/structuredData';
 import { getProductDisplayName } from '../utils/productUrls';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS } from '../config/pricing';
+import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../config/pricing';
 import type { Product } from '../types/database';
 
 import { SIZES } from '../utils/sizeHelper';
@@ -74,7 +74,8 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!product || !selectedSize || !selectedMaterial) return;
-    const finalPrice = selectedSize.price + selectedMaterial.price;
+    const isBundle = product.genre?.toLowerCase() === 'bundle';
+    const finalPrice = isBundle ? selectedSize.price : calculateSinglePosterPrice(selectedSize.name, selectedMaterial.name);
     addToCart({
       id: product.id,
       name: getProductDisplayName(product),

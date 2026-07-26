@@ -7,22 +7,35 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const POSTER_PRICING: Record<string, number> = { A5: 89, A4: 220, A3: 299, A2: 390 };
+const POSTER_PRICING: Record<string, number> = { A5: 89, A4: 180, A3: 230, A2: 350 };
+const FLAGSHIP_PRICING: Record<string, number> = { A5: 175, A4: 280, A3: 330, A2: 450 };
 const FLAGSHIP_PREMIUM = 100;
-const SHIPPING_CHARGE = 150;
+const SHIPPING_CHARGE = 99;
 
 function getPosterBasePrice(size: string): number {
   const sz = (size || '').toUpperCase();
   return POSTER_PRICING[sz] || POSTER_PRICING.A5;
 }
 
-function getMaterialPremium(material: string): number {
+function getMaterialPremium(material: string, size?: string): number {
   const mat = (material || '').toLowerCase();
-  return mat.includes('flagship') ? FLAGSHIP_PREMIUM : 0;
+  if (mat.includes('flagship')) {
+    if (size) {
+      const sz = size.toUpperCase();
+      if (sz === 'A5') return 86;
+    }
+    return FLAGSHIP_PREMIUM;
+  }
+  return 0;
 }
 
 function calculateSinglePosterPrice(size: string, material: string): number {
-  return getPosterBasePrice(size) + getMaterialPremium(material);
+  const sz = (size || '').toUpperCase();
+  const mat = (material || '').toLowerCase();
+  if (mat.includes('flagship') && sz in FLAGSHIP_PRICING) {
+    return FLAGSHIP_PRICING[sz];
+  }
+  return getPosterBasePrice(size) + getMaterialPremium(material, size);
 }
 
 serve(async (req) => {
@@ -64,6 +77,29 @@ serve(async (req) => {
     const paidItems = cartItems.filter(item => !item.isFreeItem);
     const totalPaidQuantity = paidItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
+    console.log("==================================================");
+    console.log("[razorpay-order] CART CALCULATION LOGS:");
+    console.log(`1. Total Cart Items Received: ${cartItems.length}`);
+
+    paidItems.forEach((item, idx) => {
+      const isCustom = Boolean(item.id && Number(item.id) >= 1000000000000);
+      const productType = isCustom ? 'custom' : 'collection';
+      const size = item.size || item.selected_size || 'A5';
+      const material = item.material || item.selected_material || 'Matte';
+      const unitPrice = calculateSinglePosterPrice(size, material);
+      const quantity = item.quantity || 1;
+      const itemSubtotal = unitPrice * quantity;
+
+      console.log(`--- Item #${idx + 1} ---`);
+      console.log(`2. Product ID: ${item.id}`);
+      console.log(`3. Product Type: ${productType}`);
+      console.log(`4. Size: ${size}`);
+      console.log(`5. Material: ${material}`);
+      console.log(`6. Unit Price used by backend: ₹${unitPrice}`);
+      console.log(`7. Quantity: ${quantity}`);
+      console.log(`8. Item Subtotal: ₹${itemSubtotal}`);
+    });
+
     for (const item of paidItems) {
       // Validate product existence and active status in DB for non-custom items
       if (item.id && Number(item.id) < 1000000000000) {
@@ -82,11 +118,14 @@ serve(async (req) => {
         }
       }
 
-      const unitPrice = calculateSinglePosterPrice(item.size, item.material);
+      const size = item.size || item.selected_size || 'A5';
+      const material = item.material || item.selected_material || 'Matte';
+      const unitPrice = calculateSinglePosterPrice(size, material);
       calculatedSubtotal += unitPrice * (item.quantity || 1);
     }
 
     let calculatedDiscount = 0;
+    let bundleDiscount = 0;
 
     // Validate Coupon if present
     if (couponCode) {
@@ -137,8 +176,8 @@ serve(async (req) => {
 
             paidItems.forEach(item => {
               const qty = item.quantity || 1;
-              const sz = item.size || 'A3';
-              const mat = item.material || 'Matte';
+              const sz = item.size || item.selected_size || 'A3';
+              const mat = item.material || item.selected_material || 'Matte';
               sizeCounts[sz] = (sizeCounts[sz] || 0) + qty;
               materialCounts[mat] = (materialCounts[mat] || 0) + qty;
             });
@@ -174,6 +213,7 @@ serve(async (req) => {
             const freeCount = Math.min(Math.max(totalPaidQuantity - buyQty, 0), freeQty);
             const freeItemUnitPrice = calculateSinglePosterPrice(majoritySize, majorityMaterial);
             calculatedDiscount = freeCount * freeItemUnitPrice;
+            bundleDiscount = calculatedDiscount;
           }
         }
       } else {
@@ -184,7 +224,13 @@ serve(async (req) => {
     const calculatedNetSubtotal = Math.max(0, calculatedSubtotal - calculatedDiscount);
     const calculatedTotal = Math.max(0, calculatedNetSubtotal + SHIPPING_CHARGE);
 
-    console.log(`[razorpay-order] Calculated Subtotal: ₹${calculatedSubtotal}, Discount: ₹${calculatedDiscount}, Shipping: ₹${SHIPPING_CHARGE}, Total: ₹${calculatedTotal}`);
+    console.log("--------------------------------------------------");
+    console.log(`9. Shipping Amount: ₹${SHIPPING_CHARGE}`);
+    console.log(`10. Coupon Discount: ₹${calculatedDiscount}`);
+    console.log(`11. Bundle Discount: ₹${bundleDiscount}`);
+    console.log(`12. Final Subtotal before Razorpay: ₹${calculatedNetSubtotal}`);
+    console.log(`13. Final Amount sent to Razorpay: ₹${calculatedTotal}`);
+    console.log("==================================================");
 
     // Create Razorpay Order
     const razorpay = new Razorpay({

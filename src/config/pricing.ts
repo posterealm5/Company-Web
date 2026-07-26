@@ -5,14 +5,21 @@
 
 export const POSTER_PRICING = {
   A5: 89,
-  A4: 220,
-  A3: 299,
-  A2: 390
+  A4: 180,
+  A3: 230,
+  A2: 350
+};
+
+export const FLAGSHIP_PRICING: Record<string, number> = {
+  A5: 175,
+  A4: 280,
+  A3: 330,
+  A2: 450
 };
 
 export const FLAGSHIP_PREMIUM = 100;
 
-export const SHIPPING_CHARGE = 150;
+export const SHIPPING_CHARGE = 99;
 
 // Standalone Bundle Options
 export const BUNDLE_OPTIONS = [
@@ -37,9 +44,13 @@ export function getPosterBasePrice(size: string): number {
 }
 
 /** Get material premium */
-export function getMaterialPremium(material: string): number {
+export function getMaterialPremium(material: string, size?: string): number {
   const mat = (material || '').toLowerCase();
   if (mat.includes('flagship')) {
+    if (size) {
+      const sz = size.toUpperCase();
+      if (sz === 'A5') return 86;
+    }
     return FLAGSHIP_PREMIUM;
   }
   return 0;
@@ -47,8 +58,13 @@ export function getMaterialPremium(material: string): number {
 
 /** Calculate pricing of a single poster */
 export function calculateSinglePosterPrice(size: string, material: string): number {
+  const sz = (size || '').toUpperCase();
+  const mat = (material || '').toLowerCase();
+  if (mat.includes('flagship') && sz in FLAGSHIP_PRICING) {
+    return FLAGSHIP_PRICING[sz];
+  }
   const base = getPosterBasePrice(size);
-  const premium = getMaterialPremium(material);
+  const premium = getMaterialPremium(material, size);
   return base + premium;
 }
 

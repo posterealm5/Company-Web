@@ -4,7 +4,7 @@ import { RippleWrapper } from '../ui/RippleWrapper';
 import { getProductDisplayName } from '../../utils/productUrls';
 import { useWishlist } from '../../context/WishlistContext';
 import { useSharePoster } from '../../hooks/useSharePoster';
-import { BUNDLE_OPTIONS } from '../../config/pricing';
+import { BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing';
 import type { Product } from '../../types/database';
 import { getOptimizedImageUrl } from '../../utils/imageUtils';
 import { ProtectedImage } from '../ProtectedImage';
@@ -196,7 +196,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
               <p className="text-4xl md:text-5xl font-black text-brand-red leading-none">
-                ₹{((selectedSize?.price || 0) + (selectedMaterial?.price || 0))}
+                ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
               </p>
             </div>
             <RippleWrapper delay={2} className="flex-1">
@@ -346,7 +346,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
             <p className="text-4xl font-black text-brand-red leading-none">
-              ₹{((selectedSize?.price || 0) + (selectedMaterial?.price || 0))}
+              ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
             </p>
           </div>
           <RippleWrapper delay={2} className="flex-1">
