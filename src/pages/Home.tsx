@@ -18,7 +18,7 @@ import { homeCache } from '../utils/homeCache';
 import heroLeft from '../assets/images/hero-left.jpg';
 import heroCenter from '../assets/images/hero-center.jpg';
 import heroRight from '../assets/images/hero-right.jpg';
-import objectiveImage from '../assets/images/regenerated_image_1778348846524.jpg';
+import objectiveImage from '../assets/images/objective-team.jpg';
 import { getOptimizedImageUrl } from '../utils/imageUtils';
 import { ProtectedImage } from '../components/ProtectedImage';
 
@@ -322,7 +322,7 @@ const ObjectiveSection = () => {
   return (
     <section className="py-24 bg-brand-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center lg:items-start">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -357,17 +357,16 @@ const ObjectiveSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.8 }}
-            className="relative lg:pl-12"
+            className="relative lg:pl-8 lg:mt-3"
           >
             <div
-              className="comic-border p-4 bg-white transform rotate-2 hover:rotate-0 transition-transform duration-500"
-              style={{ width: '897.2px', maxWidth: '100%', height: 'auto', aspectRatio: '897.2 / 1250.82' }}
+              className="comic-border p-3 sm:p-4 bg-white transform rotate-2 hover:rotate-0 transition-transform duration-500 w-full max-w-xl mx-auto lg:max-w-none"
             >
               <ProtectedImage
                 src={objectiveImage}
                 alt="Our Objective"
-                width={897}
-                height={1251}
+                width={1024}
+                height={768}
                 loading="lazy"
                 className="w-full h-auto rounded-lg"
                 onError={(e) => {
