@@ -183,9 +183,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                         {material.desc}
                       </p>
                     </div>
-                    {material.price > 0 && (
-                      <p className="font-mono text-xs font-bold">+₹{material.price}</p>
-                    )}
+                    <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || 'A3', material.name)}</p>
                   </button>
                 ))}
               </div>
@@ -214,7 +212,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
   }
 
   return (
-    <>
+    <div className="w-full flex flex-col md:flex-row">
       {/* Product Image Gallery */}
       <div className="w-full md:w-1/2 bg-gray-100 relative protected-area animate-fade-in" style={{ aspectRatio: '3/4' }}>
         <ProtectedImage 
@@ -333,9 +331,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                       {material.desc}
                     </p>
                   </div>
-                  {material.price > 0 && (
-                    <p className="font-mono text-xs font-bold">+₹{material.price}</p>
-                  )}
+                  <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || 'A3', material.name)}</p>
                 </button>
               ))}
             </div>
@@ -359,6 +355,6 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           </RippleWrapper>
         </div>
       </div>
-    </>
+    </div>
   );
 };

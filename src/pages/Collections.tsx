@@ -23,14 +23,14 @@ import { ProtectedImage } from '../components/ProtectedImage';
 
 const GENRES = ['All', 'Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Printesty', 'Gaming', 'Bundle'];
 
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, calculateSinglePosterPrice, BUNDLE_OPTIONS } from '../config/pricing';
+import { POSTER_PRICING, calculateSinglePosterPrice, BUNDLE_OPTIONS } from '../config/pricing';
 
 import { SIZES } from '../utils/sizeHelper';
 
 const MATERIALS = [
-  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
-  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine', price: 0 },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured', price: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
+  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
+  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
 ];
 
 const PRODUCTS = [

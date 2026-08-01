@@ -9,15 +9,15 @@ import { getProductMetadata } from '../services/metadata';
 import { StructuredData } from '../components/StructuredData';
 import { getProductSchema, getBreadcrumbSchema } from '../services/structuredData';
 import { getProductDisplayName } from '../utils/productUrls';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../config/pricing';
+import { POSTER_PRICING, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../config/pricing';
 import type { Product } from '../types/database';
 
 import { SIZES } from '../utils/sizeHelper';
 
 const MATERIALS = [
-  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
-  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine', price: 0 },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured', price: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
+  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
+  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
 ];
 
 export default function ProductDetail() {

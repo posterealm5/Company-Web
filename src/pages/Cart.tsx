@@ -13,16 +13,16 @@ import { getProductDisplayName } from '../utils/productUrls';
 
 import { EmptyState } from '../components/ui/EmptyState';
 
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice, getMajoritySizeAndMaterial, SHIPPING_CHARGE } from '../config/pricing';
+import { POSTER_PRICING, BUNDLE_OPTIONS, calculateSinglePosterPrice, getMajoritySizeAndMaterial, SHIPPING_CHARGE } from '../config/pricing';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
 
 import { SIZES, getSizeDimension, getSizeDisplayLabel } from '../utils/sizeHelper';
 
 const MATERIALS = [
-  { id: 'matte', name: 'Matte', premium: 0 },
-  { id: 'glossy', name: 'Glossy', premium: 0 },
-  { id: 'flagship', name: 'Flagship Material', premium: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte' },
+  { id: 'glossy', name: 'Glossy' },
+  { id: 'flagship', name: 'Flagship Material' },
 ];
 
 export default function Cart() {
@@ -870,9 +870,7 @@ export default function Cart() {
                               {material.name === 'Matte' ? 'Non-reflective, professional finish' : material.name === 'Glossy' ? 'Vibrant colors, high shine' : 'Heavyweight archival stock, textured'}
                             </p>
                           </div>
-                          {material.premium > 0 && (
-                            <p className="font-mono text-xs font-bold">+₹{material.premium}</p>
-                          )}
+                          <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(editingItem.size, material.name)}</p>
                         </button>
                       ))}
                     </div>
@@ -1038,9 +1036,9 @@ export default function Cart() {
 const RECOMMENDATION_SIZES = SIZES;
 
 const RECOMMENDATION_MATERIALS = [
-  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
-  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine', price: 0 },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured', price: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
+  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
+  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
 ];
 
 const CartRecommendations = () => {
@@ -1127,7 +1125,8 @@ const CartRecommendations = () => {
   const handleQuickAdd = () => {
     if (!selectedProduct) return;
     
-    const finalPrice = selectedSize.price + selectedMaterial.price;
+    const isBundle = selectedProduct.genre?.toLowerCase() === 'bundle';
+    const finalPrice = isBundle ? selectedSize.price : calculateSinglePosterPrice(selectedSize.name, selectedMaterial.name);
     addToCart({
       id: selectedProduct.id,
       name: getProductDisplayName(selectedProduct),
@@ -1327,9 +1326,7 @@ const CartRecommendations = () => {
                               {material.desc}
                             </p>
                           </div>
-                          {material.price > 0 && (
-                            <p className="font-mono text-xs font-bold">+₹{material.price}</p>
-                          )}
+                          <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || 'A3', material.name)}</p>
                         </button>
                       ))}
                     </div>
@@ -1340,7 +1337,7 @@ const CartRecommendations = () => {
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
                     <p className="text-4xl font-black text-brand-red leading-none">
-                      ₹{((selectedSize?.price || 0) + (selectedMaterial?.price || 0))}
+                      ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
                     </p>
                   </div>
                   <RippleWrapper delay={2} className="flex-1">

@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { AuthModal } from '../components/auth/AuthModal';
 
 import { RippleWrapper } from '../components/ui/RippleWrapper';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, calculateSinglePosterPrice } from '../config/pricing';
+import { POSTER_PRICING, calculateSinglePosterPrice } from '../config/pricing';
 import { SEO } from '../components/SEO';
 import { getCustomizeMetadata } from '../services/metadata';
 import { StructuredData } from '../components/StructuredData';
@@ -18,9 +18,9 @@ import { getOptimizedImageUrl } from '../utils/imageUtils';
 import { SIZES, getSizeDisplayLabel } from '../utils/sizeHelper';
 
 const MATERIALS = [
-  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
-  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine', price: 0 },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured', price: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
+  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
+  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
 ];
 
 export default function Customize() {
@@ -365,7 +365,7 @@ export default function Customize() {
                       <p className={`text-sm font-medium ${selectedMaterial.id === material.id ? 'text-gray-400' : 'text-gray-500'}`}>{material.desc}</p>
                     </div>
                     <div className="text-right">
-                       <p className="font-mono font-bold">₹{material.price}</p>
+                       <p className="font-mono font-bold">₹{calculateSinglePosterPrice(selectedSize.name, material.name)}</p>
                        {material.id === 'flagship' && <span className="text-[10px] bg-brand-red text-white px-2 py-0.5 rounded font-black uppercase">Elite</span>}
                     </div>
                   </button>

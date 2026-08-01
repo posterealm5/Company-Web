@@ -13,7 +13,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Review, ShowcaseEntry, Product } from '../types/database';
 import { useCart } from '../context/CartContext';
 import { getProductDisplayName } from '../utils/productUrls';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS } from '../config/pricing';
+import { POSTER_PRICING, BUNDLE_OPTIONS } from '../config/pricing';
 import { homeCache } from '../utils/homeCache';
 import heroLeft from '../assets/images/hero-left.jpg';
 import heroCenter from '../assets/images/hero-center.jpg';
@@ -31,9 +31,9 @@ const RecentlyViewed = lazy(() => import('../components/home/RecentlyViewed'));
 import { SIZES } from '../utils/sizeHelper';
 
 const MATERIALS = [
-  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
-  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine', price: 0 },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured', price: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
+  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
+  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
 ];
 
 interface HeroProps {

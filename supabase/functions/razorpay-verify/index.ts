@@ -6,9 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const POSTER_PRICING: Record<string, number> = { A5: 89, A4: 180, A3: 230, A2: 350 };
-const FLAGSHIP_PRICING: Record<string, number> = { A5: 175, A4: 280, A3: 330, A2: 450 };
-const FLAGSHIP_PREMIUM = 100;
+const POSTER_PRICING: Record<string, number> = { A5: 79, A4: 129, A3: 179, A2: 299 };
+const FLAGSHIP_PRICING: Record<string, number> = { A5: 175, A4: 280, A3: 330, A2: 400 };
 const SHIPPING_CHARGE = 99;
 
 function getPosterBasePrice(size: string): number {
@@ -16,25 +15,16 @@ function getPosterBasePrice(size: string): number {
   return POSTER_PRICING[sz] || POSTER_PRICING.A5;
 }
 
-function getMaterialPremium(material: string, size?: string): number {
-  const mat = (material || '').toLowerCase();
-  if (mat.includes('flagship')) {
-    if (size) {
-      const sz = size.toUpperCase();
-      if (sz === 'A5') return 86;
-    }
-    return FLAGSHIP_PREMIUM;
-  }
-  return 0;
-}
-
 function calculateSinglePosterPrice(size: string, material: string): number {
   const sz = (size || '').toUpperCase();
   const mat = (material || '').toLowerCase();
-  if (mat.includes('flagship') && sz in FLAGSHIP_PRICING) {
-    return FLAGSHIP_PRICING[sz];
+  if (mat.includes('flagship')) {
+    if (sz in FLAGSHIP_PRICING) {
+      return FLAGSHIP_PRICING[sz];
+    }
+    return FLAGSHIP_PRICING.A5;
   }
-  return getPosterBasePrice(size) + getMaterialPremium(material, size);
+  return getPosterBasePrice(size);
 }
 
 serve(async (req) => {

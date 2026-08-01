@@ -3,21 +3,19 @@
  * Posterealm E-Commerce System
  */
 
-export const POSTER_PRICING = {
-  A5: 89,
-  A4: 180,
-  A3: 230,
-  A2: 350
+export const POSTER_PRICING: Record<string, number> = {
+  A5: 79,
+  A4: 129,
+  A3: 179,
+  A2: 299
 };
 
 export const FLAGSHIP_PRICING: Record<string, number> = {
   A5: 175,
   A4: 280,
   A3: 330,
-  A2: 450
+  A2: 400
 };
-
-export const FLAGSHIP_PREMIUM = 100;
 
 export const SHIPPING_CHARGE = 99;
 
@@ -31,10 +29,7 @@ export const BUNDLE_OPTIONS = [
 /** Get base price of poster size */
 export function getPosterBasePrice(size: string): number {
   const sz = (size || '').toUpperCase();
-  if (sz === 'A2') return POSTER_PRICING.A2;
-  if (sz === 'A3') return POSTER_PRICING.A3;
-  if (sz === 'A4') return POSTER_PRICING.A4;
-  if (sz === 'A5') return POSTER_PRICING.A5;
+  if (sz in POSTER_PRICING) return POSTER_PRICING[sz];
   
   // Check if size matches a bundle option name
   const bundle = BUNDLE_OPTIONS.find(b => b.name.toLowerCase() === size.toLowerCase());
@@ -43,15 +38,14 @@ export function getPosterBasePrice(size: string): number {
   return POSTER_PRICING.A5; // Default fallback
 }
 
-/** Get material premium */
+/** Get material premium over Glossy/Matte base price */
 export function getMaterialPremium(material: string, size?: string): number {
   const mat = (material || '').toLowerCase();
   if (mat.includes('flagship')) {
-    if (size) {
-      const sz = size.toUpperCase();
-      if (sz === 'A5') return 86;
-    }
-    return FLAGSHIP_PREMIUM;
+    const sz = (size || 'A5').toUpperCase();
+    const flagshipPrice = FLAGSHIP_PRICING[sz] || FLAGSHIP_PRICING.A5;
+    const basePrice = POSTER_PRICING[sz] || POSTER_PRICING.A5;
+    return flagshipPrice - basePrice;
   }
   return 0;
 }
@@ -60,12 +54,13 @@ export function getMaterialPremium(material: string, size?: string): number {
 export function calculateSinglePosterPrice(size: string, material: string): number {
   const sz = (size || '').toUpperCase();
   const mat = (material || '').toLowerCase();
-  if (mat.includes('flagship') && sz in FLAGSHIP_PRICING) {
-    return FLAGSHIP_PRICING[sz];
+  if (mat.includes('flagship')) {
+    if (sz in FLAGSHIP_PRICING) {
+      return FLAGSHIP_PRICING[sz];
+    }
+    return FLAGSHIP_PRICING.A5;
   }
-  const base = getPosterBasePrice(size);
-  const premium = getMaterialPremium(material, size);
-  return base + premium;
+  return getPosterBasePrice(size);
 }
 
 /**
@@ -93,7 +88,7 @@ export function recalculateCartPrices(items: any[]): any[] {
 
 /**
  * Determine the most common size and material among selected paid posters.
- * Breaks ties by choosing the higher-priced size/material.
+ * Breaks ties by choosing the cheaper size/material.
  */
 export function getMajoritySizeAndMaterial(paidItems: any[]): { size: string; material: string } {
   if (!paidItems || paidItems.length === 0) {
@@ -137,10 +132,10 @@ export function getMajoritySizeAndMaterial(paidItems: any[]): { size: string; ma
       maxMatCount = count;
       majorityMaterial = material;
     } else if (count === maxMatCount) {
-      // Tie-breaker: choose cheapest material
-      const priceCurrent = getMaterialPremium(material);
-      const priceMajority = getMaterialPremium(majorityMaterial);
-      if (priceCurrent < priceMajority) {
+      // Tie-breaker: choose cheapest material (Glossy/Matte over Flagship)
+      const isCurrentFlagship = (material || '').toLowerCase().includes('flagship');
+      const isMajorityFlagship = (majorityMaterial || '').toLowerCase().includes('flagship');
+      if (!isCurrentFlagship && isMajorityFlagship) {
         majorityMaterial = material;
       }
     }

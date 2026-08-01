@@ -4,7 +4,7 @@ import { ShoppingCart, Maximize2, Layers, X } from 'lucide-react';
 import { getRecentlyViewedProducts } from '../../services/recentProducts';
 import { getProductDisplayName } from '../../utils/productUrls';
 import { getOptimizedImageUrl } from '../../utils/imageUtils';
-import { POSTER_PRICING, FLAGSHIP_PREMIUM, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing';
+import { POSTER_PRICING, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing';
 import { useCart } from '../../context/CartContext';
 import { RippleWrapper } from '../ui/RippleWrapper';
 import type { Product } from '../../types/database';
@@ -13,9 +13,9 @@ import { ProtectedImage } from '../ProtectedImage';
 import { SIZES } from '../../utils/sizeHelper';
 
 const MATERIALS = [
-  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish', price: 0 },
-  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine', price: 0 },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured', price: FLAGSHIP_PREMIUM },
+  { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
+  { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
+  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
 ];
 
 export default function RecentlyViewed() {
@@ -266,9 +266,7 @@ export default function RecentlyViewed() {
                               {material.desc}
                             </p>
                           </div>
-                          {material.price > 0 && (
-                            <p className="font-mono text-xs font-bold">+₹{material.price}</p>
-                          )}
+                          <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || 'A3', material.name)}</p>
                         </button>
                       ))}
                     </div>
