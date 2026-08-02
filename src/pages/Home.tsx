@@ -320,9 +320,9 @@ const Hero: React.FC<HeroProps> = ({
 
 const ObjectiveSection = () => {
   return (
-    <section className="py-24 bg-brand-white overflow-hidden">
+    <section className="pt-24 pb-28 sm:pb-32 lg:pb-36 bg-brand-white overflow-x-clip relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center lg:items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -379,6 +379,14 @@ const ObjectiveSection = () => {
                   }
                 }}
               />
+              <div className="mt-4 px-1 sm:px-2 pb-1 sm:pb-2">
+                <h3 className="text-2xl sm:text-3xl font-black uppercase text-black tracking-tight mb-2 text-left">
+                  TEAM POSTEREALM
+                </h3>
+                <p className="text-base text-gray-700 leading-relaxed text-left">
+                  {"These people aren’t just part of the team—they’re family. The ones who helped turn PosterRealm from an idea into reality, standing by it, believing in it, and contributing in every way possible."}
+                </p>
+              </div>
             </div>
             {/* Visual element */}
             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-red/5 rounded-full blur-3xl"></div>
