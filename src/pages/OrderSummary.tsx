@@ -7,7 +7,7 @@ import { useCart } from '../context/CartContext';
 import { RippleWrapper } from '../components/ui/RippleWrapper';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { SHIPPING_CHARGE } from '../config/pricing';
 import { getSizeDisplayLabel } from '../utils/sizeHelper';
 
@@ -106,7 +106,7 @@ export default function OrderSummary() {
                   <div key={item.id} className="flex gap-4 border-b border-gray-100 pb-6 last:border-0 last:pb-0">
                     <div className="w-16 h-16 bg-gray-100 rounded border border-brand-black flex-shrink-0 overflow-hidden">
                       <img 
-                        src={getOptimizedImageUrl(item.image, 80, 80)} 
+                        src={getStorefrontImage(item, 'thumbnail')} 
                         alt={item.name} 
                         width={80}
                         height={80}

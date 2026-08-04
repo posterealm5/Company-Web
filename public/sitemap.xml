@@ -2,69 +2,49 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://posterealm.com/</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://posterealm.com/collections</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://posterealm.com/customize</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://posterealm.com/how-it-works</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://posterealm.com/faq</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://posterealm.com/privacy-policy</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://posterealm.com/terms-of-service</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://posterealm.com/products/j-cole-2014-forest-hills-drive</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/JC-2.png</image:loc>
-      <image:title>J. Cole 2014 Forest Hills Drive Poster | Hip-Hop Album Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/shinobu-kocho-butterfly-hashira</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DS-3.png</image:loc>
-      <image:title>Shinobu Kocho Butterfly Hashira Poster | Demon Slayer Anime Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/goku-push-past-your-limits</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -73,38 +53,18 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/vegeta-saiyan-pride</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/j-cole-2014-forest-hills-drive</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-1.png</image:loc>
-      <image:title>Vegeta | Saiyan Pride | Dragon Ball Z Wall Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/beerus-god-of-destruction-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-3.png</image:loc>
-      <image:title>Beerus | God of Destruction | Dragon Ball Super Wall Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/goku-look-up-it-all-begins</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-5.png</image:loc>
-      <image:title>Goku | Look Up It All Begins | Dragon Ball Z Wall Poster</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/JC-2.png</image:loc>
+      <image:title>J. Cole 2014 Forest Hills Drive Poster | Hip-Hop Album Wall Art</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://posterealm.com/products/goku-shenron-dragon-ball-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -114,7 +74,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/son-goku-flying-nimbus-silhouette</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -124,7 +84,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/tanjiro-japanese-ink-art-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -133,38 +93,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/bmw-s1000rr</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-10.png</image:loc>
-      <image:title>BMW S1000RR Poster – Superbike Racing Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/jujutsu-kaisen-japanese-ink-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-2.png</image:loc>
-      <image:title>Jujutsu Kaisen Japanese Ink Poster | Yuji Itadori Anime Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/jujutsu-kaisen-minimalist-character-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-3.png</image:loc>
-      <image:title>Jujutsu Kaisen Minimalist Character Poster | Anime Wall Art Poster</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/one-punch-man-saitama-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -174,7 +104,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/one-punch-man-saitama-mordern-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -184,7 +114,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/solo-leveling-sung-jinwoo-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -193,18 +123,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/your-lie-in-april-anime-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/YLA-1.png</image:loc>
-      <image:title>Your Lie in April Anime Poster | Romantic Music-Inspired Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/your-lie-in-april-minimalistic-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -214,7 +134,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/call-of-duty-wwii-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -223,28 +143,18 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/kanye-west-graduation-bear</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/bmw-s1000rr</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/KW-1.png</image:loc>
-      <image:title>Kanye West Graduation Bear Poster | Hip-Hop Inspired Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/ghost-of-tsushima-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/GOT-2.png</image:loc>
-      <image:title>Ghost of Tsushima Poster | Samurai Ink Art Gaming Wall Decor</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-10.png</image:loc>
+      <image:title>BMW S1000RR Poster – Superbike Racing Wall Art</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://posterealm.com/products/ghost-of-tsushima-gaming-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -253,18 +163,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/kratos-gaming-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/GOW-1.png</image:loc>
-      <image:title>Kratos Poster | God of War Gaming Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/god-of-war-ragnarok-gaming-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -274,7 +174,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/arthur-morgan-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -283,18 +183,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/red-dead-redemption-poster-set</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/RDR-3.png</image:loc>
-      <image:title>Red Dead Redemption Poster Set | Western Cowboy Gaming Wall Art Triptych</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/jett-valorant</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -303,38 +193,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/michael-jackson-smooth-criminal</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/MJ-2.jpg</image:loc>
-      <image:title>Michael Jackson Smooth Criminal Poster | Iconic Pop Legend Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/the-boys</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-2.png</image:loc>
-      <image:title>The Boys Poster | Dark Superhero TV Series Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/the-boys-ensemble</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-4.png</image:loc>
-      <image:title>The Boys Ensemble Poster | Dark Superhero Team Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/heisenberg-breaking-bad</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -343,18 +203,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/fight-club-rules</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-7.png</image:loc>
-      <image:title>Fight Club Rules Poster | Cult Classic Movie Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/breaking-bad</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -364,7 +214,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/stranger-things-upside-down-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -374,7 +224,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/friends-tv-show</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -384,7 +234,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/j-cole-middle-child</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -394,7 +244,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/j-cole-be-free</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -403,28 +253,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/j-cole-4-your-eyez-only</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/JC-1.png</image:loc>
-      <image:title>J. Cole 4 Your Eyez Only Poster | Hip-Hop Album Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/kanye-west-808s-heartbreak</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/KW-2.png</image:loc>
-      <image:title>Kanye West 808s &amp; Heartbreak Poster | Minimalist Hip-Hop Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/michael-jackson-signature</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -434,7 +264,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/encore-abj-samurai</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -443,18 +273,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/seedhe-maut-typography</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/SM-2.png</image:loc>
-      <image:title>Seedhe Maut Typography Poster | Indian Hip-Hop Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/koenigsegg-agera</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -463,18 +283,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/royal-enfield-super-meteor-650</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-2.png</image:loc>
-      <image:title>Royal Enfield Super Meteor 650 Poster – Classic Cruiser Motorcycle Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/royal-enfield-continental-gt-650</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -483,18 +293,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/royal-enfield-meteor-350</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-5.png</image:loc>
-      <image:title>Royal Enfield Meteor 350 Poster – Classic Cruiser Motorcycle Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/royal-enfield-himalayan-450-minimalistic</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -504,7 +304,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/built-for-speed-motorcycle-racing</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -513,18 +313,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/yamaha-yzr-m1-valentino-rossi</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-11.png</image:loc>
-      <image:title>Yamaha YZR-M1 Valentino Rossi Poster – MotoGP Racing Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/ducati-desmosedici-gp-marc-marquez</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -534,7 +324,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/royal-enfield-bullet-350</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -544,7 +334,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/bugatti-chiron-pur-sport</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -553,18 +343,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/lamborghini-revuelto</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-4.png</image:loc>
-      <image:title>Lamborghini Revuelto Poster – Luxury Supercar Wall Art | Modern Automotive Decor</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/mclaren-720s</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -573,18 +353,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/porsche-911-gt3-rs</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-7.png</image:loc>
-      <image:title>Porsche 911 GT3 RS Poster – Luxury Sports Car Wall Art | Modern Automotive Decor</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/nissan-skyline-gt-r-r34</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -594,7 +364,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/pagani-huayra</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -604,7 +374,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/koenigsegg-jesko-attack-3-panel</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -613,18 +383,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/dodge-challenger</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-14.png</image:loc>
-      <image:title>Dodge Challenger Wall Art | American Muscle Car Canvas</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/honda-nsx-na1</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -634,7 +394,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/bugatti-chiron</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -643,18 +403,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/dear-self-you-can-do-it</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-31.png</image:loc>
-      <image:title>Dear Self You Can Do It Wall Art Poster | Motivational Quote Print</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/history-warrior</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -663,48 +413,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/stay-soft-stay-dangerous-black-cat</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-2.png</image:loc>
-      <image:title>Stay Soft Stay Dangerous Black Cat Wall Art | Cute Aesthetic Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/fuck-what-they-think-pink-vintage-car</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-3.png</image:loc>
-      <image:title>Fuck What They Think Pink Vintage Car Wall Art | Retro Quote Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/ferrari-sf-26-f1</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-20.png</image:loc>
-      <image:title>Ferrari SF-26 F1 Wall Art | Formula 1 Racing Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/cadillac-formula-1-team</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-22.png</image:loc>
-      <image:title>Cadillac Formula 1 Team Wall Art | F1 Racing Poster</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/michael-jackson</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -713,8 +423,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://posterealm.com/products/fuck-what-they-think-pink-vintage-car</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-3.png</image:loc>
+      <image:title>Fuck What They Think Pink Vintage Car Wall Art | Retro Quote Poster</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://posterealm.com/products/fuck-your-sharam-and-lihaz</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -724,7 +444,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/music-wine-is-always-a-good-time</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -733,38 +453,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/choose-happiness-dog</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-33.png</image:loc>
-      <image:title>Choose Happiness Dog Wall Art Poster | Cute Golden Retriever Quote Print</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/i-have-to-succeed-because-i-like-expensive-shit</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-9.png</image:loc>
-      <image:title>I Have To Succeed Because I Like Expensive Sh*t Vintage Newspaper Motivational Wall Art Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/icate-lotus-art-typography-wall</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-11.png</image:loc>
-      <image:title>दिलicate Lotus Art Typography Wall Poster | Indian Aesthetic Minimalist Wall Decor</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/retro-boombox-cassette-tape</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -773,18 +463,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/warning-artist-work-zone-vintage-studio</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-14.png</image:loc>
-      <image:title>Warning Artist Work Zone Vintage Studio Wall Art Poster | Creative Workspace Sign</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/go-away-i-m-reading</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -794,7 +474,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/fucks-i-give-nun</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -804,7 +484,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/hustle-motivation</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -813,58 +493,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/good-mood-on-world-off-cat</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-32.png</image:loc>
-      <image:title>Good Mood On, World Off Cat Wall Art Poster | Cute Cat Quote Print</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/mom-i-am-a-rich-man</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-26.png</image:loc>
-      <image:title>Mom I Am A Rich Man Wall Art Poster | Vintage Newspaper Quote Print</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/funny-cat-motivation</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-22.png</image:loc>
-      <image:title>Funny Cat Motivation Wall Art Poster | Keep Going No Panic Print</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/i-can-try-again-motivational</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-23.png</image:loc>
-      <image:title>I Can Try Again Motivational Wall Art Poster | Minimalist Black &amp; White Quote Print</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/you-are-strong-beautiful-inspirational</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-25.png</image:loc>
-      <image:title>You Are Strong Beautiful Inspirational Wall Art Poster | Self Love Quote Print</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/confidence-is-power-black-panther</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -873,8 +503,28 @@
     </image:image>
   </url>
   <url>
+    <loc>https://posterealm.com/products/funny-cat-motivation</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-22.png</image:loc>
+      <image:title>Funny Cat Motivation Wall Art Poster | Keep Going No Panic Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/you-are-strong-beautiful-inspirational</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-25.png</image:loc>
+      <image:title>You Are Strong Beautiful Inspirational Wall Art Poster | Self Love Quote Print</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://posterealm.com/products/no-panic-just-keep-going-cat</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -883,28 +533,18 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/pixel-art-goku-sunset</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/good-mood-on-world-off-cat</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-11.png</image:loc>
-      <image:title>Pixel Art Goku Sunset Poster | Retro Anime Landscape Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/goku-a-legend-which-never-fails</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-7.png</image:loc>
-      <image:title>Goku | A Legend Never Fades | Dragon Ball Wall Poster</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-32.png</image:loc>
+      <image:title>Good Mood On, World Off Cat Wall Art Poster | Cute Cat Quote Print</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://posterealm.com/products/demon-slayer-corps-vintage-japanese-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -913,8 +553,18 @@
     </image:image>
   </url>
   <url>
+    <loc>https://posterealm.com/products/goku-on-flying-nimbus-dragon-ball-anime-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-9.png</image:loc>
+      <image:title>Goku on Flying Nimbus | Adventure Is Always Ahead | Dragon Ball Anime Poster</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://posterealm.com/products/vegeta-ambition-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -924,7 +574,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/kid-goku-saiyan-legend</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -933,48 +583,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/goku-on-flying-nimbus-dragon-ball-anime-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-9.png</image:loc>
-      <image:title>Goku on Flying Nimbus | Adventure Is Always Ahead | Dragon Ball Anime Poster</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/yoriichi-tsugikuni-japanese-art-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DS-4.png</image:loc>
-      <image:title>Yoriichi Tsugikuni Japanese Art Poster | Demon Slayer Anime Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/jujutsu-kaisen-vintage-manga-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-1.png</image:loc>
-      <image:title>Jujutsu Kaisen Vintage Manga Poster | Anime Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/jujutsu-kaisen-character-collage-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-4.png</image:loc>
-      <image:title>Jujutsu Kaisen Character Collage Poster | Red &amp; Black Anime Wall Art </image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/one-punch-man-minimalist-saitama-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -984,7 +594,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/solo-leveling-minimalist</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -993,18 +603,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/ghost-call-of-duty-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/COD-1.png</image:loc>
-      <image:title>Ghost Poster | Call of Duty Modern Warfare Tactical Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/task-force-141-call-of-duty-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1014,7 +614,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/jin-sakai-ghost-of-tsushima-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1024,7 +624,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/jin-sakai-ghost-of-tsushima-poster</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1033,38 +633,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/calm-by-seedhe-maut</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/SM-3.png</image:loc>
-      <image:title>Calm by Seedhe Maut Poster | Japanese Samurai Hip-Hop Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/god-of-war-ragnarok-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/GOW-2.png</image:loc>
-      <image:title>God of War Ragnarok Poster | Kratos Blades of Chaos Gaming Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/red-dead-redemption-2-wall-poster</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/RDR-1.png</image:loc>
-      <image:title>Red Dead Redemption 2 Poster | The Man The Plan The Rat Outlaw Gaming Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/omen-valorant</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1073,18 +643,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/fight-club</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-1.png</image:loc>
-      <image:title>Fight Club Poster | Tyler Durden Cinematic Movie Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/homelander</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1094,7 +654,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/stranger-things</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1104,7 +664,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/the-boys-homelander-billy-butcher-wall-art</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1113,38 +673,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/parvana-album</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/C-1.png</image:loc>
-      <image:title>Parvana Album Poster | Chaar Diwaari Music Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/chaar-diwaari-concert</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/C-2.png</image:loc>
-      <image:title>Chaar Diwaari Concert Poster | Indian Hip-Hop Artist Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/chaar-diwaari-portrait</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/C-3.png</image:loc>
-      <image:title>Chaar Diwaari Portrait Poster | Hip-Hop Music Artist Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/seedhe-maut-live-concert</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1153,18 +683,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/royal-enfield-himalayan-450</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-1.png</image:loc>
-      <image:title>Royal Enfield Himalayan 450 Poster – Adventure Motorcycle Mountain Wall Art</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/royal-enfield-continental-red-gt-650</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1174,7 +694,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/royal-enfield-classic-series</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1184,7 +704,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/ducati-desmosedici-gp23-marc-marquez</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1194,7 +714,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/kawasaki-z900</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1204,7 +724,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/dodge-challenger-muscle-car</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1213,18 +733,28 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/toyota-gr-supra</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/vegeta-saiyan-pride</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-3.png</image:loc>
-      <image:title>Toyota GR Supra Poster – JDM Sports Car Wall Art | Modern Automotive Decor</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-1.png</image:loc>
+      <image:title>Vegeta | Saiyan Pride | Dragon Ball Z Wall Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/beerus-god-of-destruction-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-3.png</image:loc>
+      <image:title>Beerus | God of Destruction | Dragon Ball Super Wall Poster</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://posterealm.com/products/dodge-challenger-srt-hellcat</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1233,18 +763,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/ferrari-f40</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-8.png</image:loc>
-      <image:title>Ferrari F40 Poster – Iconic Supercar Wall Art | Classic Automotive Decor</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/bmw-m4-competition</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1254,7 +774,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/bmw-m4-gt3-evo</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1263,38 +783,48 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/pawsitive-cat</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/shinobu-kocho-butterfly-hashira</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-34.png</image:loc>
-      <image:title>Pawsitive Cat Wall Art Poster | Good Music Good Mood Quote Print | Cute Black Cat with Headphones Decor</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DS-3.png</image:loc>
+      <image:title>Shinobu Kocho Butterfly Hashira Poster | Demon Slayer Anime Wall Art</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/ford-gt40-mk-i</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/goku-a-legend-which-never-fails</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-16.png</image:loc>
-      <image:title>Ford GT40 Mk I Wall Art | Le Mans Racing Legend Canvas</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-7.png</image:loc>
+      <image:title>Goku | A Legend Never Fades | Dragon Ball Wall Poster</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/michael-jackson-live-performance</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/pixel-art-goku-sunset</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/MJ-5.png</image:loc>
-      <image:title>Michael Jackson Live Performance Wall Art | Music Poster</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-11.png</image:loc>
+      <image:title>Pixel Art Goku Sunset Poster | Retro Anime Landscape Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/yoriichi-tsugikuni-japanese-art-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DS-4.png</image:loc>
+      <image:title>Yoriichi Tsugikuni Japanese Art Poster | Demon Slayer Anime Wall Art</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://posterealm.com/products/rare-by-nature-black-panther</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1303,18 +833,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/koenigsegg-jesko</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-19.png</image:loc>
-      <image:title>Koenigsegg Jesko Wall Art | Hypercar Canvas Poster</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/hoonicorn-rtr-v1</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1323,18 +843,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/what-if-it-all-works-out</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-1.png</image:loc>
-      <image:title>What If It All Works Out Wall Art | Motivational Quote Poster</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/no-means-no-black-cat</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1344,7 +854,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/spill-the-tea-girlie</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1354,7 +864,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/they-will-judge-you-anyway</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1363,18 +873,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/it-s-what-it-is-retro-typography-motivational</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-10.png</image:loc>
-      <image:title>It&apos;s What It Is Retro Typography Motivational Wall Art Poster</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/stop-overthinking-retro-typography</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1383,28 +883,18 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/raise-the-standard-fashion</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://posterealm.com/products/goku-look-up-it-all-begins</loc>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-15.png</image:loc>
-      <image:title>Raise the Standard Fashion Wall Art Poster | Luxury Minimalist Cocktail Aesthetic Print</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://posterealm.com/products/vampire-gothic</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-18.png</image:loc>
-      <image:title>Vampire Gothic Wall Art Poster | Dark Fantasy Vampire Aesthetic Print</image:title>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/DBZ-5.png</image:loc>
+      <image:title>Goku | Look Up It All Begins | Dragon Ball Z Wall Poster</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://posterealm.com/products/diet-coke-india-pop</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1413,18 +903,8 @@
     </image:image>
   </url>
   <url>
-    <loc>https://posterealm.com/products/honey-hindi-typography</loc>
-    <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-21.png</image:loc>
-      <image:title>Honey Hindi Typography Wall Art Poster | Retro Indian Radio Print</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://posterealm.com/products/keep-kaam-se-kaam-indian-motivational</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1434,7 +914,7 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/but-first-coffee</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -1444,12 +924,532 @@
   </url>
   <url>
     <loc>https://posterealm.com/products/what-if-it-all-goes-right</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-29.png</image:loc>
       <image:title>What If It All Goes Right Wall Art Poster | Motivational Quote Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/jujutsu-kaisen-vintage-manga-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-1.png</image:loc>
+      <image:title>Jujutsu Kaisen Vintage Manga Poster | Anime Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/jujutsu-kaisen-japanese-ink-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-2.png</image:loc>
+      <image:title>Jujutsu Kaisen Japanese Ink Poster | Yuji Itadori Anime Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/jujutsu-kaisen-minimalist-character-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-3.png</image:loc>
+      <image:title>Jujutsu Kaisen Minimalist Character Poster | Anime Wall Art Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/jujutsu-kaisen-character-collage-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/JJK-4.png</image:loc>
+      <image:title>Jujutsu Kaisen Character Collage Poster | Red &amp; Black Anime Wall Art </image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/your-lie-in-april-anime-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Anime/YLA-1.png</image:loc>
+      <image:title>Your Lie in April Anime Poster | Romantic Music-Inspired Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/ghost-call-of-duty-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/COD-1.png</image:loc>
+      <image:title>Ghost Poster | Call of Duty Modern Warfare Tactical Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/ghost-of-tsushima-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/GOT-2.png</image:loc>
+      <image:title>Ghost of Tsushima Poster | Samurai Ink Art Gaming Wall Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/red-dead-redemption-poster-set</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/RDR-3.png</image:loc>
+      <image:title>Red Dead Redemption Poster Set | Western Cowboy Gaming Wall Art Triptych</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/chaar-diwaari-portrait</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/C-3.png</image:loc>
+      <image:title>Chaar Diwaari Portrait Poster | Hip-Hop Music Artist Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/kratos-gaming-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/GOW-1.png</image:loc>
+      <image:title>Kratos Poster | God of War Gaming Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/fight-club</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-1.png</image:loc>
+      <image:title>Fight Club Poster | Tyler Durden Cinematic Movie Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/god-of-war-ragnarok-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/GOW-2.png</image:loc>
+      <image:title>God of War Ragnarok Poster | Kratos Blades of Chaos Gaming Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/red-dead-redemption-2-wall-poster</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Gaming/RDR-1.png</image:loc>
+      <image:title>Red Dead Redemption 2 Poster | The Man The Plan The Rat Outlaw Gaming Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/the-boys</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-2.png</image:loc>
+      <image:title>The Boys Poster | Dark Superhero TV Series Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/the-boys-ensemble</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-4.png</image:loc>
+      <image:title>The Boys Ensemble Poster | Dark Superhero Team Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/parvana-album</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/C-1.png</image:loc>
+      <image:title>Parvana Album Poster | Chaar Diwaari Music Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/kanye-west-graduation-bear</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/KW-1.png</image:loc>
+      <image:title>Kanye West Graduation Bear Poster | Hip-Hop Inspired Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/fight-club-rules</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Movies%20&amp;%20Series/p-7.png</image:loc>
+      <image:title>Fight Club Rules Poster | Cult Classic Movie Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/j-cole-4-your-eyez-only</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/JC-1.png</image:loc>
+      <image:title>J. Cole 4 Your Eyez Only Poster | Hip-Hop Album Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/seedhe-maut-typography</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/SM-2.png</image:loc>
+      <image:title>Seedhe Maut Typography Poster | Indian Hip-Hop Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/chaar-diwaari-concert</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/C-2.png</image:loc>
+      <image:title>Chaar Diwaari Concert Poster | Indian Hip-Hop Artist Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/michael-jackson-smooth-criminal</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/MJ-2.jpg</image:loc>
+      <image:title>Michael Jackson Smooth Criminal Poster | Iconic Pop Legend Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/kanye-west-808s-heartbreak</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/KW-2.png</image:loc>
+      <image:title>Kanye West 808s &amp; Heartbreak Poster | Minimalist Hip-Hop Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/calm-by-seedhe-maut</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/SM-3.png</image:loc>
+      <image:title>Calm by Seedhe Maut Poster | Japanese Samurai Hip-Hop Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/royal-enfield-himalayan-450</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-1.png</image:loc>
+      <image:title>Royal Enfield Himalayan 450 Poster – Adventure Motorcycle Mountain Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/royal-enfield-super-meteor-650</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-2.png</image:loc>
+      <image:title>Royal Enfield Super Meteor 650 Poster – Classic Cruiser Motorcycle Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/royal-enfield-meteor-350</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-5.png</image:loc>
+      <image:title>Royal Enfield Meteor 350 Poster – Classic Cruiser Motorcycle Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/yamaha-yzr-m1-valentino-rossi</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Bike/B-11.png</image:loc>
+      <image:title>Yamaha YZR-M1 Valentino Rossi Poster – MotoGP Racing Wall Art</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/toyota-gr-supra</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-3.png</image:loc>
+      <image:title>Toyota GR Supra Poster – JDM Sports Car Wall Art | Modern Automotive Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/lamborghini-revuelto</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-4.png</image:loc>
+      <image:title>Lamborghini Revuelto Poster – Luxury Supercar Wall Art | Modern Automotive Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/ferrari-sf-26-f1</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-20.png</image:loc>
+      <image:title>Ferrari SF-26 F1 Wall Art | Formula 1 Racing Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/icate-lotus-art-typography-wall</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-11.png</image:loc>
+      <image:title>दिलicate Lotus Art Typography Wall Poster | Indian Aesthetic Minimalist Wall Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/porsche-911-gt3-rs</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-7.png</image:loc>
+      <image:title>Porsche 911 GT3 RS Poster – Luxury Sports Car Wall Art | Modern Automotive Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/ferrari-f40</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-8.png</image:loc>
+      <image:title>Ferrari F40 Poster – Iconic Supercar Wall Art | Classic Automotive Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/dodge-challenger</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-14.png</image:loc>
+      <image:title>Dodge Challenger Wall Art | American Muscle Car Canvas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/ford-gt40-mk-i</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-16.png</image:loc>
+      <image:title>Ford GT40 Mk I Wall Art | Le Mans Racing Legend Canvas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/cadillac-formula-1-team</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-22.png</image:loc>
+      <image:title>Cadillac Formula 1 Team Wall Art | F1 Racing Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/warning-artist-work-zone-vintage-studio</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-14.png</image:loc>
+      <image:title>Warning Artist Work Zone Vintage Studio Wall Art Poster | Creative Workspace Sign</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/koenigsegg-jesko</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Bikes%20&amp;%20Cars/Cars/C-19.png</image:loc>
+      <image:title>Koenigsegg Jesko Wall Art | Hypercar Canvas Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/michael-jackson-live-performance</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Music/MJ-5.png</image:loc>
+      <image:title>Michael Jackson Live Performance Wall Art | Music Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/what-if-it-all-works-out</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-1.png</image:loc>
+      <image:title>What If It All Works Out Wall Art | Motivational Quote Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/stay-soft-stay-dangerous-black-cat</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-2.png</image:loc>
+      <image:title>Stay Soft Stay Dangerous Black Cat Wall Art | Cute Aesthetic Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/i-have-to-succeed-because-i-like-expensive-shit</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-9.png</image:loc>
+      <image:title>I Have To Succeed Because I Like Expensive Sh*t Vintage Newspaper Motivational Wall Art Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/it-s-what-it-is-retro-typography-motivational</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-10.png</image:loc>
+      <image:title>It&apos;s What It Is Retro Typography Motivational Wall Art Poster</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/raise-the-standard-fashion</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-15.png</image:loc>
+      <image:title>Raise the Standard Fashion Wall Art Poster | Luxury Minimalist Cocktail Aesthetic Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/i-can-try-again-motivational</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-23.png</image:loc>
+      <image:title>I Can Try Again Motivational Wall Art Poster | Minimalist Black &amp; White Quote Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/dear-self-you-can-do-it</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-31.png</image:loc>
+      <image:title>Dear Self You Can Do It Wall Art Poster | Motivational Quote Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/vampire-gothic</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-18.png</image:loc>
+      <image:title>Vampire Gothic Wall Art Poster | Dark Fantasy Vampire Aesthetic Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/mom-i-am-a-rich-man</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-26.png</image:loc>
+      <image:title>Mom I Am A Rich Man Wall Art Poster | Vintage Newspaper Quote Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/pawsitive-cat</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-34.png</image:loc>
+      <image:title>Pawsitive Cat Wall Art Poster | Good Music Good Mood Quote Print | Cute Black Cat with Headphones Decor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/honey-hindi-typography</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-21.png</image:loc>
+      <image:title>Honey Hindi Typography Wall Art Poster | Retro Indian Radio Print</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://posterealm.com/products/choose-happiness-dog</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://tmzafqeneyreqffobcwn.supabase.co/storage/v1/object/public/posters/Printesty/PR-33.png</image:loc>
+      <image:title>Choose Happiness Dog Wall Art Poster | Cute Golden Retriever Quote Print</image:title>
     </image:image>
   </url>
 </urlset>

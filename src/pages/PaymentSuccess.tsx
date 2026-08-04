@@ -5,7 +5,7 @@ import { CheckCircle2, ShoppingBag, ArrowRight, Loader2, MapPin, Calendar, Credi
 import { getOrderById } from '../services/orders';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
@@ -105,7 +105,7 @@ export default function PaymentSuccess() {
                 {order.items?.map((item: any, idx: number) => (
                   <div key={idx} className="flex gap-4 items-center border-b border-gray-50 pb-3 last:border-0 last:pb-0">
                     <img 
-                      src={getOptimizedImageUrl(item.image, 80, 80)} 
+                      src={getStorefrontImage(item, 'thumbnail')} 
                       alt={item.name} 
                       width={64}
                       height={64}

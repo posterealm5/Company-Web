@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ArrowLeft, Check, X, Maximize2, Layers, AlertCircle, Sparkles } from 'lucide-react';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart, CartItem } from '../context/CartContext';
@@ -221,7 +221,7 @@ export default function Cart() {
 
                 <div className={`w-full md:w-32 aspect-[3/4] bg-gray-100 flex-shrink-0 border-2 border-brand-black overflow-hidden transition-opacity ${!item.selected ? 'opacity-40 grayscale' : ''}`}>
                   <img 
-                    src={getOptimizedImageUrl(item.image, 160, 213)} 
+                    src={getStorefrontImage(item, 'thumbnail')} 
                     alt={item.name} 
                     width={160}
                     height={213}
@@ -339,7 +339,7 @@ export default function Cart() {
                         >
                           <div className="w-20 aspect-[3/4] bg-gray-100 flex-shrink-0 border-2 border-brand-black overflow-hidden">
                             <img 
-                              src={getOptimizedImageUrl(freeItem.image, 120, 160)} 
+                              src={getStorefrontImage(freeItem, 'thumbnail')} 
                               alt={freeItem.name} 
                               width={120}
                               height={160}
@@ -732,10 +732,10 @@ export default function Cart() {
 
               <div className="w-full md:w-1/2 bg-gray-100 relative" style={{ aspectRatio: '3/4' }}>
                 <img 
-                  src={getOptimizedImageUrl(editingItem.image, 1000, 1333)} 
+                  src={getStorefrontImage(editingItem, 'preview')} 
                   alt={editingItem.name} 
-                  width={1000}
-                  height={1333}
+                  width={800}
+                  height={1067}
                   loading="lazy"
                   className="w-full h-full object-cover aspect-[3/4] md:aspect-auto"
                 />
@@ -1009,10 +1009,10 @@ export default function Cart() {
                     >
                       <div className="aspect-[3/4] bg-gray-100 border-b-2 border-brand-black overflow-hidden relative">
                         <img 
-                          src={getOptimizedImageUrl(product.image, 160, 213)} 
+                          src={getStorefrontImage(product, 'thumbnail')} 
                           alt={getProductDisplayName(product)} 
-                          width={160}
-                          height={213}
+                          width={100}
+                          height={133}
                           loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                         />
@@ -1171,10 +1171,10 @@ const CartRecommendations = () => {
           >
             <div className="relative overflow-hidden aspect-[3/4]">
               <img 
-                src={getOptimizedImageUrl(product.image, 600, 800)} 
+                src={getStorefrontImage(product, 'card')} 
                 alt={getProductDisplayName(product)} 
-                width={600}
-                height={800}
+                width={400}
+                height={533}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
                 loading="lazy"
@@ -1235,10 +1235,10 @@ const CartRecommendations = () => {
 
               <div className="w-full md:w-1/2 bg-gray-100 relative" style={{ aspectRatio: '3/4' }}>
                 <img 
-                  src={getOptimizedImageUrl(selectedProduct.image, 1000, 1333)} 
+                  src={getStorefrontImage(selectedProduct, 'preview')} 
                   alt={selectedProduct.name} 
-                  width={1000}
-                  height={1333}
+                  width={800}
+                  height={1067}
                   loading="lazy"
                   className="w-full h-full object-cover aspect-[3/4] md:aspect-auto"
                   referrerPolicy="no-referrer"

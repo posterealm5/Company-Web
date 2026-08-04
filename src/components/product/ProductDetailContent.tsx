@@ -6,7 +6,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useSharePoster } from '../../hooks/useSharePoster';
 import { BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing';
 import type { Product } from '../../types/database';
-import { getOptimizedImageUrl } from '../../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../../utils/imageUtils';
 import { ProtectedImage } from '../ProtectedImage';
 
 interface ProductDetailContentProps {
@@ -68,7 +68,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
         <div className="w-full lg:w-[48%] flex justify-center sticky lg:top-36 protected-area">
           <div className="w-full relative max-h-[750px] aspect-[3/4] flex items-center justify-center">
             <ProtectedImage 
-              src={getOptimizedImageUrl(product.image, 1000, 1333)} 
+              src={getStorefrontImage(product, 'preview')} 
               alt={product.name} 
               width={1000}
               height={1333}
@@ -216,7 +216,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
       {/* Product Image Gallery */}
       <div className="w-full md:w-1/2 bg-gray-100 relative protected-area animate-fade-in" style={{ aspectRatio: '3/4' }}>
         <ProtectedImage 
-          src={getOptimizedImageUrl(product.image, 1000, 1333)} 
+          src={getStorefrontImage(product, 'preview')} 
           alt={product.name} 
           width={1000}
           height={1333}

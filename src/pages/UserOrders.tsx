@@ -7,7 +7,7 @@ import { getUserOrders, getOrderById, cancelOrderByCustomer } from '../services/
 import type { Order } from '../types/database';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { downloadInvoice } from '../utils/invoiceGenerator';
 import { getSizeDisplayLabel } from '../utils/sizeHelper';
 
@@ -435,7 +435,7 @@ export default function UserOrders() {
                   <div key={idx} className="flex gap-4 items-center bg-white p-4 comic-border border-gray-200">
                     <div className="w-16 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0 border border-gray-200">
                       <img 
-                        src={getOptimizedImageUrl(item.image, 80, 80)} 
+                        src={getStorefrontImage(item, 'thumbnail')} 
                         alt={item.name} 
                         width={80}
                         height={80}

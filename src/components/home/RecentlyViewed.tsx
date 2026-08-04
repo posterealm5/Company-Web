@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, Maximize2, Layers, X } from 'lucide-react';
 import { getRecentlyViewedProducts } from '../../services/recentProducts';
 import { getProductDisplayName } from '../../utils/productUrls';
-import { getOptimizedImageUrl } from '../../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../../utils/imageUtils';
 import { POSTER_PRICING, BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing';
 import { useCart } from '../../context/CartContext';
 import { RippleWrapper } from '../ui/RippleWrapper';
@@ -115,7 +115,7 @@ export default function RecentlyViewed() {
             >
               <div className="relative overflow-hidden aspect-[3/4] protected-area">
                 <ProtectedImage
-                  src={getOptimizedImageUrl(product.image, 600, 800)}
+                  src={getStorefrontImage(product, 'card')}
                   alt={product.name}
                   width={600}
                   height={800}
@@ -179,7 +179,7 @@ export default function RecentlyViewed() {
 
               <div className="w-full md:w-1/2 bg-gray-100 relative protected-area">
                 <ProtectedImage
-                  src={getOptimizedImageUrl(selectedProduct.image, 1000, 1333)}
+                  src={getStorefrontImage(selectedProduct, 'preview')}
                   alt={selectedProduct.name}
                   width={1000}
                   height={1333}

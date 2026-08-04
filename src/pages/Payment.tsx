@@ -13,7 +13,7 @@ import { incrementRedemptionCount } from '../services/coupons';
 import { RippleWrapper } from '../components/ui/RippleWrapper';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { SHIPPING_CHARGE } from '../config/pricing';
 import { checkCodEligibility } from '../config/payment';
 
@@ -667,7 +667,7 @@ export default function Payment() {
                     {selectedItems.map((item) => (
                       <div key={item.id} className="flex gap-3 items-center">
                         <img 
-                          src={getOptimizedImageUrl(item.image, 80, 80)} 
+                          src={getStorefrontImage(item, 'thumbnail')} 
                           alt={item.name} 
                           width={80}
                           height={80}

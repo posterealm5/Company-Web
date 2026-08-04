@@ -20,21 +20,27 @@ const BUCKETS = {
 
 type BucketName = typeof BUCKETS[keyof typeof BUCKETS];
 
-/** Upload a file to a Supabase Storage bucket */
+/** Upload a file or Blob to a Supabase Storage bucket */
 export async function uploadFile(
   bucket: BucketName,
   path: string,
-  file: File,
-  options?: { upsert?: boolean }
+  file: File | Blob,
+  options?: { upsert?: boolean; cacheControl?: string }
 ): Promise<{ url: string | null; error: string | null }> {
   if (!isSupabaseConfigured()) {
     return { url: null, error: 'Supabase is not configured' };
   }
 
+  // Immutable cache strategy (1 year) for storefront variants; 1 hour default for raw uploads
+  const cacheHeader = options?.cacheControl || 
+    (path.includes('storefront/') 
+      ? 'public, max-age=31536000, immutable' 
+      : '3600');
+
   const { error } = await supabase.storage
     .from(bucket)
     .upload(path, file, {
-      cacheControl: '3600',
+      cacheControl: cacheHeader,
       upsert: options?.upsert ?? false,
     });
 
@@ -44,7 +50,6 @@ export async function uploadFile(
       payload: {
         bucket: bucket,
         path: path,
-        fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
       },

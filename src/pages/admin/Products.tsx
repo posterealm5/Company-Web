@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { Product } from '../../types/database';
-import { getOptimizedImageUrl } from '../../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../../utils/imageUtils';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { ErrorState } from '../../components/ui/ErrorState';
@@ -32,6 +32,8 @@ import {
 } from '../../services/seo';
 
 const AdminProducts: React.FC = () => {
+  const ITEMS_PER_PAGE = 25;
+  const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -202,6 +204,12 @@ const AdminProducts: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE) || 1;
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -237,13 +245,19 @@ const AdminProducts: React.FC = () => {
             type="text" 
             placeholder="Search vault..." 
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full pl-12 pr-4 py-4 bg-white comic-border font-bold focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all"
           />
         </div>
         <select 
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
+          onChange={(e) => {
+            setCategoryFilter(e.target.value);
+            setCurrentPage(1);
+          }}
           className="px-6 py-4 bg-white comic-border font-black uppercase text-xs tracking-widest hover:bg-gray-50 transition-colors focus:outline-none"
         >
           <option value="all">All Categories</option>
@@ -316,12 +330,12 @@ const AdminProducts: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((p) => (
+                paginatedProducts.map((p) => (
                   <tr key={p.id} className="hover:bg-gray-50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <img 
-                          src={getOptimizedImageUrl(p.image, 50, 67)} 
+                          src={getStorefrontImage(p, 'thumbnail')} 
                           alt={p.name} 
                           width={50}
                           height={67}
@@ -391,6 +405,48 @@ const AdminProducts: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Bar */}
+        {filteredProducts.length > 0 && (
+          <div className="bg-gray-50 px-6 py-4 border-t-2 border-brand-black flex flex-col sm:flex-row items-center justify-between gap-4 font-black uppercase text-xs">
+            <p className="text-gray-500 tracking-wider">
+              Showing <span className="text-brand-black font-black">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-brand-black font-black">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-brand-black font-black">{filteredProducts.length}</span> Posters
+            </p>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-white text-brand-black border-2 border-brand-black comic-border hover:bg-brand-red hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-brand-black cursor-pointer"
+                >
+                  Prev
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-9 h-9 flex items-center justify-center border-2 border-brand-black comic-border transition-all cursor-pointer ${
+                        currentPage === page
+                          ? 'bg-brand-black text-white'
+                          : 'bg-white text-brand-black hover:bg-gray-100'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-white text-brand-black border-2 border-brand-black comic-border hover:bg-brand-red hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-brand-black cursor-pointer"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Add/Edit Modal */}
@@ -467,6 +523,9 @@ const AdminProducts: React.FC = () => {
                     price: Number(formData.get('price')),
                     description: formData.get('description') as string,
                     image: formData.get('image') as string,
+                    image_thumbnail_url: editingProduct?.image_thumbnail_url ?? null,
+                    image_card_url: editingProduct?.image_card_url ?? null,
+                    image_preview_url: editingProduct?.image_preview_url ?? null,
                     is_active: editingProduct?.is_active ?? true,
                     is_featured: editingProduct?.is_featured ?? false,
                     is_popular: editingProduct?.is_popular ?? false,

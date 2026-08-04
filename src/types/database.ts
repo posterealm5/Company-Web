@@ -18,6 +18,9 @@ export type Database = {
           genre: string;
           price: number;
           image: string;
+          image_thumbnail_url: string | null;
+          image_card_url: string | null;
+          image_preview_url: string | null;
           description: string;
           display_name: string | null;
           seo_title: string | null;
@@ -37,6 +40,9 @@ export type Database = {
           genre: string;
           price: number;
           image: string;
+          image_thumbnail_url?: string | null;
+          image_card_url?: string | null;
+          image_preview_url?: string | null;
           description: string;
           display_name?: string | null;
           seo_title?: string | null;
@@ -56,6 +62,9 @@ export type Database = {
           genre?: string;
           price?: number;
           image?: string;
+          image_thumbnail_url?: string | null;
+          image_card_url?: string | null;
+          image_preview_url?: string | null;
           description?: string;
           display_name?: string | null;
           seo_title?: string | null;

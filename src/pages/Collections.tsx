@@ -17,7 +17,7 @@ import { SEO } from '../components/SEO';
 import { getCollectionMetadata } from '../services/metadata';
 import { StructuredData } from '../components/StructuredData';
 import { getCollectionSchema, getBreadcrumbSchema } from '../services/structuredData';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { ProtectedImage } from '../components/ProtectedImage';
 
 
@@ -615,7 +615,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
         {pageUrl ? (
           <Link to={pageUrl} className="block w-full h-full cursor-pointer">
             <ProtectedImage 
-              src={getOptimizedImageUrl(product.image, 600, 800)} 
+              src={getStorefrontImage(product, 'card')} 
               alt={product.name} 
               width={600}
               height={800}
@@ -626,7 +626,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
         ) : (
           <div className="block w-full h-full">
             <ProtectedImage 
-              src={getOptimizedImageUrl(product.image, 600, 800)} 
+              src={getStorefrontImage(product, 'card')} 
               alt={product.name} 
               width={600}
               height={800}

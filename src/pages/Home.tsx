@@ -19,7 +19,7 @@ import heroLeft from '../assets/images/hero-left.jpg';
 import heroCenter from '../assets/images/hero-center.jpg';
 import heroRight from '../assets/images/hero-right.jpg';
 import objectiveImage from '../assets/images/objective-team.jpg';
-import { getOptimizedImageUrl } from '../utils/imageUtils';
+import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { ProtectedImage } from '../components/ProtectedImage';
 
 const FeedbackMarquee = lazy(() => import('../components/home/FeedbackMarquee'));
@@ -418,6 +418,19 @@ const CollectionCard: React.FC<{
   const [slotB, setSlotB] = useState<string | null>(null);
   const [activeSlot, setActiveSlot] = useState<'A' | 'B'>('A');
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    }, { threshold: 0.1 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Set initial slots when images load
   useEffect(() => {
     if (images.length > 0) {
@@ -433,9 +446,9 @@ const CollectionCard: React.FC<{
     }
   }, [images, fallbackImage]);
 
-  // Auto-rotate every 3.2 seconds when there are multiple images
+  // Auto-rotate every 3.2 seconds when there are multiple images AND component is visible
   useEffect(() => {
-    if (images.length <= 1) return;
+    if (images.length <= 1 || !isVisible) return;
     const interval = setInterval(() => {
       setActiveSlot(current => {
         const nextSlot = current === 'A' ? 'B' : 'A';
@@ -453,11 +466,11 @@ const CollectionCard: React.FC<{
       });
     }, 3200);
     return () => clearInterval(interval);
-  }, [images]);
+  }, [images, isVisible]);
 
   // Preload next image in the inactive slot after transition is complete
   useEffect(() => {
-    if (images.length <= 1) return;
+    if (images.length <= 1 || !isVisible) return;
     const timer = setTimeout(() => {
       const nextIdx = (activeIndex + 1) % images.length;
       if (activeSlot === 'A') {
@@ -467,13 +480,14 @@ const CollectionCard: React.FC<{
       }
     }, 850); // wait for transition (800ms) to complete before changing the inactive slot source
     return () => clearTimeout(timer);
-  }, [activeIndex, images, activeSlot]);
+  }, [activeIndex, images, activeSlot, isVisible]);
 
   const displayCount = count !== null ? count : '—';
 
   return (
     <Link to={`/collections?category=${genre}`} className="block protected-area">
       <motion.div
+        ref={cardRef}
         key={index}
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -484,10 +498,10 @@ const CollectionCard: React.FC<{
         {/* Slot A */}
         {slotA && (
           <ProtectedImage
-            src={getOptimizedImageUrl(slotA, 500, 625)}
+            src={slotA}
             alt={title}
-            width={500}
-            height={625}
+            width={400}
+            height={500}
             loading="lazy"
             className={`absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-[800ms] ease-in-out ${
               activeSlot === 'A' ? 'opacity-80 group-hover:opacity-100' : 'opacity-0 pointer-events-none'
@@ -499,10 +513,10 @@ const CollectionCard: React.FC<{
         {/* Slot B */}
         {slotB && (
           <ProtectedImage
-            src={getOptimizedImageUrl(slotB, 500, 625)}
+            src={slotB}
             alt={title}
-            width={500}
-            height={625}
+            width={400}
+            height={500}
             loading="lazy"
             className={`absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-[800ms] ease-in-out ${
               activeSlot === 'B' ? 'opacity-80 group-hover:opacity-100' : 'opacity-0 pointer-events-none'
@@ -623,7 +637,7 @@ export default function Home() {
 
         const { data, error } = await supabase
           .from('products')
-          .select('genre, image')
+          .select('id, name, genre, image, image_card_url, image_preview_url, image_thumbnail_url')
           .eq('is_active', true)
           .in('genre', ['Anime', 'Movies', 'Printesty']);
 
@@ -638,8 +652,9 @@ export default function Home() {
             const genre = item.genre;
             if (result[genre]) {
               result[genre].count!++;
-              if (item.image) {
-                result[genre].images.push(item.image);
+              const storefrontUrl = getStorefrontImage(item, 'card');
+              if (storefrontUrl) {
+                result[genre].images.push(storefrontUrl);
               }
             }
           });
