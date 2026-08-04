@@ -1009,10 +1009,10 @@ export default function Cart() {
                     >
                       <div className="aspect-[3/4] bg-gray-100 border-b-2 border-brand-black overflow-hidden relative">
                         <img 
-                          src={getStorefrontImage(product, 'thumbnail')} 
+                          src={getStorefrontImage(product, 'card')} 
                           alt={getProductDisplayName(product)} 
-                          width={100}
-                          height={133}
+                          width={400}
+                          height={533}
                           loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                         />

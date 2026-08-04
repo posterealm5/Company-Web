@@ -133,6 +133,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const selectedRegular = recalculatedRegular.filter(item => item.selected);
       const totalSelectedPosterQuantity = selectedRegular.reduce((sum, item) => sum + item.quantity, 0);
 
+      // Centralized Reconciliation: if selected paid posters drop below buyQty, clear coupon and free items
+      if (totalSelectedPosterQuantity < buyQty) {
+        setTimeout(() => {
+          setAppliedCouponCode(null);
+          setAppliedCoupon(null);
+          const key = user?.id ? `appliedCouponCode_${user.id}` : 'appliedCouponCode_guest';
+          localStorage.removeItem(key);
+        }, 0);
+        return [...recalculatedRegular];
+      }
+
       // automaticFreeCount = min(max(totalSelectedPosterQuantity - X, 0), Y)
       const automaticFreeCount = Math.min(
         Math.max(totalSelectedPosterQuantity - buyQty, 0),

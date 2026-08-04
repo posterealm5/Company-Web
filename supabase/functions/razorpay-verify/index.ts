@@ -128,6 +128,10 @@ serve(async (req) => {
     const paidItems = cartItems.filter(item => !item.isFreeItem);
     const totalPaidQuantity = paidItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
+    if (!paidItems || paidItems.length === 0 || totalPaidQuantity === 0) {
+      throw new Error("Cart must contain at least one paid product.");
+    }
+
     for (const item of paidItems) {
       // Validate product existence and active status in DB for non-custom items
       if (item.id && Number(item.id) < 1000000000000) {

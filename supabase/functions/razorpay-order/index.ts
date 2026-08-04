@@ -67,6 +67,10 @@ serve(async (req) => {
     const paidItems = cartItems.filter(item => !item.isFreeItem);
     const totalPaidQuantity = paidItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
+    if (!paidItems || paidItems.length === 0 || totalPaidQuantity === 0) {
+      throw new Error("Cart must contain at least one paid product.");
+    }
+
     console.log("==================================================");
     console.log("[razorpay-order] CART CALCULATION LOGS:");
     console.log(`1. Total Cart Items Received: ${cartItems.length}`);
