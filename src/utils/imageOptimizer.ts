@@ -127,12 +127,12 @@ export const generateImageVariant = (
  * Generates all three storefront WebP variants (100px, 400px, 800px) in parallel.
  */
 export const generateAllStorefrontVariants = async (
-  file: File | Blob
+  source: File | Blob | string
 ): Promise<StorefrontVariants> => {
   const [thumb100, card400, preview800] = await Promise.all([
-    generateImageVariant(file, 100, 0.78),
-    generateImageVariant(file, 400, 0.82),
-    generateImageVariant(file, 800, 0.84)
+    generateImageVariant(source, 100, 0.78),
+    generateImageVariant(source, 400, 0.82),
+    generateImageVariant(source, 800, 0.84)
   ]);
 
   return { thumb100, card400, preview800 };
@@ -145,12 +145,12 @@ export const generateAllStorefrontVariants = async (
 export const uploadStorefrontVariants = async (
   genre: string,
   productId: number | string,
-  file: File | Blob,
+  source: File | Blob | string,
   customVersion?: string | number
 ): Promise<StorefrontUrls> => {
   try {
     const version = customVersion || Date.now();
-    const variants = await generateAllStorefrontVariants(file);
+    const variants = await generateAllStorefrontVariants(source);
 
     const path100 = buildStorefrontPath(genre, productId, version, 100);
     const path400 = buildStorefrontPath(genre, productId, version, 400);

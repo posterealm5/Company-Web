@@ -20,6 +20,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import type { Product } from '../../types/database';
 import { getOptimizedImageUrl, getStorefrontImage } from '../../utils/imageUtils';
+import { uploadStorefrontVariants } from '../../utils/imageOptimizer';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { ErrorState } from '../../components/ui/ErrorState';
@@ -517,15 +518,20 @@ const AdminProducts: React.FC = () => {
                     return;
                   }
 
+                  const newImageUrl = formData.get('image') as string;
+                  const isImageChanged = editingProduct?.id ? editingProduct.image !== newImageUrl : true;
+
                   const productData = {
                     name: formData.get('name') as string,
                     genre: formData.get('genre') as string,
                     price: Number(formData.get('price')),
                     description: formData.get('description') as string,
-                    image: formData.get('image') as string,
-                    image_thumbnail_url: editingProduct?.image_thumbnail_url ?? null,
-                    image_card_url: editingProduct?.image_card_url ?? null,
-                    image_preview_url: editingProduct?.image_preview_url ?? null,
+                    image: newImageUrl,
+                    // If image changed on edit, immediately set variant URLs to NULL so stale variants are cleared.
+                    // If new product creation, set variant URLs to NULL initially.
+                    image_thumbnail_url: (editingProduct?.id && !isImageChanged) ? (editingProduct.image_thumbnail_url ?? null) : null,
+                    image_card_url: (editingProduct?.id && !isImageChanged) ? (editingProduct.image_card_url ?? null) : null,
+                    image_preview_url: (editingProduct?.id && !isImageChanged) ? (editingProduct.image_preview_url ?? null) : null,
                     is_active: editingProduct?.is_active ?? true,
                     is_featured: editingProduct?.is_featured ?? false,
                     is_popular: editingProduct?.is_popular ?? false,
@@ -537,19 +543,60 @@ const AdminProducts: React.FC = () => {
                     alt_text: currentSeo.alt_text || null
                   };
 
-                  let result;
+                  let savedProductId: number | null = null;
+                  let dbError: any = null;
+
                   if (editingProduct?.id) {
-                    result = await supabase.from('products').update(productData).eq('id', editingProduct.id);
+                    savedProductId = editingProduct.id;
+                    const { error } = await supabase
+                      .from('products')
+                      .update(productData)
+                      .eq('id', editingProduct.id);
+                    dbError = error;
                   } else {
-                    result = await supabase.from('products').insert(productData);
+                    const { data: newProd, error } = await supabase
+                      .from('products')
+                      .insert(productData)
+                      .select('id')
+                      .single();
+                    if (newProd) savedProductId = newProd.id;
+                    dbError = error;
                   }
 
-                  if (!result.error) {
-                    fetchProducts();
-                    setIsModalOpen(false);
-                  } else {
-                    alert(result.error.message);
+                  if (dbError || !savedProductId) {
+                    alert(dbError?.message || 'Failed to save product');
+                    setIsSaving(false);
+                    return;
                   }
+
+                  // Post-save storefront WebP variant generation (new product creation or image URL replacement)
+                  if (isImageChanged && newImageUrl) {
+                    try {
+                      const version = Date.now();
+                      const variants = await uploadStorefrontVariants(
+                        productData.genre,
+                        savedProductId,
+                        newImageUrl,
+                        version
+                      );
+
+                      if (variants.image_thumbnail_url && variants.image_card_url && variants.image_preview_url) {
+                        await supabase
+                          .from('products')
+                          .update({
+                            image_thumbnail_url: variants.image_thumbnail_url,
+                            image_card_url: variants.image_card_url,
+                            image_preview_url: variants.image_preview_url,
+                          })
+                          .eq('id', savedProductId);
+                      }
+                    } catch (varErr) {
+                      console.error('Non-blocking storefront variant generation error:', varErr);
+                    }
+                  }
+
+                  fetchProducts();
+                  setIsModalOpen(false);
                   setIsSaving(false);
                 }}>
                   {/* Basic Info Tab Content */}
