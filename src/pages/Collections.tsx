@@ -21,7 +21,7 @@ import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { ProtectedImage } from '../components/ProtectedImage';
 
 
-const GENRES = ['All', 'Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Printesty', 'Gaming', 'Bundle'];
+const GENRES = ['All', 'Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Pinteresty', 'Gaming', 'Bundle'];
 
 import { POSTER_PRICING, calculateSinglePosterPrice, BUNDLE_OPTIONS } from '../config/pricing';
 
@@ -42,7 +42,7 @@ const PRODUCTS = [
   { id: 6, name: 'Desert Cruiser', genre: 'Bike', price: 399, image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=800&auto=format&fit=crop', description: 'Feel the freedom of the open road with this rugged cruiser set against the backdrop of a desert sunset.' },
   { id: 7, name: 'Midnight Racer', genre: 'Cars', price: 899, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop', description: 'High-octane excitement captured in pixels, featuring the sleekest lines of a midnight sports car.' },
   { id: 8, name: 'Synthwave Night', genre: 'Music', price: 299, image: 'https://images.unsplash.com/photo-1514525253342-b0bb0d845ff2?q=80&w=800&auto=format&fit=crop', description: 'Vibrant neon hues and retro beats come alive in this tribute to the synthwave musical movement.' },
-  { id: 9, name: 'Abstract Flow', genre: 'Printesty', price: 349, image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop', description: 'A dance of colors and shapes designed to evoke emotion and spark conversation in any room.' },
+  { id: 9, name: 'Abstract Flow', genre: 'Pinteresty', price: 349, image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop', description: 'A dance of colors and shapes designed to evoke emotion and spark conversation in any room.' },
   { id: 10, name: 'Retro Console', genre: 'Gaming', price: 299, image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop', description: 'Relive the 8-bit glory days with this pixel-perfect render of a classic gaming console.' },
   { id: 11, name: 'The Grid', genre: 'Gaming', price: 399, image: 'https://images.unsplash.com/photo-1558244661-9121f2827562?q=80&w=800&auto=format&fit=crop', description: 'Step into the digital realm where every pixel tells a story of strategy and triumph.' },
   { id: 12, name: 'Melody Line', genre: 'Music', price: 249, image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop', description: 'Simple, elegant, and harmonious—a visual representation of your favorite sonic landscapes.' },
@@ -86,7 +86,9 @@ export default function Collections() {
   const activeGenre = useMemo(() => {
     const categoryParam = searchParams.get('category');
     if (categoryParam) {
-      const found = GENRES.find(g => g.toLowerCase() === categoryParam.toLowerCase());
+      const lower = categoryParam.toLowerCase();
+      if (lower === 'printesty' || lower === 'pinteresty') return 'Pinteresty';
+      const found = GENRES.find(g => g.toLowerCase() === lower);
       if (found) return found;
     }
     return 'All';
@@ -666,17 +668,18 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
         <div className="absolute inset-0 bg-brand-red/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
       </motion.div>
       
-      <div className={`p-6 flex-1 flex flex-col justify-between ${viewMode === 'list' ? 'p-10' : ''}`}>
+      <div className={`p-3.5 sm:p-6 flex-1 flex flex-col justify-between ${viewMode === 'list' ? 'p-6 md:p-10' : ''}`}>
         <div>
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-[10px] font-black uppercase text-brand-red tracking-[0.2em]">{product.genre}</p>
-            <p className="font-mono text-xs font-black uppercase tracking-wider text-gray-500">
-              {product.genre?.toLowerCase() === 'bundle'
-                ? `Starting From ₹${BUNDLE_OPTIONS[0].price}`
-                : `Starting From ₹${POSTER_PRICING.A5}`}
-            </p>
+          <div className="flex justify-between items-start gap-1.5 sm:gap-4 mb-2">
+            <div className="shrink-0">
+              <p className="text-[10px] font-black uppercase text-brand-red tracking-wider sm:tracking-[0.2em]">{product.genre}</p>
+            </div>
+            <div className="text-right font-mono text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-500 flex flex-col items-end sm:flex-row sm:items-baseline sm:gap-1 leading-tight sm:leading-normal">
+              <span>Starting From</span>
+              <span>₹{product.genre?.toLowerCase() === 'bundle' ? BUNDLE_OPTIONS[0].price : POSTER_PRICING.A5}</span>
+            </div>
           </div>
-          <h3 className="font-display text-2xl font-black uppercase tracking-tight mb-4 group-hover:text-brand-red transition-colors line-clamp-1">
+          <h3 className="font-display text-sm sm:text-2xl font-black uppercase tracking-tight leading-tight line-clamp-2 sm:line-clamp-1 mb-2.5 sm:mb-4 group-hover:text-brand-red transition-colors">
             {pageUrl ? (
               <Link to={pageUrl} className="hover:text-brand-red cursor-pointer">
                 {getProductDisplayName(product)}
@@ -714,7 +717,7 @@ const ProductGrid: React.FC<ProductGridProps> = React.memo(({ paginatedProducts,
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className={`grid gap-8 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2'}`}
+      className={`grid gap-3 sm:gap-8 ${viewMode === 'grid' ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-2'}`}
     >
       {paginatedProducts.map((product) => (
         <ProductErrorBoundary key={product.id}>

@@ -538,13 +538,13 @@ const CollectionCard: React.FC<{
 const CollectionsSection: React.FC<{
   animeData: CategoryState;
   moviesData: CategoryState;
-  printestyData: CategoryState;
-}> = ({ animeData, moviesData, printestyData }) => {
+  pinterestyData: CategoryState;
+}> = ({ animeData, moviesData, pinterestyData }) => {
   const collections = useMemo(() => [
     { title: "Anime & Manga", genre: "Anime", fallbackImage: "/anime-manga.jpg", data: animeData },
     { title: "Movies & Series", genre: "Movies", fallbackImage: "/movies-series.jpg", data: moviesData },
-    { title: "Printesty", genre: "Printesty", fallbackImage: "/printesty.jpg", data: printestyData },
-  ], [animeData, moviesData, printestyData]);
+    { title: "Pinteresty", genre: "Pinteresty", fallbackImage: "/pinteresty.jpg", data: pinterestyData },
+  ], [animeData, moviesData, pinterestyData]);
 
   return (
     <section className="py-24 bg-brand-white relative overflow-hidden">
@@ -610,7 +610,7 @@ export default function Home() {
   const [categoriesData, setCategoriesData] = useState<Record<string, CategoryState>>({
     Anime: { images: [], count: null },
     Movies: { images: [], count: null },
-    Printesty: { images: [], count: null }
+    Pinteresty: { images: [], count: null }
   });
 
   useEffect(() => {
@@ -629,7 +629,7 @@ export default function Home() {
             setCategoriesData({
               Anime: { images: [], count: 0 },
               Movies: { images: [], count: 0 },
-              Printesty: { images: [], count: 0 }
+              Pinteresty: { images: [], count: 0 }
             });
           }
           return;
@@ -639,12 +639,12 @@ export default function Home() {
           .from('products')
           .select('id, name, genre, image, image_card_url, image_preview_url, image_thumbnail_url')
           .eq('is_active', true)
-          .in('genre', ['Anime', 'Movies', 'Printesty']);
+          .in('genre', ['Anime', 'Movies', 'Pinteresty']);
 
         const result: Record<string, CategoryState> = {
           Anime: { images: [], count: 0 },
           Movies: { images: [], count: 0 },
-          Printesty: { images: [], count: 0 }
+          Pinteresty: { images: [], count: 0 }
         };
 
         if (!error && data) {
@@ -674,7 +674,7 @@ export default function Home() {
 
   const animeData = useMemo(() => categoriesData.Anime, [categoriesData]);
   const moviesData = useMemo(() => categoriesData.Movies, [categoriesData]);
-  const printestyData = useMemo(() => categoriesData.Printesty, [categoriesData]);
+  const pinterestyData = useMemo(() => categoriesData.Pinteresty, [categoriesData]);
 
   return (
     <div>
@@ -693,7 +693,7 @@ export default function Home() {
       <CollectionsSection
         animeData={animeData}
         moviesData={moviesData}
-        printestyData={printestyData}
+        pinterestyData={pinterestyData}
       />
 
       {/* Promotion Section */}

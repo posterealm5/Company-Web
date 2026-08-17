@@ -262,7 +262,7 @@ const AdminProducts: React.FC = () => {
           className="px-6 py-4 bg-white comic-border font-black uppercase text-xs tracking-widest hover:bg-gray-50 transition-colors focus:outline-none"
         >
           <option value="all">All Categories</option>
-          {['Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Printesty', 'Gaming', 'Bundle'].map(g => (
+          {['Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Pinteresty', 'Gaming', 'Bundle'].map(g => (
             <option key={g} value={g}>{g}</option>
           ))}
         </select>
@@ -618,7 +618,7 @@ const AdminProducts: React.FC = () => {
                           defaultValue={editingProduct?.genre}
                           className="w-full p-4 bg-gray-50 comic-border font-bold focus:outline-none focus:ring-2 focus:ring-brand-red/20"
                         >
-                          {['Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Printesty', 'Gaming', 'Bundle'].map(g => (
+                          {['Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Pinteresty', 'Gaming', 'Bundle'].map(g => (
                             <option key={g} value={g}>{g}</option>
                           ))}
                         </select>

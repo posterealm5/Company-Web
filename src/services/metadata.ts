@@ -101,9 +101,13 @@ const COLLECTION_MAP: { [key: string]: CollectionInfo } = {
     title: 'Music & Band Wall Posters | Posterealm',
     description: 'Bring your walls to life with music, album, and band posters of iconic artists.'
   },
+  pinteresty: {
+    title: 'Aesthetic & Pinteresty Wall Posters | Posterealm',
+    description: 'Transform your room with minimalist and aesthetic pinteresty wall art.'
+  },
   printesty: {
-    title: 'Aesthetic & Printesty Wall Posters | Posterealm',
-    description: 'Transform your room with minimalist and aesthetic printesty wall art.'
+    title: 'Aesthetic & Pinteresty Wall Posters | Posterealm',
+    description: 'Transform your room with minimalist and aesthetic pinteresty wall art.'
   },
   gaming: {
     title: 'Gaming & Gamer Wall Posters | Posterealm',
