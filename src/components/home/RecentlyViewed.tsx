@@ -9,6 +9,7 @@ import { useCart } from '../../context/CartContext';
 import { RippleWrapper } from '../ui/RippleWrapper';
 import type { Product } from '../../types/database';
 import { ProtectedImage } from '../ProtectedImage';
+import { CustomPosterCTA } from '../product/CustomPosterCTA';
 
 import { SIZES } from '../../utils/sizeHelper';
 
@@ -271,6 +272,9 @@ export default function RecentlyViewed() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Custom Poster CTA */}
+                  <CustomPosterCTA onClick={() => setSelectedProduct(null)} />
                 </div>
 
                 <div className="mt-10 pt-8 border-t-2 border-gray-100 flex items-center justify-between gap-6">

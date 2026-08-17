@@ -8,6 +8,7 @@ import { BUNDLE_OPTIONS, calculateSinglePosterPrice } from '../../config/pricing
 import type { Product } from '../../types/database';
 import { getOptimizedImageUrl, getStorefrontImage } from '../../utils/imageUtils';
 import { ProtectedImage } from '../ProtectedImage';
+import { CustomPosterCTA } from './CustomPosterCTA';
 
 interface ProductDetailContentProps {
   product: Product;
@@ -188,6 +189,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                 ))}
               </div>
             </div>
+
+            {/* Custom Poster CTA */}
+            <CustomPosterCTA />
           </div>
 
           <div className="pt-8 border-t-2 border-brand-black/10 flex items-center justify-between gap-6">
@@ -336,6 +340,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
               ))}
             </div>
           </div>
+
+          {/* Custom Poster CTA */}
+          <CustomPosterCTA />
         </div>
 
         <div className="mt-10 pt-8 border-t-2 border-gray-100 flex items-center justify-between gap-6">
