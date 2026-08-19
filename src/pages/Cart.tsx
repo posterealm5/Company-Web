@@ -22,7 +22,7 @@ import { SIZES, getSizeDimension, getSizeDisplayLabel } from '../utils/sizeHelpe
 const MATERIALS = [
   { id: 'matte', name: 'Matte' },
   { id: 'glossy', name: 'Glossy' },
-  { id: 'flagship', name: 'Flagship Material' },
+  { id: 'rigid_board', name: 'Rigid Board' },
 ];
 
 export default function Cart() {
@@ -1038,7 +1038,7 @@ const RECOMMENDATION_SIZES = SIZES;
 const RECOMMENDATION_MATERIALS = [
   { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
   { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
+  { id: 'rigid_board', name: 'Rigid Board', desc: 'Heavyweight archival stock, textured' },
 ];
 
 const CartRecommendations = () => {

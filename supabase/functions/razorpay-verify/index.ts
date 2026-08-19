@@ -7,22 +7,54 @@ const corsHeaders = {
 }
 
 const POSTER_PRICING: Record<string, number> = { A5: 79, A4: 129, A3: 179, A2: 299 };
-const FLAGSHIP_PRICING: Record<string, number> = { A5: 175, A4: 280, A3: 330, A2: 400 };
+const RIGID_BOARD_PRICING: Record<string, number> = { A5: 175, A4: 280, A3: 330, A2: 400 };
+const FLAGSHIP_PRICING = RIGID_BOARD_PRICING; // Legacy constant alias
 const SHIPPING_CHARGE = 99;
+
+function normalizeMaterialId(material: string): string {
+  if (!material) return 'matte';
+  const mat = material.trim().toLowerCase();
+  if (
+    mat === 'rigid_board' ||
+    mat === 'rigid board' ||
+    mat === 'rigidboard' ||
+    mat === 'rigid' ||
+    mat === 'flagship' ||
+    mat === 'flagship material' ||
+    mat.includes('rigid') ||
+    mat.includes('flagship')
+  ) {
+    return 'rigid_board';
+  }
+  if (mat.includes('glossy')) return 'glossy';
+  if (mat.includes('matte')) return 'matte';
+  return mat;
+}
 
 function getPosterBasePrice(size: string): number {
   const sz = (size || '').toUpperCase();
   return POSTER_PRICING[sz] || POSTER_PRICING.A5;
 }
 
+function getMaterialPremium(material: string, size?: string): number {
+  const normId = normalizeMaterialId(material);
+  if (normId === 'rigid_board') {
+    const sz = (size || 'A5').toUpperCase();
+    const rigidBoardPrice = RIGID_BOARD_PRICING[sz] || RIGID_BOARD_PRICING.A5;
+    const basePrice = POSTER_PRICING[sz] || POSTER_PRICING.A5;
+    return rigidBoardPrice - basePrice;
+  }
+  return 0;
+}
+
 function calculateSinglePosterPrice(size: string, material: string): number {
   const sz = (size || '').toUpperCase();
-  const mat = (material || '').toLowerCase();
-  if (mat.includes('flagship')) {
-    if (sz in FLAGSHIP_PRICING) {
-      return FLAGSHIP_PRICING[sz];
+  const normId = normalizeMaterialId(material);
+  if (normId === 'rigid_board') {
+    if (sz in RIGID_BOARD_PRICING) {
+      return RIGID_BOARD_PRICING[sz];
     }
-    return FLAGSHIP_PRICING.A5;
+    return RIGID_BOARD_PRICING.A5;
   }
   return getPosterBasePrice(size);
 }

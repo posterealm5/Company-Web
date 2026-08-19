@@ -269,7 +269,7 @@ export const Footer = () => {
             </div>
             <p className="text-gray-400 max-w-md">
               Revolutionizing the way you decorate your walls. From custom designs to 
-              flagship materials, we bring your vision to life with bold aesthetics 
+              rigid board materials, we bring your vision to life with bold aesthetics 
               and premium quality.
             </p>
           </div>

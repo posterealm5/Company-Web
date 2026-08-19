@@ -120,7 +120,7 @@ export default function HowItWorks() {
               image="https://images.unsplash.com/photo-1554188248-986adbb73be4?q=80&w=600&auto=format&fit=crop"
             />
             <MaterialCard 
-              title="Flagship Material" 
+              title="Rigid Board" 
               desc="A wrinkle-free, crease-resistant, and built to withstand wear. It mounts perfectly flat with a bubble-free finish, ensuring your art stays straight and flawless on any wall."
               image="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop"
             />
@@ -134,7 +134,7 @@ export default function HowItWorks() {
                 <h2 className="text-5xl font-black uppercase mb-6">SIZING <span className="text-brand-red">GUIDE</span></h2>
                 <p className="text-gray-400 mb-10 text-lg">
                   Unsure which size fits your space? We've standardized our sizing 
-                  to match common frame sizes worldwide, but our Flagship XL 
+                  to match common frame sizes worldwide, but our Rigid Board XL 
                   is designed specifically for maximum impact.
                 </p>
                 <div className="space-y-4">

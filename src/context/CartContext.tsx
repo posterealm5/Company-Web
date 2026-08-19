@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { useNotification } from './NotificationContext';
-import { recalculateCartPrices, getMajoritySizeAndMaterial, calculateSinglePosterPrice } from '../config/pricing';
+import { recalculateCartPrices, getMajoritySizeAndMaterial, calculateSinglePosterPrice, normalizeMaterialId } from '../config/pricing';
 import { Coupon, COUPONS, validateCoupon, calculateCouponDiscount } from '../config/coupons';
 import { getCouponByCode } from '../services/coupons';
 import { getUserCouponRedemptionCount } from '../services/orders';
@@ -64,6 +64,19 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const normalizeCartItem = (item: CartItem): CartItem => {
+  const rawMat = item.selected_material || item.material || 'Matte';
+  const normId = normalizeMaterialId(rawMat);
+  if (normId === 'rigid_board') {
+    return {
+      ...item,
+      material: item.material ? (normalizeMaterialId(item.material) === 'rigid_board' ? 'Rigid Board' : item.material) : 'Rigid Board',
+      selected_material: item.selected_material ? (normalizeMaterialId(item.selected_material) === 'rigid_board' ? 'Rigid Board' : item.selected_material) : 'Rigid Board'
+    };
+  }
+  return item;
+};
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
 
@@ -73,7 +86,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const key = user?.id ? `cart_${user.id}` : 'cart_guest';
     const savedCart = localStorage.getItem(key);
-    return savedCart ? JSON.parse(savedCart) : [];
+    if (!savedCart) return [];
+    try {
+      const parsed: CartItem[] = JSON.parse(savedCart);
+      return parsed.map(normalizeCartItem);
+    } catch {
+      return [];
+    }
   });
   const { showNotification, notificationMessage, triggerNotification: globalTrigger } = useNotification();
   
@@ -87,12 +106,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [userRedemptionCount, setUserRedemptionCount] = useState<number>(0);
 
   const syncCartState = (items: CartItem[], couponCode: string | null, activeCoupon?: Coupon | null): CartItem[] => {
+    // 0. Normalize legacy material names (e.g. flagship -> Rigid Board)
+    const normalized = items.map(normalizeCartItem);
+
     // 1. Separate slot free items
-    const slotFreeItems = items.filter(item => item.slotIndex !== undefined);
+    const slotFreeItems = normalized.filter(item => item.slotIndex !== undefined);
 
     // 2. Merge previously split regular items back into their single representation
     const regularItemsMerged: CartItem[] = [];
-    items.forEach(item => {
+    normalized.forEach(item => {
       if (item.slotIndex !== undefined) return;
       const targetId = item.originalId || item.id;
       const existing = regularItemsMerged.find(r => r.id === targetId);

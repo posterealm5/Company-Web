@@ -20,7 +20,7 @@ import { SIZES, getSizeDisplayLabel } from '../utils/sizeHelper';
 const MATERIALS = [
   { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
   { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
+  { id: 'rigid_board', name: 'Rigid Board', desc: 'Heavyweight archival stock, textured' },
 ];
 
 export default function Customize() {
@@ -366,7 +366,7 @@ export default function Customize() {
                     </div>
                     <div className="text-right">
                        <p className="font-mono font-bold">₹{calculateSinglePosterPrice(selectedSize.name, material.name)}</p>
-                       {material.id === 'flagship' && <span className="text-[10px] bg-brand-red text-white px-2 py-0.5 rounded font-black uppercase">Elite</span>}
+                       {material.id === 'rigid_board' && <span className="text-[10px] bg-brand-red text-white px-2 py-0.5 rounded font-black uppercase">Elite</span>}
                     </div>
                   </button>
                 ))}
@@ -377,7 +377,7 @@ export default function Customize() {
                <Info className="text-blue-500 shrink-0" />
                <div>
                   <p className="font-bold text-blue-900 uppercase text-xs tracking-widest mb-1">Expert Tip</p>
-                  <p className="text-sm text-blue-800 font-medium">Flagship material offers the best color accuracy and texture for digital art and high-contrast designs.</p>
+                  <p className="text-sm text-blue-800 font-medium">Rigid Board material offers the best color accuracy and texture for digital art and high-contrast designs.</p>
                </div>
             </div>
           </motion.div>

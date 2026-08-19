@@ -30,7 +30,7 @@ import { SIZES } from '../utils/sizeHelper';
 const MATERIALS = [
   { id: 'matte', name: 'Matte', desc: 'Non-reflective, professional finish' },
   { id: 'glossy', name: 'Glossy', desc: 'Vibrant colors, high shine' },
-  { id: 'flagship', name: 'Flagship Material', desc: 'Heavyweight archival stock, textured' },
+  { id: 'rigid_board', name: 'Rigid Board', desc: 'Heavyweight archival stock, textured' },
 ];
 
 const PRODUCTS = [

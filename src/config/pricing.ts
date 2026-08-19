@@ -10,12 +10,15 @@ export const POSTER_PRICING: Record<string, number> = {
   A2: 299
 };
 
-export const FLAGSHIP_PRICING: Record<string, number> = {
+export const RIGID_BOARD_PRICING: Record<string, number> = {
   A5: 175,
   A4: 280,
   A3: 330,
   A2: 400
 };
+
+// Legacy pricing constant alias for backward compatibility
+export const FLAGSHIP_PRICING = RIGID_BOARD_PRICING;
 
 export const SHIPPING_CHARGE = 99;
 
@@ -25,6 +28,30 @@ export const BUNDLE_OPTIONS = [
   { id: 'b63', name: 'Buy 6 Get 3 Free', postersCount: 9, price: 699 },
   { id: 'b75', name: 'Buy 7 Get 5 Free', postersCount: 12, price: 849 }
 ];
+
+/**
+ * Normalizes material identifiers and user inputs into canonical material IDs.
+ * Canonical IDs: 'rigid_board' | 'matte' | 'glossy'
+ */
+export function normalizeMaterialId(material: string): string {
+  if (!material) return 'matte';
+  const mat = material.trim().toLowerCase();
+  if (
+    mat === 'rigid_board' ||
+    mat === 'rigid board' ||
+    mat === 'rigidboard' ||
+    mat === 'rigid' ||
+    mat === 'flagship' ||
+    mat === 'flagship material' ||
+    mat.includes('rigid') ||
+    mat.includes('flagship')
+  ) {
+    return 'rigid_board';
+  }
+  if (mat.includes('glossy')) return 'glossy';
+  if (mat.includes('matte')) return 'matte';
+  return mat;
+}
 
 /** Get base price of poster size */
 export function getPosterBasePrice(size: string): number {
@@ -40,12 +67,12 @@ export function getPosterBasePrice(size: string): number {
 
 /** Get material premium over Glossy/Matte base price */
 export function getMaterialPremium(material: string, size?: string): number {
-  const mat = (material || '').toLowerCase();
-  if (mat.includes('flagship')) {
+  const normId = normalizeMaterialId(material);
+  if (normId === 'rigid_board') {
     const sz = (size || 'A5').toUpperCase();
-    const flagshipPrice = FLAGSHIP_PRICING[sz] || FLAGSHIP_PRICING.A5;
+    const rigidBoardPrice = RIGID_BOARD_PRICING[sz] || RIGID_BOARD_PRICING.A5;
     const basePrice = POSTER_PRICING[sz] || POSTER_PRICING.A5;
-    return flagshipPrice - basePrice;
+    return rigidBoardPrice - basePrice;
   }
   return 0;
 }
@@ -53,12 +80,12 @@ export function getMaterialPremium(material: string, size?: string): number {
 /** Calculate pricing of a single poster */
 export function calculateSinglePosterPrice(size: string, material: string): number {
   const sz = (size || '').toUpperCase();
-  const mat = (material || '').toLowerCase();
-  if (mat.includes('flagship')) {
-    if (sz in FLAGSHIP_PRICING) {
-      return FLAGSHIP_PRICING[sz];
+  const normId = normalizeMaterialId(material);
+  if (normId === 'rigid_board') {
+    if (sz in RIGID_BOARD_PRICING) {
+      return RIGID_BOARD_PRICING[sz];
     }
-    return FLAGSHIP_PRICING.A5;
+    return RIGID_BOARD_PRICING.A5;
   }
   return getPosterBasePrice(size);
 }
@@ -70,7 +97,15 @@ export function calculateSinglePosterPrice(size: string, material: string): numb
 export function recalculateCartPrices(items: any[]): any[] {
   return items.map(item => {
     const selectedSize = item.selected_size || item.size;
-    const selectedMaterial = item.selected_material || item.material;
+    let selectedMaterial = item.selected_material || item.material;
+
+    // Normalize legacy material identifiers to Rigid Board display string if applicable
+    if (selectedMaterial) {
+      const normId = normalizeMaterialId(selectedMaterial);
+      if (normId === 'rigid_board' && selectedMaterial.toLowerCase().includes('flagship')) {
+        selectedMaterial = 'Rigid Board';
+      }
+    }
 
     const unitPrice = calculateSinglePosterPrice(selectedSize, selectedMaterial);
     const lineTotal = unitPrice * item.quantity;
@@ -132,10 +167,10 @@ export function getMajoritySizeAndMaterial(paidItems: any[]): { size: string; ma
       maxMatCount = count;
       majorityMaterial = material;
     } else if (count === maxMatCount) {
-      // Tie-breaker: choose cheapest material (Glossy/Matte over Flagship)
-      const isCurrentFlagship = (material || '').toLowerCase().includes('flagship');
-      const isMajorityFlagship = (majorityMaterial || '').toLowerCase().includes('flagship');
-      if (!isCurrentFlagship && isMajorityFlagship) {
+      // Tie-breaker: choose cheapest material (Glossy/Matte over Rigid Board)
+      const isCurrentRigidBoard = normalizeMaterialId(material) === 'rigid_board';
+      const isMajorityRigidBoard = normalizeMaterialId(majorityMaterial) === 'rigid_board';
+      if (!isCurrentRigidBoard && isMajorityRigidBoard) {
         majorityMaterial = material;
       }
     }
