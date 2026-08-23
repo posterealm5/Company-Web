@@ -145,7 +145,7 @@ export default function Customize() {
   };
 
   return (
-    <div className="pt-32 pb-24 bg-brand-white min-h-screen">
+    <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 min-h-screen">
       <SEO metadata={getCustomizeMetadata()} />
       <StructuredData schema={getCustomizeSchema()} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -153,10 +153,10 @@ export default function Customize() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.1 }}
-          className="mb-12"
+          className="mb-12 text-left"
         >
-          <h1 className="text-6xl md:text-8xl font-black mb-4">CUSTOM <span className="text-brand-red">DESIGNER</span></h1>
-          <p className="text-xl text-gray-600 font-medium">Create your masterpiece with premium materials.</p>
+          <h1 className="text-6xl md:text-8xl font-black mb-4 text-brand-black dark:text-zinc-100">CUSTOM <span className="text-brand-red">DESIGNER</span></h1>
+          <p className="text-xl text-gray-600 dark:text-zinc-400 font-medium">Create your masterpiece with premium materials.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
@@ -166,8 +166,8 @@ export default function Customize() {
             viewport={{ once: false, amount: 0.1 }}
             className="sticky top-32"
           >
-            <div className="bg-white p-8 comic-border relative group">
-              <div className={`transition-all duration-500 ease-in-out bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-brand-black ${
+            <div className="bg-white dark:bg-zinc-900 p-8 comic-border border-2 border-brand-black dark:border-zinc-700 relative group">
+              <div className={`transition-all duration-500 ease-in-out bg-gray-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden border-2 border-brand-black dark:border-zinc-700 ${
                 orientation === 'portrait' ? 'aspect-[3/4]' : 'aspect-[4/3]'
               }`}>
                 {isUploading ? (
@@ -187,7 +187,7 @@ export default function Customize() {
                     />
                     <button 
                       onClick={handleUploadClick}
-                      className="absolute inset-0 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2 backdrop-blur-sm"
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2 backdrop-blur-sm cursor-pointer"
                     >
                       <RefreshCw className="w-8 h-8" />
                       <span className="font-black uppercase tracking-widest text-sm">Change Design</span>
@@ -196,13 +196,13 @@ export default function Customize() {
                 ) : (
                   <div className="text-center p-8">
                     <Sparkles size={64} className="mx-auto mb-4 text-brand-red opacity-20" />
-                    <p className="text-gray-400 font-bold uppercase tracking-widest">Awaiting Your Vision</p>
+                    <p className="text-gray-400 dark:text-zinc-500 font-bold uppercase tracking-widest">Awaiting Your Vision</p>
                   </div>
                 )}
               </div>
               
               {/* Material hint labels */}
-              <div className="absolute top-12 right-12 bg-brand-black text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest rotate-6 z-10">
+              <div className="absolute top-12 right-12 bg-brand-black dark:bg-zinc-800 text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest rotate-6 z-10">
                 Material: {selectedMaterial.name}
               </div>
               <div className="absolute bottom-12 left-12 bg-brand-red text-white px-3 py-1 text-[10px] uppercase font-black tracking-widest -rotate-6 z-10">
@@ -210,17 +210,17 @@ export default function Customize() {
               </div>
             </div>
             
-            <div className="mt-8 flex items-center gap-4 p-6 bg-brand-black text-brand-white rounded-xl">
-              <div className="flex-1">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Estimated Total</p>
-                <p className="text-5xl font-display font-black leading-none">
+            <div className="mt-8 flex items-center gap-4 p-6 bg-brand-black dark:bg-zinc-900 text-brand-white border-2 border-brand-black dark:border-zinc-700 rounded-xl">
+              <div className="flex-1 text-left">
+                <p className="text-xs font-bold text-gray-400 dark:text-zinc-400 uppercase tracking-widest mb-1">Estimated Total</p>
+                <p className="text-5xl font-display font-black leading-none text-white dark:text-zinc-100">
                   {totalPrice !== null ? `₹${totalPrice.toLocaleString()}` : '—'}
                 </p>
               </div>
               <RippleWrapper delay={2}>
                 <button 
                   onClick={handleAddToBag}
-                  className="px-8 py-4 bg-brand-red text-white hover:bg-white hover:text-brand-red transition-all font-display text-2xl uppercase tracking-widest"
+                  className="px-8 py-4 bg-brand-red text-white hover:bg-white hover:text-brand-red dark:hover:bg-zinc-100 dark:hover:text-brand-red transition-all font-display text-2xl uppercase tracking-widest cursor-pointer"
                 >
                   Add to Cart
                 </button>
@@ -236,13 +236,13 @@ export default function Customize() {
           >
             {/* Step 1: Upload */}
             <div className="space-y-6 text-left">
-              <h3 className="text-3xl font-black uppercase flex items-center gap-3">
+              <h3 className="text-3xl font-black uppercase flex items-center gap-3 text-brand-black dark:text-zinc-100">
                 <span className="w-10 h-10 bg-brand-red text-white rounded-full flex items-center justify-center text-xl">1</span>
                 Upload Design
               </h3>
               {imagePreview ? (
-                <div className="flex items-center gap-4 p-4 border-2 border-brand-black rounded-2xl bg-white">
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                <div className="flex items-center gap-4 p-4 border-2 border-brand-black dark:border-zinc-700 rounded-2xl bg-white dark:bg-zinc-900">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700">
                     {isUploading ? (
                       <div className="w-full h-full flex items-center justify-center">
                         <Loader2 className="animate-spin text-brand-red" size={24} />
@@ -258,13 +258,13 @@ export default function Customize() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="font-black uppercase text-sm">{isUploading ? 'Uploading...' : 'Design Ready'}</p>
-                    <p className="text-xs text-gray-500 font-medium">{isUploading ? 'Sending to storage' : 'Your custom art is loaded'}</p>
+                    <p className="font-black uppercase text-sm text-brand-black dark:text-zinc-100">{isUploading ? 'Uploading...' : 'Design Ready'}</p>
+                    <p className="text-xs text-gray-500 dark:text-zinc-400 font-medium">{isUploading ? 'Sending to storage' : 'Your custom art is loaded'}</p>
                   </div>
                   <button 
                     onClick={handleUploadClick}
                     disabled={isUploading}
-                    className={`flex items-center gap-2 text-brand-red font-black uppercase text-xs hover:underline ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex items-center gap-2 text-brand-red font-black uppercase text-xs hover:underline cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <RefreshCw size={14} /> Change
                   </button>
@@ -276,10 +276,10 @@ export default function Customize() {
                   onDrop={handleDrop}
                   className="block w-full cursor-pointer group"
                 >
-                  <div className="border-4 border-dashed border-gray-200 group-hover:border-brand-red transition-colors p-10 text-center rounded-2xl bg-gray-50">
-                    <Upload size={48} className="mx-auto mb-4 text-gray-300 group-hover:text-brand-red transition-colors" />
-                    <p className="text-lg font-bold text-gray-500 group-hover:text-brand-black">Drag or click to upload</p>
-                    <p className="text-sm text-gray-400 mt-2 font-medium">Recommended: 300 DPI, JPG/PNG, min. 2000px width</p>
+                  <div className="border-4 border-dashed border-gray-200 dark:border-zinc-700 group-hover:border-brand-red transition-colors p-10 text-center rounded-2xl bg-gray-50 dark:bg-zinc-900">
+                    <Upload size={48} className="mx-auto mb-4 text-gray-300 dark:text-zinc-600 group-hover:text-brand-red transition-colors" />
+                    <p className="text-lg font-bold text-gray-500 dark:text-zinc-300 group-hover:text-brand-black dark:group-hover:text-zinc-100">Drag or click to upload</p>
+                    <p className="text-sm text-gray-400 dark:text-zinc-500 mt-2 font-medium">Recommended: 300 DPI, JPG/PNG, min. 2000px width</p>
                   </div>
                 </div>
               )}
@@ -295,32 +295,32 @@ export default function Customize() {
 
             {/* Step 2: Orientation & Size */}
             <div className="space-y-6 text-left">
-              <h3 className="text-3xl font-black uppercase flex items-center gap-3">
+              <h3 className="text-3xl font-black uppercase flex items-center gap-3 text-brand-black dark:text-zinc-100">
                 <span className="w-10 h-10 bg-brand-red text-white rounded-full flex items-center justify-center text-xl">2</span>
                 Choose Orientation
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <button 
                   onClick={() => setOrientation('portrait')}
-                  className={`p-6 border-2 transition-all flex flex-col items-center gap-3 rounded-2xl ${
-                    orientation === 'portrait' ? 'border-brand-black bg-brand-black text-white' : 'border-gray-200 bg-white hover:border-brand-red'
+                  className={`p-6 border-2 transition-all flex flex-col items-center gap-3 rounded-2xl cursor-pointer ${
+                    orientation === 'portrait' ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white' : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                   }`}
                 >
-                  <Maximize2 size={32} className={orientation === 'portrait' ? 'text-brand-red' : 'text-gray-300'} />
+                  <Maximize2 size={32} className={orientation === 'portrait' ? 'text-brand-red dark:text-white' : 'text-gray-300 dark:text-zinc-500'} />
                   <p className="font-display text-xl font-black uppercase">Portrait</p>
                 </button>
                 <button 
                   onClick={() => setOrientation('landscape')}
-                  className={`p-6 border-2 transition-all flex flex-col items-center gap-3 rounded-2xl ${
-                    orientation === 'landscape' ? 'border-brand-black bg-brand-black text-white' : 'border-gray-200 bg-white hover:border-brand-red'
+                  className={`p-6 border-2 transition-all flex flex-col items-center gap-3 rounded-2xl cursor-pointer ${
+                    orientation === 'landscape' ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white' : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                   }`}
                 >
-                  <Minimize2 size={32} className={orientation === 'landscape' ? 'text-brand-red' : 'text-gray-300'} />
+                  <Minimize2 size={32} className={orientation === 'landscape' ? 'text-brand-red dark:text-white' : 'text-gray-300 dark:text-zinc-500'} />
                   <p className="font-display text-xl font-black uppercase">Landscape</p>
                 </button>
               </div>
 
-              <h3 className="text-3xl font-black uppercase flex items-center gap-3 pt-6">
+              <h3 className="text-3xl font-black uppercase flex items-center gap-3 pt-6 text-brand-black dark:text-zinc-100">
                 <span className="w-10 h-10 bg-brand-red text-white rounded-full flex items-center justify-center text-xl">3</span>
                 Select Poster Size
               </h3>
@@ -329,12 +329,12 @@ export default function Customize() {
                   <button
                     key={size.id}
                     onClick={() => setSelectedSize(size)}
-                    className={`h-24 border-2 transition-all flex flex-col items-center justify-center relative rounded-xl group ${
-                      selectedSize.id === size.id ? 'border-brand-black bg-brand-black text-white px-2' : 'border-gray-200 bg-white hover:border-brand-red'
+                    className={`h-24 border-2 transition-all flex flex-col items-center justify-center relative rounded-xl group cursor-pointer ${
+                      selectedSize.id === size.id ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white px-2' : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                     }`}
                   >
-                    <p className={`text-2xl font-black uppercase tracking-tighter ${selectedSize.id === size.id ? 'text-white' : 'text-brand-black'}`}>{size.name}</p>
-                    <p className={`text-[10px] font-bold mt-1 ${selectedSize.id === size.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                    <p className={`text-2xl font-black uppercase tracking-tighter ${selectedSize.id === size.id ? 'text-white' : 'text-brand-black dark:text-zinc-100'}`}>{size.name}</p>
+                    <p className={`text-[10px] font-bold mt-1 ${selectedSize.id === size.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                       {size.dimensions}
                     </p>
                   </button>
@@ -344,7 +344,7 @@ export default function Customize() {
 
             {/* Step 4: Material */}
             <div className="space-y-6 text-left">
-              <h3 className="text-3xl font-black uppercase flex items-center gap-3">
+              <h3 className="text-3xl font-black uppercase flex items-center gap-3 text-brand-black dark:text-zinc-100">
                 <span className="w-10 h-10 bg-brand-red text-white rounded-full flex items-center justify-center text-xl">4</span>
                 Choose Material
               </h3>
@@ -353,16 +353,16 @@ export default function Customize() {
                   <button
                     key={material.id}
                     onClick={() => setSelectedMaterial(material)}
-                    className={`w-full p-6 border-2 transition-all flex items-center gap-6 text-left rounded-2xl ${
-                      selectedMaterial.id === material.id ? 'border-brand-black bg-brand-black text-white' : 'border-gray-200 bg-white hover:border-brand-red'
+                    className={`w-full p-6 border-2 transition-all flex items-center gap-6 text-left rounded-2xl cursor-pointer ${
+                      selectedMaterial.id === material.id ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white' : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                     }`}
                   >
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${selectedMaterial.id === material.id ? 'bg-brand-red' : 'bg-gray-100'}`}>
-                      <Layers size={24} className={selectedMaterial.id === material.id ? 'text-white' : 'text-gray-400'} />
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${selectedMaterial.id === material.id ? 'bg-brand-red dark:bg-zinc-900' : 'bg-gray-100 dark:bg-zinc-700'}`}>
+                      <Layers size={24} className={selectedMaterial.id === material.id ? 'text-white' : 'text-gray-400 dark:text-zinc-400'} />
                     </div>
                     <div className="flex-1">
                       <p className="font-display text-2xl font-black uppercase">{material.name}</p>
-                      <p className={`text-sm font-medium ${selectedMaterial.id === material.id ? 'text-gray-400' : 'text-gray-500'}`}>{material.desc}</p>
+                      <p className={`text-sm font-medium ${selectedMaterial.id === material.id ? 'text-gray-400 dark:text-zinc-200' : 'text-gray-500 dark:text-zinc-400'}`}>{material.desc}</p>
                     </div>
                     <div className="text-right">
                        <p className="font-mono font-bold">₹{calculateSinglePosterPrice(selectedSize.name, material.name)}</p>
@@ -373,11 +373,11 @@ export default function Customize() {
               </div>
             </div>
             
-            <div className="p-6 bg-blue-50 border-l-4 border-blue-500 flex gap-4 text-left rounded-2xl">
-               <Info className="text-blue-500 shrink-0" />
+            <div className="p-6 bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-500 dark:border-blue-400 flex gap-4 text-left rounded-2xl text-blue-900 dark:text-blue-200">
+               <Info className="text-blue-500 dark:text-blue-400 shrink-0" />
                <div>
-                  <p className="font-bold text-blue-900 uppercase text-xs tracking-widest mb-1">Expert Tip</p>
-                  <p className="text-sm text-blue-800 font-medium">Rigid Board material offers the best color accuracy and texture for digital art and high-contrast designs.</p>
+                  <p className="font-bold uppercase text-xs tracking-widest mb-1">Expert Tip</p>
+                  <p className="text-sm font-medium opacity-90">Rigid Board material offers the best color accuracy and texture for digital art and high-contrast designs.</p>
                </div>
             </div>
           </motion.div>

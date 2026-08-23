@@ -318,7 +318,7 @@ export default function Collections() {
 
 
   return (
-    <div className="pt-32 pb-24 bg-brand-white" ref={catalogRef}>
+    <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100" ref={catalogRef}>
       <SEO metadata={getCollectionMetadata(activeGenre)} />
       <StructuredData schema={getCollectionSchema(activeGenre)} />
       <StructuredData schema={getBreadcrumbSchema(breadcrumbs)} />
@@ -330,8 +330,8 @@ export default function Collections() {
           className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8"
         >
           <div className="flex-grow">
-            <h1 className="text-6xl md:text-8xl font-black mb-4 tracking-tighter">THE <span className="text-brand-red">CATALOG</span></h1>
-            <p className="text-xl text-gray-600 font-medium">Search among {products.length} unique posters from the realm.</p>
+            <h1 className="text-6xl md:text-8xl font-black mb-4 tracking-tighter text-brand-black dark:text-zinc-100">THE <span className="text-brand-red">CATALOG</span></h1>
+            <p className="text-xl text-gray-600 dark:text-zinc-400 font-medium">Search among {products.length} unique posters from the realm.</p>
           </div>
           
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
@@ -343,7 +343,7 @@ export default function Collections() {
                   placeholder="Search posters..."
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white comic-border font-bold focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white dark:bg-zinc-800 comic-border border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 font-bold focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all"
                 />
                 {searchQuery && (
                   <button 
@@ -358,22 +358,22 @@ export default function Collections() {
              <div className="flex items-center gap-4">
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`p-3 transition-all comic-border flex items-center gap-2 font-black uppercase text-xs tracking-widest ${showFilters ? 'bg-brand-red text-white' : 'bg-white hover:bg-gray-100'}`}
+                  className={`p-3 transition-all comic-border border-2 border-brand-black dark:border-zinc-700 flex items-center gap-2 font-black uppercase text-xs tracking-widest cursor-pointer ${showFilters ? 'bg-brand-red text-white' : 'bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
                 >
                   <SlidersHorizontal size={18} />
                   Filters
                 </button>
 
-                <div className="flex items-center gap-2 bg-white p-2 border-2 border-brand-black">
+                <div className="flex items-center gap-2 bg-white dark:bg-zinc-800 p-2 border-2 border-brand-black dark:border-zinc-700">
                   <button 
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-brand-black text-white' : 'hover:bg-gray-100'}`}
+                    className={`p-2 transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-brand-black dark:bg-brand-red text-white' : 'hover:bg-gray-100 dark:hover:bg-zinc-700 text-brand-black dark:text-zinc-100'}`}
                   >
                     <Grid size={20} />
                   </button>
                   <button 
                     onClick={() => setViewMode('list')}
-                    className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-brand-black text-white' : 'hover:bg-gray-100'}`}
+                    className={`p-2 transition-colors cursor-pointer ${viewMode === 'list' ? 'bg-brand-black dark:bg-brand-red text-white' : 'hover:bg-gray-100 dark:hover:bg-zinc-700 text-brand-black dark:text-zinc-100'}`}
                   >
                     <ListIcon size={20} />
                   </button>
@@ -389,7 +389,7 @@ export default function Collections() {
               initial={{ opacity: 0, y: -20, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: -20, height: 0 }}
-              className="overflow-hidden mb-12 bg-white comic-border p-8 shadow-[8px_8px_0px_0px_rgba(255,0,0,0.1)]"
+              className="overflow-hidden mb-12 bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 shadow-[8px_8px_0px_0px_rgba(255,0,0,0.1)] text-brand-black dark:text-zinc-100"
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
                 {/* Category Filter */}
@@ -400,10 +400,10 @@ export default function Collections() {
                       <button
                         key={genre}
                         onClick={() => handleCategoryChange(genre)}
-                        className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
+                        className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all border-2 cursor-pointer ${
                           activeGenre === genre 
-                            ? 'bg-brand-black border-brand-black text-white' 
-                            : 'bg-white border-gray-200 text-gray-500 hover:border-brand-red'
+                            ? 'bg-brand-black dark:bg-brand-red border-brand-black dark:border-zinc-600 text-white' 
+                            : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-300 hover:border-brand-red'
                         }`}
                       >
                         {genre}
@@ -419,7 +419,7 @@ export default function Collections() {
                         setSearchQuery('');
                         setSearchParams({});
                      }}
-                     className="w-full py-4 comic-border font-black uppercase text-xs tracking-widest hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                     className="w-full py-4 comic-border border-2 border-brand-black dark:border-zinc-700 font-black uppercase text-xs tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 cursor-pointer"
                    >
                      <X size={16} /> Reset All Filters
                    </button>
@@ -435,10 +435,10 @@ export default function Collections() {
               <button
                 key={genre}
                 onClick={() => handleCategoryChange(genre)}
-                className={`px-6 py-2 text-sm font-black uppercase tracking-widest transition-all border-2 ${
+                className={`px-6 py-2 text-sm font-black uppercase tracking-widest transition-all border-2 cursor-pointer ${
                   activeGenre === genre 
-                    ? 'bg-brand-red border-brand-red text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' 
-                    : 'bg-white border-brand-black text-brand-black hover:bg-gray-100'
+                    ? 'bg-brand-red border-brand-red text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
+                    : 'bg-white dark:bg-zinc-800 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700'
                 } ${activeGenre === genre && shouldHighlight ? 'animate-pulse ring-4 ring-brand-red/30 scale-105' : ''}`}
               >
                 {genre}
@@ -451,7 +451,7 @@ export default function Collections() {
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="mb-12 p-6 bg-brand-black text-white comic-border overflow-hidden"
+            className="mb-12 p-6 bg-brand-black dark:bg-zinc-900 text-white comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden"
           >
             <div className="flex items-start gap-4">
               <div className="bg-brand-red p-3 shrink-0">
@@ -552,7 +552,7 @@ class ProductErrorBoundary extends React.Component<{ children: React.ReactNode }
   render() {
     if (this.state.hasError) {
       return (
-        <div className="comic-border p-6 bg-white flex flex-col items-center justify-center text-center text-brand-red border-2 border-dashed border-brand-red h-full min-h-[320px] shadow-[4px_4px_0px_0px_rgba(255,0,0,0.1)]">
+        <div className="comic-border p-6 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center text-center text-brand-red border-2 border-dashed border-brand-red h-full min-h-[320px] shadow-[4px_4px_0px_0px_rgba(255,0,0,0.1)]">
           <p className="font-black uppercase text-sm">Product unavailable.</p>
         </div>
       );
@@ -606,7 +606,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
       layout
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`group bg-white comic-border transition-all hover:-translate-y-2 overflow-hidden protected-area ${viewMode === 'list' ? 'flex' : ''}`}
+      className={`group bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 transition-all hover:-translate-y-2 overflow-hidden protected-area ${viewMode === 'list' ? 'flex' : ''}`}
     >
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -647,10 +647,10 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
           <button 
             ref={wishlistBtnRef}
             onClick={handleWishlistToggle}
-            className={`w-9 h-9 flex items-center justify-center bg-white rounded-full border border-gray-100 shadow-sm transition-all hover:scale-110 cursor-pointer ${
+            className={`w-9 h-9 flex items-center justify-center bg-white dark:bg-zinc-800 rounded-full border border-gray-100 dark:border-zinc-700 shadow-sm transition-all hover:scale-110 cursor-pointer ${
               wishlisted 
                 ? 'text-brand-red' 
-                : 'text-brand-black hover:text-brand-red'
+                : 'text-brand-black dark:text-zinc-100 hover:text-brand-red'
             }`}
             aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
@@ -659,7 +659,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
           <button 
             ref={shareBtnRef}
             onClick={handleShareClick}
-            className="w-9 h-9 flex items-center justify-center bg-white rounded-full border border-gray-100 shadow-sm transition-all hover:scale-110 cursor-pointer text-brand-black hover:text-brand-red"
+            className="w-9 h-9 flex items-center justify-center bg-white dark:bg-zinc-800 rounded-full border border-gray-100 dark:border-zinc-700 shadow-sm transition-all hover:scale-110 cursor-pointer text-brand-black dark:text-zinc-100 hover:text-brand-red"
             aria-label="Share poster"
           >
             <Share2 size={18} />
@@ -674,18 +674,18 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
             <div className="shrink-0">
               <p className="text-[10px] font-black uppercase text-brand-red tracking-wider sm:tracking-[0.2em]">{product.genre}</p>
             </div>
-            <div className="text-right font-mono text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-500 flex flex-col items-end sm:flex-row sm:items-baseline sm:gap-1 leading-tight sm:leading-normal">
+            <div className="text-right font-mono text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 flex flex-col items-end sm:flex-row sm:items-baseline sm:gap-1 leading-tight sm:leading-normal">
               <span>Starting From</span>
               <span>₹{product.genre?.toLowerCase() === 'bundle' ? BUNDLE_OPTIONS[0].price : POSTER_PRICING.A5}</span>
             </div>
           </div>
           <h3 className="font-display text-sm sm:text-2xl font-black uppercase tracking-tight leading-tight line-clamp-2 sm:line-clamp-1 mb-2.5 sm:mb-4 group-hover:text-brand-red transition-colors">
             {pageUrl ? (
-              <Link to={pageUrl} className="hover:text-brand-red cursor-pointer">
+              <Link to={pageUrl} className="hover:text-brand-red dark:hover:text-brand-red text-brand-black dark:text-zinc-100 cursor-pointer">
                 {getProductDisplayName(product)}
               </Link>
             ) : (
-              <span className="text-brand-black">
+              <span className="text-brand-black dark:text-zinc-100">
                 {getProductDisplayName(product)}
               </span>
             )}
@@ -693,7 +693,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, viewMode,
         </div>
         <button 
           onClick={() => handleOpenQuickAdd(product)}
-          className="w-full py-3 bg-brand-black text-white font-display text-xl uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red transition-all"
+          className="w-full py-3 bg-brand-black dark:bg-brand-red text-white font-display text-xl uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red dark:hover:bg-red-600 transition-all cursor-pointer"
         >
           <ShoppingCart size={18} /> Quick Add
         </button>
@@ -767,7 +767,7 @@ const ProductModal: React.FC<ProductModalProps> = React.memo(({
       initial={{ opacity: 0, scale: 0.9, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 20 }}
-      className="relative bg-brand-white w-full max-w-4xl comic-border overflow-hidden flex flex-col md:flex-row shadow-2xl my-auto"
+      className="relative bg-brand-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 w-full max-w-4xl comic-border overflow-hidden flex flex-col md:flex-row shadow-2xl my-auto"
     >
       <button 
         onClick={() => setSelectedProduct(null)}

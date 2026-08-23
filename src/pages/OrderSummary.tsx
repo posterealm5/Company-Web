@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, MapPin, Package } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { RippleWrapper } from '../components/ui/RippleWrapper';
@@ -38,11 +38,10 @@ export default function OrderSummary() {
 
   if (!details) return null;
 
-
   return (
-    <div className="pt-32 pb-24 bg-brand-white min-h-screen">
+    <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] min-h-screen text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('Order Summary', '/order-summary')} />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -50,61 +49,58 @@ export default function OrderSummary() {
         >
           <button 
             onClick={() => navigate('/checkout')}
-            className="inline-flex items-center gap-2 text-brand-black hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-sm"
+            className="inline-flex items-center gap-2 text-brand-black dark:text-zinc-100 hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-sm"
           >
             <ArrowLeft size={18} />
-            Back to Details
+            Edit Checkout Details
           </button>
-          <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter mt-4">
+          <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter mt-4 text-brand-black dark:text-zinc-100">
             ORDER <span className="text-brand-red">SUMMARY</span>
           </h1>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Details & Items */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Delivery Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
+          <div className="lg:col-span-7 space-y-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white comic-border p-8"
+              className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 text-brand-black dark:text-zinc-100"
             >
-              <h2 className="text-2xl font-black uppercase mb-6 flex items-center gap-3">
-                <ShoppingBag size={24} className="text-brand-red" /> Delivery Details
+              <h2 className="text-2xl font-black uppercase mb-6 flex items-center gap-3 text-brand-black dark:text-zinc-100">
+                <MapPin size={24} className="text-brand-red" /> Delivery Details
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+              <div className="space-y-4">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Customer</p>
-                  <p className="font-bold text-lg">{details.fullName}</p>
+                  <span className="text-xs font-black uppercase text-gray-400 dark:text-zinc-400 block mb-1">Customer Name</span>
+                  <p className="font-bold text-lg text-brand-black dark:text-zinc-100">{details.fullName}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Contact</p>
-                  <p className="font-bold text-lg">{details.contactNumber}</p>
+                  <span className="text-xs font-black uppercase text-gray-400 dark:text-zinc-400 block mb-1">Contact Number</span>
+                  <p className="font-bold text-lg text-brand-black dark:text-zinc-100">{details.contactNumber}</p>
                 </div>
-                <div className="md:col-span-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Shipping Address</p>
-                  <p className="font-bold text-lg">{details.address}</p>
+                <div>
+                  <span className="text-xs font-black uppercase text-gray-400 dark:text-zinc-400 block mb-1">Shipping Address</span>
+                  <p className="font-bold text-lg leading-snug whitespace-pre-line text-brand-black dark:text-zinc-100">{details.address}</p>
                   {details.nearestLandmark && (
-                    <p className="text-sm text-gray-500 mt-1">Landmark: {details.nearestLandmark}</p>
+                    <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Landmark: {details.nearestLandmark}</p>
                   )}
                 </div>
               </div>
             </motion.div>
 
-            {/* Selected Items */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white comic-border p-8"
+              className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 text-brand-black dark:text-zinc-100"
             >
-              <h2 className="text-2xl font-black uppercase mb-6 flex items-center gap-3">
-                <ShoppingBag size={24} className="text-brand-red" /> Your Realm Selection
+              <h2 className="text-2xl font-black uppercase mb-6 flex items-center gap-3 text-brand-black dark:text-zinc-100">
+                <Package size={24} className="text-brand-red" /> Selected Items ({selectedItems.length})
               </h2>
-              <div className="space-y-6">
-                {selectedItems.map((item) => (
-                  <div key={item.id} className="flex gap-4 border-b border-gray-100 pb-6 last:border-0 last:pb-0">
-                    <div className="w-16 h-16 bg-gray-100 rounded border border-brand-black flex-shrink-0 overflow-hidden">
+              <div className="divide-y-2 divide-gray-100 dark:divide-zinc-800 max-h-[400px] overflow-y-auto pr-2">
+                {selectedItems.map((item, idx) => (
+                  <div key={idx} className="py-4 flex gap-4 items-center first:pt-0 last:pb-0">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded overflow-hidden flex-shrink-0 border border-brand-black dark:border-zinc-700">
                       <img 
                         src={getStorefrontImage(item, 'thumbnail')} 
                         alt={item.name} 
@@ -114,22 +110,27 @@ export default function OrderSummary() {
                         className="w-full h-full object-cover" 
                       />
                     </div>
-                    <div className="flex-grow text-left">
-                      <p className="font-black uppercase text-sm">{item.name}</p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <div className="flex-grow">
+                      <h4 className="font-black uppercase text-sm text-brand-black dark:text-zinc-100">{item.name}</h4>
+                      <p className="text-xs text-gray-400 dark:text-zinc-400 font-bold uppercase mt-1">
                         {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
                       </p>
                     </div>
                     <div className="text-right">
                       {item.isFreeItem ? (
                         <>
-                          <p className="font-black text-green-600">FREE</p>
-                          <span className="text-xs text-gray-400 line-through block mt-0.5">
+                          <span className="font-black text-green-600 dark:text-green-400 text-sm">FREE</span>
+                          <span className="text-xs text-gray-400 dark:text-zinc-500 line-through block mt-0.5">
                             ₹{(item.unit_price || item.price) * item.quantity}
                           </span>
                         </>
                       ) : (
-                        <p className="font-black text-brand-red">₹{item.line_total || (item.price * item.quantity)}</p>
+                        <>
+                          <span className="font-black text-brand-red text-sm">₹{item.line_total || (item.price * item.quantity)}</span>
+                          <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest block mt-0.5">
+                            Unit: ₹{item.unit_price || item.price}
+                          </span>
+                        </>
                       )}
                     </div>
                   </div>
@@ -138,8 +139,7 @@ export default function OrderSummary() {
             </motion.div>
           </div>
 
-          {/* Pricing & Payment */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

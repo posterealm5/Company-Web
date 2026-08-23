@@ -260,16 +260,16 @@ export default function Checkout() {
     }
   };
 
-  const inputClasses = (name: string) => `w-full bg-white text-brand-black p-4 font-bold text-lg comic-border focus:outline-none transition-all ${
-    errors[name] ? 'border-brand-red focus:ring-brand-red' : 'focus:ring-brand-black'
+  const inputClasses = (name: string) => `w-full bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 p-4 font-bold text-lg comic-border border-2 border-brand-black dark:border-zinc-700 focus:outline-none transition-all ${
+    errors[name] ? 'border-brand-red focus:ring-brand-red' : 'focus:ring-brand-black dark:focus:ring-zinc-400'
   }`;
 
-  const addressModalInputClasses = (name: string) => `block w-full px-4 py-3 border-2 border-brand-black bg-white focus:outline-none focus:ring-0 focus:border-brand-red transition-colors ${
+  const addressModalInputClasses = (name: string) => `block w-full px-4 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 focus:border-brand-red transition-colors ${
     addressErrors[name] ? 'border-brand-red' : ''
   }`;
 
   return (
-    <div className="pt-32 pb-24 bg-brand-white min-h-screen">
+    <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] min-h-screen text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('Checkout', '/checkout')} />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
@@ -279,12 +279,12 @@ export default function Checkout() {
         >
           <button 
             onClick={() => navigate('/cart')}
-            className="inline-flex items-center gap-2 text-brand-black hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-sm"
+            className="inline-flex items-center gap-2 text-brand-black dark:text-zinc-100 hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-sm"
           >
             <ArrowLeft size={18} />
             Back to Bag
           </button>
-          <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter mt-4 text-left">
+          <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter mt-4 text-left text-brand-black dark:text-zinc-100">
             CHECKOUT <span className="text-brand-red">DETAILS</span>
           </h1>
         </motion.div>
@@ -292,12 +292,12 @@ export default function Checkout() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white comic-border p-8 md:p-12 shadow-xl"
+          className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 md:p-12 shadow-xl text-brand-black dark:text-zinc-100"
         >
           <form onSubmit={handleSubmit} className="space-y-8 text-left">
             {/* Email Address */}
             <div className="space-y-2">
-              <label className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+              <label className="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400 flex items-center gap-2">
                 <Mail size={14} /> Email Address
               </label>
               <input 
@@ -309,21 +309,21 @@ export default function Checkout() {
                 disabled={!!user}
               />
               {errors.email && <p className="text-brand-red text-[10px] font-black uppercase mt-1">{errors.email}</p>}
-              {user && <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Linked to your registered account.</p>}
+              {user && <p className="text-[10px] text-gray-400 dark:text-zinc-500 font-bold uppercase tracking-wider">Linked to your registered account.</p>}
             </div>
 
             {user ? (
               /* Logged In User Saved Address Section */
               <div className="space-y-6">
-                <div className="flex items-center justify-between border-b-2 border-brand-black pb-2">
-                  <h3 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
+                <div className="flex items-center justify-between border-b-2 border-brand-black dark:border-zinc-700 pb-2">
+                  <h3 className="text-xl font-black uppercase tracking-tight flex items-center gap-2 text-brand-black dark:text-zinc-100">
                     <MapPin className="text-brand-red animate-pulse" size={20} /> Shipping Address
                   </h3>
                   {addresses.length > 0 && (
                     <button
                       type="button"
                       onClick={() => navigate('/account')}
-                      className="text-xs font-black uppercase tracking-widest text-brand-black hover:text-brand-red transition-colors underline"
+                      className="text-xs font-black uppercase tracking-widest text-brand-black dark:text-zinc-100 hover:text-brand-red transition-colors underline"
                     >
                       Manage All Addresses
                     </button>
@@ -333,14 +333,14 @@ export default function Checkout() {
                 {loadingAddresses && !hasLoadedAddresses ? (
                   <div className="py-6 flex flex-col items-center justify-center gap-2">
                     <Loader2 className="animate-spin text-brand-red" size={24} />
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Loading delivery details...</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Loading delivery details...</span>
                   </div>
                 ) : addresses.length === 0 ? (
                   /* No Saved Address Prompt */
-                  <div className="border-2 border-dashed border-brand-red bg-red-50/50 p-8 text-center comic-border">
+                  <div className="border-2 border-dashed border-brand-red bg-red-50/50 dark:bg-red-950/30 p-8 text-center comic-border">
                     <AlertCircle className="mx-auto text-brand-red mb-3" size={36} />
-                    <p className="font-black text-lg text-brand-black uppercase tracking-wide">No Saved Delivery Address Found</p>
-                    <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest mb-6">You need a saved address to complete your order.</p>
+                    <p className="font-black text-lg text-brand-black dark:text-zinc-100 uppercase tracking-wide">No Saved Delivery Address Found</p>
+                    <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1 uppercase tracking-widest mb-6">You need a saved address to complete your order.</p>
                     <button
                       type="button"
                       onClick={handleOpenAddModal}
@@ -352,15 +352,15 @@ export default function Checkout() {
                 ) : (
                   /* Default Address Display */
                   <div className="space-y-4">
-                    <div className={`border-2 border-brand-black p-6 bg-gray-50 relative ${
-                      isAddressIncomplete ? 'border-brand-red bg-red-50/20' : ''
+                    <div className={`border-2 border-brand-black dark:border-zinc-700 p-6 bg-gray-50 dark:bg-zinc-800/50 relative ${
+                      isAddressIncomplete ? 'border-brand-red bg-red-50/20 dark:bg-red-950/20' : ''
                     }`}>
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <span className="inline-flex items-center bg-brand-black text-white text-[9px] font-black uppercase px-2 py-0.5 tracking-wider">
+                          <span className="inline-flex items-center bg-brand-black dark:bg-zinc-900 text-white dark:text-zinc-100 text-[9px] font-black uppercase px-2 py-0.5 tracking-wider comic-border border-white/20">
                             {defaultAddress?.address_type}
                           </span>
-                          <span className="ml-2 text-[10px] font-black text-gray-400 uppercase tracking-wide">Default Address</span>
+                          <span className="ml-2 text-[10px] font-black text-gray-400 dark:text-zinc-400 uppercase tracking-wide">Default Address</span>
                         </div>
                         <button
                           type="button"
@@ -372,33 +372,33 @@ export default function Checkout() {
                       </div>
 
                       <div className="space-y-1">
-                        <p className="font-black text-lg uppercase">{defaultAddress?.recipient_name}</p>
-                        <p className="text-xs font-bold text-gray-500 flex items-center gap-1">
+                        <p className="font-black text-lg uppercase text-brand-black dark:text-zinc-100">{defaultAddress?.recipient_name}</p>
+                        <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 flex items-center gap-1">
                           <Phone size={12} className="text-brand-red" /> {defaultAddress?.phone}
                         </p>
                         
-                        <div className="text-sm font-semibold text-brand-black pt-2 space-y-0.5 leading-snug">
+                        <div className="text-sm font-semibold text-brand-black dark:text-zinc-200 pt-2 space-y-0.5 leading-snug">
                           <p>{defaultAddress?.house}</p>
                           {defaultAddress?.street && <p>{defaultAddress?.street}</p>}
                           {defaultAddress?.landmark && (
-                            <p className="text-xs text-gray-400 italic font-medium">Landmark: {defaultAddress?.landmark}</p>
+                            <p className="text-xs text-gray-400 dark:text-zinc-400 italic font-medium">Landmark: {defaultAddress?.landmark}</p>
                           )}
                           <p>
                             {defaultAddress?.city && `${defaultAddress?.city}, `}
                             {defaultAddress?.state && `${defaultAddress?.state} `}
                             {defaultAddress?.pincode && `- ${defaultAddress?.pincode}`}
                           </p>
-                          <p className="text-xs font-black uppercase tracking-wider text-gray-400 mt-1">{defaultAddress?.country}</p>
+                          <p className="text-xs font-black uppercase tracking-wider text-gray-400 dark:text-zinc-400 mt-1">{defaultAddress?.country}</p>
                         </div>
                       </div>
 
                       {/* Incomplete Warning */}
                       {isAddressIncomplete && (
-                        <div className="mt-4 text-[10px] font-black text-brand-red bg-red-50 border border-brand-red/20 p-4 flex items-start gap-2.5 uppercase tracking-wide">
+                        <div className="mt-4 text-[10px] font-black text-brand-red bg-red-50 dark:bg-red-950/40 border border-brand-red/20 p-4 flex items-start gap-2.5 uppercase tracking-wide">
                           <AlertCircle size={16} className="shrink-0 mt-0.5 animate-bounce" />
                           <div>
                             <p className="font-black">Incomplete Shipping Address</p>
-                            <p className="text-[9px] font-medium text-gray-500 normal-case mt-0.5">Please add your street, city, state, and pincode before continuing.</p>
+                            <p className="text-[9px] font-medium text-gray-500 dark:text-zinc-400 normal-case mt-0.5">Please add your street, city, state, and pincode before continuing.</p>
                             <button
                               type="button"
                               onClick={handleOpenEditModal}
@@ -426,7 +426,7 @@ export default function Checkout() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Full Name */}
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400 flex items-center gap-2">
                       <User size={14} /> Full Name
                     </label>
                     <input 
@@ -441,7 +441,7 @@ export default function Checkout() {
 
                   {/* Contact Number */}
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400 flex items-center gap-2">
                       <Phone size={14} /> Contact Number
                     </label>
                     <input 
@@ -456,7 +456,7 @@ export default function Checkout() {
 
                   {/* Nearest Landmark */}
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400 flex items-center gap-2">
                       <Landmark size={14} /> Nearest Landmark (Optional)
                     </label>
                     <input 
@@ -471,7 +471,7 @@ export default function Checkout() {
 
                 {/* Address */}
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                  <label className="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400 flex items-center gap-2">
                     <MapPin size={14} /> Full Shipping Address
                   </label>
                   <textarea 
@@ -490,10 +490,10 @@ export default function Checkout() {
               <button 
                 type="submit"
                 disabled={user && (addresses.length === 0 || isAddressIncomplete)}
-                className={`w-full py-5 text-white font-display text-2xl uppercase tracking-widest comic-border border-white transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none ${
+                className={`w-full py-5 text-white font-display text-2xl uppercase tracking-widest comic-border border-white dark:border-zinc-700 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-none ${
                   user && (addresses.length === 0 || isAddressIncomplete)
-                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed grayscale shadow-none'
-                    : 'bg-brand-black hover:bg-brand-red cursor-pointer'
+                    ? 'bg-gray-800 dark:bg-zinc-800 text-gray-500 dark:text-zinc-600 cursor-not-allowed grayscale shadow-none'
+                    : 'bg-brand-black dark:bg-zinc-900 hover:bg-brand-red dark:hover:bg-brand-red cursor-pointer'
                 }`}
               >
                 Submit Details <Check size={24} />
@@ -518,7 +518,7 @@ export default function Checkout() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-brand-white comic-border p-6 md:p-8 max-w-2xl w-full shadow-2xl z-10 text-left my-8"
+              className="relative bg-brand-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 md:p-8 max-w-2xl w-full shadow-2xl z-10 text-left my-8 text-brand-black dark:text-zinc-100"
             >
               <button 
                 onClick={() => setShowAddressModal(false)}
@@ -528,12 +528,12 @@ export default function Checkout() {
                 <X size={18} />
               </button>
 
-              <h3 className="text-3xl font-black uppercase tracking-tight mb-6">
+              <h3 className="text-3xl font-black uppercase tracking-tight mb-6 text-brand-black dark:text-zinc-100">
                 {editingAddress ? 'Complete Address Details' : 'Add Shipping Address'}
               </h3>
 
               {addressApiError && (
-                <div className="mb-4 p-3 bg-red-50 border-l-4 border-brand-red text-xs font-semibold text-brand-red">
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 border-l-4 border-brand-red text-xs font-semibold text-brand-red">
                   {addressApiError}
                 </div>
               )}
@@ -542,7 +542,7 @@ export default function Checkout() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Recipient Name */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Recipient Name *
                     </label>
                     <input 
@@ -560,7 +560,7 @@ export default function Checkout() {
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Contact Number *
                     </label>
                     <input 
@@ -579,7 +579,7 @@ export default function Checkout() {
 
                 {/* House */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                     Flat / House No. / Building *
                   </label>
                   <input 
@@ -597,7 +597,7 @@ export default function Checkout() {
 
                 {/* Street */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                     Street Address / Area *
                   </label>
                   <input 
@@ -615,18 +615,18 @@ export default function Checkout() {
 
                 {/* Landmark */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                     Nearest Landmark (Optional)
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Landmark size={14} className="text-gray-400" />
+                      <Landmark size={14} className="text-gray-400 dark:text-zinc-500" />
                     </div>
                     <input 
                       type="text"
                       value={addressForm.landmark}
                       onChange={(e) => setAddressForm({...addressForm, landmark: e.target.value})}
-                      className="block w-full pl-8 pr-3 py-3 border-2 border-brand-black bg-white focus:outline-none focus:ring-0 focus:border-brand-red transition-colors"
+                      className="block w-full pl-8 pr-3 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 focus:border-brand-red transition-colors"
                       placeholder="e.g. Near Central Metro"
                       disabled={savingAddress}
                     />
@@ -636,7 +636,7 @@ export default function Checkout() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* City */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       City *
                     </label>
                     <input 
@@ -654,7 +654,7 @@ export default function Checkout() {
 
                   {/* State */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       State *
                     </label>
                     <input 
@@ -674,7 +674,7 @@ export default function Checkout() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Pincode */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Pincode *
                     </label>
                     <input 
@@ -692,7 +692,7 @@ export default function Checkout() {
 
                   {/* Country */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Country *
                     </label>
                     <input 
@@ -711,7 +711,7 @@ export default function Checkout() {
 
                 {/* Address Type Selection */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-2">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-2">
                     Address Type *
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -722,8 +722,8 @@ export default function Checkout() {
                         onClick={() => setAddressForm({...addressForm, addressType: type})}
                         className={`py-3 font-black uppercase text-xs border-2 transition-all flex items-center justify-center gap-1.5 ${
                           addressForm.addressType === type
-                            ? 'bg-brand-black border-brand-black text-white'
-                            : 'bg-white border-gray-200 text-gray-400 hover:border-brand-red'
+                            ? 'bg-brand-black dark:bg-brand-red border-brand-black dark:border-brand-red text-white'
+                            : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:border-brand-red'
                         }`}
                         disabled={savingAddress}
                       >
@@ -737,19 +737,19 @@ export default function Checkout() {
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="flex gap-4 pt-6 border-t border-gray-100">
+                <div className="flex gap-4 pt-6 border-t border-gray-100 dark:border-zinc-800">
                   <button 
                     type="button"
                     onClick={() => setShowAddressModal(false)}
                     disabled={savingAddress}
-                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white text-brand-black hover:bg-gray-100 transition-colors comic-border border-brand-black disabled:opacity-50"
+                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors comic-border border-brand-black dark:border-zinc-700 disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit"
                     disabled={savingAddress}
-                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black text-white hover:bg-brand-red transition-colors comic-border disabled:opacity-50 flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red transition-colors comic-border border-white dark:border-zinc-700 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                   >
                     {savingAddress ? <Loader2 className="animate-spin" size={18} /> : 'Save Address'}
                   </button>
@@ -775,26 +775,26 @@ export default function Checkout() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white comic-border p-8 max-w-md w-full shadow-2xl z-10 text-center"
+              className="relative bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 max-w-md w-full shadow-2xl z-10 text-center text-brand-black dark:text-zinc-100"
             >
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertCircle size={32} className="text-blue-600" />
+              <div className="bg-blue-100 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle size={32} className="text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-3xl font-black uppercase tracking-tight mb-4">Verify Details</h3>
-              <p className="text-gray-600 font-medium mb-8 text-lg">
+              <h3 className="text-3xl font-black uppercase tracking-tight mb-4 text-brand-black dark:text-zinc-100">Verify Details</h3>
+              <p className="text-gray-600 dark:text-zinc-300 font-medium mb-8 text-lg">
                 Kindly verify the details that you provided are correct.
               </p>
               <div className="flex gap-4">
                 <button 
                   onClick={() => setShowConfirmModal(false)}
-                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white text-brand-black hover:bg-gray-100 transition-colors comic-border border-brand-black"
+                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors comic-border border-brand-black dark:border-zinc-700"
                 >
                   Cancel
                 </button>
                 <button 
                   autoFocus
                   onClick={handleConfirm}
-                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black text-white hover:bg-brand-red transition-colors comic-border focus:outline-none focus:ring-4 focus:ring-brand-red/50"
+                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black dark:bg-brand-red text-white hover:bg-brand-red dark:hover:bg-red-600 transition-colors comic-border border-brand-black dark:border-zinc-700 focus:outline-none focus:ring-4 focus:ring-brand-red/50"
                 >
                   Confirm
                 </button>

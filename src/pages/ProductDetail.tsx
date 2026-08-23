@@ -96,10 +96,10 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-brand-white flex items-center justify-center pt-32 pb-24">
+      <div className="min-h-screen bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 flex items-center justify-center pt-32 pb-24">
         <div className="text-center space-y-4">
           <Loader2 className="animate-spin text-brand-red w-12 h-12 mx-auto" />
-          <p className="text-xs font-black uppercase tracking-widest text-gray-500">Retrieving poster details...</p>
+          <p className="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400">Retrieving poster details...</p>
         </div>
       </div>
     );
@@ -107,28 +107,28 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-brand-white flex items-center justify-center p-6 pt-32 pb-24">
-        <div className="max-w-md w-full bg-white comic-border p-10 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center space-y-8 relative overflow-hidden">
+      <div className="min-h-screen bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 flex items-center justify-center p-6 pt-32 pb-24">
+        <div className="max-w-md w-full bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-10 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center space-y-8 relative overflow-hidden">
           <div className="absolute top-2 right-[-24px] bg-brand-red text-white text-[8px] font-black uppercase tracking-wider px-6 py-1 rotate-45">
             404
           </div>
           
-          <div className="w-20 h-20 bg-red-50 flex items-center justify-center mx-auto comic-border border-brand-red rotate-3 hover:rotate-0 transition-transform duration-300">
+          <div className="w-20 h-20 bg-red-50 dark:bg-zinc-800 flex items-center justify-center mx-auto comic-border border-brand-red rotate-3 hover:rotate-0 transition-transform duration-300">
             <Sparkles size={40} className="text-brand-red animate-pulse" />
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-4xl font-black uppercase tracking-tighter italic leading-none">
+            <h1 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-brand-black dark:text-zinc-100">
               POSTER <span className="text-brand-red">NOT FOUND</span>
             </h1>
-            <p className="text-gray-500 font-bold uppercase tracking-wider text-xs leading-relaxed">
+            <p className="text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-xs leading-relaxed">
               Looks like this poster escaped the realm or does not exist.
             </p>
           </div>
 
           <div className="flex flex-col gap-4 pt-2">
             <Link to="/collections" className="w-full">
-              <span className="w-full py-4 bg-brand-black text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 comic-border border-white hover:bg-brand-red transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none inline-flex">
+              <span className="w-full py-4 bg-brand-black dark:bg-brand-red text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 comic-border border-white hover:bg-brand-red transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none inline-flex">
                 <Compass size={16} /> Browse Collections
               </span>
             </Link>
@@ -141,12 +141,12 @@ export default function ProductDetail() {
   const isBundle = product.genre?.toLowerCase() === 'bundle';
 
   return (
-    <div className="bg-brand-white pt-32 pb-24 min-h-screen">
+    <div className="bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 pt-32 pb-24 min-h-screen">
       <SEO metadata={getProductMetadata(product)} />
       <StructuredData schema={getProductSchema(product)} />
       <StructuredData schema={getBreadcrumbSchema(breadcrumbs)} />
       <div className="max-w-[1280px] w-full mx-auto px-8 md:px-12">
-        <Link to="/collections" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-brand-black hover:text-brand-red mb-8 transition-colors">
+        <Link to="/collections" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-brand-black dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red mb-8 transition-colors">
           <ChevronLeft size={16} /> Back to Collections
         </Link>
         <div className="w-full flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">

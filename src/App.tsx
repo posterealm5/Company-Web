@@ -55,6 +55,7 @@ function ScrollToTop() {
   return null;
 }
 
+import { ThemeProvider } from './context/ThemeContext';
 import { HelmetProvider } from 'react-helmet-async';
 
 export default function App() {
@@ -62,15 +63,17 @@ export default function App() {
     <HelmetProvider>
       <ErrorBoundary>
         <Router>
-          <NotificationProvider>
-            <AuthProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <AppContent />
-                </WishlistProvider>
-              </CartProvider>
-            </AuthProvider>
-          </NotificationProvider>
+          <ThemeProvider>
+            <NotificationProvider>
+              <AuthProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    <AppContent />
+                  </WishlistProvider>
+                </CartProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </ThemeProvider>
         </Router>
       </ErrorBoundary>
     </HelmetProvider>

@@ -271,65 +271,65 @@ export default function Account() {
     }
   };
 
-  const inputClasses = (name: string) => `block w-full px-4 py-3 border-2 border-brand-black bg-white focus:outline-none focus:ring-0 focus:border-brand-red transition-colors ${
+  const inputClasses = (name: string) => `block w-full px-4 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 focus:border-brand-red transition-colors ${
     addressErrors[name] ? 'border-brand-red' : ''
   }`;
 
   return (
-    <div className="pt-32 pb-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-32 pb-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 min-h-screen">
       <SEO metadata={getNonIndexableMetadata('My Account', '/account')} />
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={() => navigate(-1)}
-          className="p-2 border-2 border-brand-black hover:bg-gray-100 transition-colors bg-white focus:outline-none flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+          className="p-2 border-2 border-brand-black dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors bg-white dark:bg-zinc-800 focus:outline-none flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
           aria-label="Go back"
         >
-          <ArrowLeft size={24} className="text-brand-black" />
+          <ArrowLeft size={24} className="text-brand-black dark:text-zinc-100" />
         </button>
-        <h1 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-wider">
+        <h1 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-wider text-brand-black dark:text-zinc-100">
           My Account
         </h1>
       </div>
 
       <div className="space-y-12">
         {/* Profile Card */}
-        <div className="bg-brand-white border-2 border-brand-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 sm:p-10 text-left">
-          <h2 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-2 pb-2 border-b-2 border-gray-100">
+        <div className="bg-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] p-6 sm:p-10 text-left text-brand-black dark:text-zinc-100">
+          <h2 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-2 pb-2 border-b-2 border-gray-100 dark:border-zinc-800 text-brand-black dark:text-zinc-100">
             <User className="text-brand-red" size={24} /> Profile Information
           </h2>
           
           {errorProfile && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-brand-red">
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/40 border-l-4 border-brand-red">
               <p className="text-sm text-brand-red font-medium">{errorProfile}</p>
             </div>
           )}
 
           <form onSubmit={handleSaveProfile} className="space-y-6">
             <div>
-              <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2">
+              <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-100 mb-2">
                 Email Address
               </label>
-              <div className="block w-full px-4 py-3 border-2 border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed font-bold">
+              <div className="block w-full px-4 py-3 border-2 border-gray-300 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 cursor-not-allowed font-bold">
                 {user?.email}
               </div>
-              <p className="mt-1 text-xs text-gray-500 font-medium">Email cannot be changed.</p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400 font-medium">Email cannot be changed.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2">
+                <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-100 mb-2">
                   Full Name
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User size={18} className="text-gray-400" />
+                    <User size={18} className="text-gray-400 dark:text-zinc-500" />
                   </div>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black bg-white focus:outline-none focus:ring-0 focus:border-brand-red transition-colors font-bold"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 focus:outline-none focus:ring-0 focus:border-brand-red transition-colors font-bold"
                     placeholder="John Doe"
                     required
                   />
@@ -337,18 +337,18 @@ export default function Account() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2">
+                <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-100 mb-2">
                   Contact Number
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone size={18} className="text-gray-400" />
+                    <Phone size={18} className="text-gray-400 dark:text-zinc-500" />
                   </div>
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black bg-white focus:outline-none focus:ring-0 focus:border-brand-red transition-colors font-bold"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 focus:outline-none focus:ring-0 focus:border-brand-red transition-colors font-bold"
                     placeholder="+91 99999 99999"
                   />
                 </div>
@@ -359,14 +359,15 @@ export default function Account() {
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="bg-brand-red text-white font-bold uppercase tracking-wider px-8 py-4 hover:bg-red-700 transition-colors flex items-center gap-2 disabled:opacity-70 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red font-bold uppercase tracking-widest text-xs comic-border shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50"
               >
-                {savingProfile ? <Loader2 className="animate-spin" size={20} /> : 'Save Changes'}
+                {savingProfile ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
+                Save Changes
               </button>
               
               {successProfile && (
-                <span className="flex items-center gap-2 text-green-600 font-bold text-sm bg-green-50 px-4 py-2 border border-green-200">
-                  <CheckCircle size={18} /> Saved successfully
+                <span className="text-xs font-bold uppercase tracking-wider text-green-600 dark:text-green-400 flex items-center gap-1">
+                  <Check size={14} /> Profile Saved Successfully
                 </span>
               )}
             </div>
@@ -374,14 +375,14 @@ export default function Account() {
         </div>
 
         {/* Addresses Card */}
-        <div className="bg-brand-white border-2 border-brand-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 sm:p-10 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-2 border-b-2 border-gray-100">
-            <h2 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
+        <div className="bg-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] p-6 sm:p-10 text-left text-brand-black dark:text-zinc-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-2 border-b-2 border-gray-100 dark:border-zinc-800">
+            <h2 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2 text-brand-black dark:text-zinc-100">
               <MapPin className="text-brand-red" size={24} /> Saved Addresses
             </h2>
             <button
               onClick={handleOpenAddModal}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-black text-white hover:bg-brand-red font-bold uppercase tracking-widest text-xs comic-border shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red font-bold uppercase tracking-widest text-xs comic-border shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
             >
               <Plus size={14} /> Add New Address
             </button>
@@ -390,13 +391,13 @@ export default function Account() {
           {loadingAddresses && !hasLoadedAddresses ? (
             <div className="py-12 flex flex-col items-center justify-center gap-2">
               <Loader2 className="animate-spin text-brand-red" size={32} />
-              <p className="text-sm font-bold uppercase tracking-wider text-gray-400">Loading your realms...</p>
+              <p className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500">Loading your realms...</p>
             </div>
           ) : addresses.length === 0 ? (
-            <div className="py-12 border-2 border-dashed border-gray-300 bg-gray-50 text-center p-8">
-              <MapPin className="mx-auto text-gray-300 mb-4" size={48} />
-              <p className="font-bold text-lg text-gray-500 uppercase tracking-wide">No Saved Addresses Found</p>
-              <p className="text-xs text-gray-400 mt-1 uppercase tracking-widest">Add a delivery address to complete your checkout faster.</p>
+            <div className="py-12 border-2 border-dashed border-gray-300 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50 text-center p-8">
+              <MapPin className="mx-auto text-gray-300 dark:text-zinc-600 mb-4" size={48} />
+              <p className="font-bold text-lg text-gray-500 dark:text-zinc-400 uppercase tracking-wide">No Saved Addresses Found</p>
+              <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1 uppercase tracking-widest">Add a delivery address to complete your checkout faster.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -420,20 +421,20 @@ export default function Account() {
                           }
                         : undefined
                     }
-                    className={`bg-white border-2 border-brand-black p-6 flex flex-col justify-between transition-all duration-200 ease-in-out relative select-none ${
+                    className={`bg-white dark:bg-zinc-800 border-2 border-brand-black dark:border-zinc-700 p-6 flex flex-col justify-between transition-all duration-200 ease-in-out relative select-none ${
                       isUpdating
-                        ? 'border-brand-black opacity-80 pointer-events-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                        ? 'border-brand-black dark:border-zinc-600 opacity-80 pointer-events-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                         : addr.is_default 
                           ? 'border-[3px] border-brand-red shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-[6px_6px_0px_0px_rgba(230,57,70,1)]' 
                           : isSelectable
-                            ? 'cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2'
-                            : 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                            ? 'cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.3)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2'
+                            : 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.3)]'
                     }`}
                   >
                     <div>
                       {/* Badge / Type Header */}
                       <div className="flex items-center justify-between mb-4">
-                        <span className="inline-flex items-center gap-1 bg-gray-100 border border-brand-black text-brand-black text-[10px] font-black uppercase px-2.5 py-1 tracking-wider">
+                        <span className="inline-flex items-center gap-1 bg-gray-100 dark:bg-zinc-700 border border-brand-black dark:border-zinc-600 text-brand-black dark:text-zinc-100 text-[10px] font-black uppercase px-2.5 py-1 tracking-wider">
                           {addr.address_type === 'Home' && <Home size={10} />}
                           {addr.address_type === 'Work' && <Briefcase size={10} />}
                           {addr.address_type === 'Other' && <Globe size={10} />}
@@ -441,11 +442,11 @@ export default function Account() {
                         </span>
                         
                         {isUpdating ? (
-                          <span className="bg-brand-black text-white text-[10px] font-black uppercase px-2.5 py-1 tracking-widest comic-border border-white flex items-center gap-1">
+                          <span className="bg-brand-black dark:bg-zinc-900 text-white text-[10px] font-black uppercase px-2.5 py-1 tracking-widest comic-border border-white/20 flex items-center gap-1">
                             <Loader2 className="animate-spin" size={10} /> Updating...
                           </span>
                         ) : addr.is_default && (
-                          <span className="bg-brand-red text-white text-[10px] font-black uppercase px-2.5 py-1 tracking-widest comic-border border-white">
+                          <span className="bg-brand-red text-white text-[10px] font-black uppercase px-2.5 py-1 tracking-widest comic-border border-white/20">
                             Default
                           </span>
                         )}
@@ -453,32 +454,32 @@ export default function Account() {
 
                       {/* Content */}
                       <div className="space-y-1 mb-6">
-                        <p className="font-black text-lg tracking-tight uppercase">{addr.recipient_name}</p>
-                        <p className="text-xs font-bold text-gray-500 flex items-center gap-1">
+                        <p className="font-black text-lg tracking-tight uppercase text-brand-black dark:text-zinc-100">{addr.recipient_name}</p>
+                        <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 flex items-center gap-1">
                           <Phone size={12} className="text-brand-red" /> {addr.phone}
                         </p>
                         
-                        <div className="text-sm font-semibold text-brand-black pt-2 space-y-0.5 leading-snug">
+                        <div className="text-sm font-semibold text-brand-black dark:text-zinc-100 pt-2 space-y-0.5 leading-snug">
                           <p>{addr.house}</p>
                           {addr.street && <p>{addr.street}</p>}
                           {addr.landmark && (
-                            <p className="text-xs text-gray-400 italic font-medium">Landmark: {addr.landmark}</p>
+                            <p className="text-xs text-gray-400 dark:text-zinc-400 italic font-medium">Landmark: {addr.landmark}</p>
                           )}
                           <p>
                             {addr.city && `${addr.city}, `}
                             {addr.state && `${addr.state} `}
                             {addr.pincode && `- ${addr.pincode}`}
                           </p>
-                          <p className="text-xs font-black uppercase tracking-wider text-gray-400 mt-1">{addr.country}</p>
+                          <p className="text-xs font-black uppercase tracking-wider text-gray-400 dark:text-zinc-400 mt-1">{addr.country}</p>
                         </div>
 
                         {/* Legacy Incomplete Warning */}
                         {isAddressIncomplete && (
-                          <div className="mt-4 text-[10px] font-black text-brand-red bg-red-50 border border-brand-red/20 p-2.5 flex items-start gap-1.5 uppercase tracking-wide">
+                          <div className="mt-4 text-[10px] font-black text-brand-red bg-red-50 dark:bg-red-950/40 border border-brand-red/20 p-2.5 flex items-start gap-1.5 uppercase tracking-wide">
                             <AlertTriangle size={14} className="shrink-0 mt-0.5" />
                             <div>
                               <p>Incomplete Details</p>
-                              <p className="text-[9px] font-medium text-gray-500 normal-case mt-0.5">Please edit to specify your street, city, state, and pincode.</p>
+                              <p className="text-[9px] font-medium text-gray-500 dark:text-zinc-400 normal-case mt-0.5">Please edit to specify your street, city, state, and pincode.</p>
                             </div>
                           </div>
                         )}
@@ -486,7 +487,7 @@ export default function Account() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-4 mt-auto">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-zinc-700 gap-4 mt-auto">
                       <div className="flex items-center gap-4">
                         <button
                           onClick={(e) => {
@@ -494,7 +495,7 @@ export default function Account() {
                             handleOpenEditModal(addr);
                           }}
                           disabled={isUpdating}
-                          className="p-3 text-gray-500 hover:text-brand-black hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none transition-colors border border-gray-200 rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-black focus:ring-offset-2"
+                          className="p-3 text-gray-500 dark:text-zinc-400 hover:text-brand-black dark:hover:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700 disabled:opacity-50 disabled:pointer-events-none transition-colors border border-gray-200 dark:border-zinc-700 rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-black dark:focus:ring-zinc-400 focus:ring-offset-2"
                           title="Edit Address"
                           aria-label={`Edit address for ${addr.recipient_name}`}
                         >
@@ -506,7 +507,7 @@ export default function Account() {
                             handleDeleteTrigger(addr);
                           }}
                           disabled={isUpdating}
-                          className="p-3 text-gray-500 hover:text-brand-red hover:bg-red-50 disabled:opacity-50 disabled:pointer-events-none transition-colors border border-gray-200 rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2"
+                          className="p-3 text-gray-500 dark:text-zinc-400 hover:text-brand-red hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-50 disabled:pointer-events-none transition-colors border border-gray-200 dark:border-zinc-700 rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2"
                           title="Delete Address"
                           aria-label={`Delete address for ${addr.recipient_name}`}
                         >
@@ -537,7 +538,7 @@ export default function Account() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-brand-white comic-border p-6 md:p-8 max-w-2xl w-full shadow-2xl z-10 text-left my-8"
+              className="relative bg-brand-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 md:p-8 max-w-2xl w-full shadow-2xl z-10 text-left my-8 text-brand-black dark:text-zinc-100"
             >
               <button 
                 onClick={() => setShowAddressModal(false)}
@@ -547,12 +548,12 @@ export default function Account() {
                 <X size={18} />
               </button>
 
-              <h3 className="text-3xl font-black uppercase tracking-tight mb-6">
+              <h3 className="text-3xl font-black uppercase tracking-tight mb-6 text-brand-black dark:text-zinc-100">
                 {editingAddress ? 'Edit Address' : 'Add New Address'}
               </h3>
 
               {addressApiError && (
-                <div className="mb-4 p-3 bg-red-50 border-l-4 border-brand-red text-xs font-semibold text-brand-red">
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border-l-4 border-brand-red text-xs font-semibold text-brand-red">
                   {addressApiError}
                 </div>
               )}
@@ -561,7 +562,7 @@ export default function Account() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Recipient Name */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Recipient Name *
                     </label>
                     <input 
@@ -579,7 +580,7 @@ export default function Account() {
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Contact Number *
                     </label>
                     <input 
@@ -598,7 +599,7 @@ export default function Account() {
 
                 {/* House */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                     Flat / House No. / Building *
                   </label>
                   <input 
@@ -616,7 +617,7 @@ export default function Account() {
 
                 {/* Street */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                     Street Address / Area *
                   </label>
                   <input 
@@ -634,18 +635,18 @@ export default function Account() {
 
                 {/* Landmark */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                     Nearest Landmark (Optional)
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Landmark size={14} className="text-gray-400" />
+                      <Landmark size={14} className="text-gray-400 dark:text-zinc-500" />
                     </div>
                     <input 
                       type="text"
                       value={addressForm.landmark}
                       onChange={(e) => setAddressForm({...addressForm, landmark: e.target.value})}
-                      className="block w-full pl-8 pr-3 py-3 border-2 border-brand-black bg-white focus:outline-none focus:ring-0 focus:border-brand-red transition-colors"
+                      className="block w-full pl-8 pr-3 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 focus:border-brand-red transition-colors"
                       placeholder="e.g. Near Central Metro"
                       disabled={savingAddress}
                     />
@@ -655,7 +656,7 @@ export default function Account() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* City */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       City *
                     </label>
                     <input 
@@ -673,7 +674,7 @@ export default function Account() {
 
                   {/* State */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       State *
                     </label>
                     <input 
@@ -693,7 +694,7 @@ export default function Account() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Pincode */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Pincode *
                     </label>
                     <input 
@@ -711,7 +712,7 @@ export default function Account() {
 
                   {/* Country */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-1">
+                    <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">
                       Country *
                     </label>
                     <input 
@@ -730,7 +731,7 @@ export default function Account() {
 
                 {/* Address Type Selection */}
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 mb-2">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-2">
                     Address Type *
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -741,8 +742,8 @@ export default function Account() {
                         onClick={() => setAddressForm({...addressForm, addressType: type})}
                         className={`py-3 font-black uppercase text-xs border-2 transition-all flex items-center justify-center gap-1.5 ${
                           addressForm.addressType === type
-                            ? 'bg-brand-black border-brand-black text-white'
-                            : 'bg-white border-gray-200 text-gray-400 hover:border-brand-red'
+                            ? 'bg-brand-black dark:bg-brand-red border-brand-black dark:border-brand-red text-white'
+                            : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:border-brand-red'
                         }`}
                         disabled={savingAddress}
                       >
@@ -760,38 +761,37 @@ export default function Account() {
                   <button
                     type="button"
                     onClick={() => {
-                      // Do not allow toggling off if this is the only default address
                       if (editingAddress?.is_default) return;
                       setAddressForm({...addressForm, isDefault: !addressForm.isDefault});
                     }}
                     className="flex items-center gap-2 select-none group text-left"
                     disabled={savingAddress || editingAddress?.is_default}
                   >
-                    <div className={`w-6 h-6 border-2 border-brand-black flex items-center justify-center transition-all ${
-                      addressForm.isDefault ? 'bg-brand-red border-brand-black text-white' : 'bg-white border-gray-300'
+                    <div className={`w-6 h-6 border-2 border-brand-black dark:border-zinc-700 flex items-center justify-center transition-all ${
+                      addressForm.isDefault ? 'bg-brand-red border-brand-black dark:border-zinc-700 text-white' : 'bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-700'
                     }`}>
                       {addressForm.isDefault && <Check size={14} strokeWidth={4} />}
                     </div>
-                    <span className="text-xs font-black uppercase tracking-widest text-brand-black group-hover:text-brand-red transition-colors">
+                    <span className="text-xs font-black uppercase tracking-widest text-brand-black dark:text-zinc-100 group-hover:text-brand-red transition-colors">
                       Set as default shipping address
                     </span>
                   </button>
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="flex gap-4 pt-6 border-t border-gray-100">
+                <div className="flex gap-4 pt-6 border-t border-gray-100 dark:border-zinc-800">
                   <button 
                     type="button"
                     onClick={() => setShowAddressModal(false)}
                     disabled={savingAddress}
-                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white text-brand-black hover:bg-gray-100 transition-colors comic-border border-brand-black disabled:opacity-50"
+                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors comic-border border-brand-black dark:border-zinc-700 disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit"
                     disabled={savingAddress}
-                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black text-white hover:bg-brand-red transition-colors comic-border disabled:opacity-50 flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                    className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red transition-colors comic-border border-white dark:border-zinc-700 disabled:opacity-50 flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(230,57,70,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                   >
                     {savingAddress ? <Loader2 className="animate-spin" size={18} /> : 'Save Address'}
                   </button>
@@ -817,13 +817,13 @@ export default function Account() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white comic-border p-8 max-w-md w-full shadow-2xl z-10 text-center"
+              className="relative bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 max-w-md w-full shadow-2xl z-10 text-center text-brand-black dark:text-zinc-100"
             >
-              <div className="bg-red-50 border-2 border-brand-red w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-red rotate-[-3deg]">
+              <div className="bg-red-50 dark:bg-red-950/40 border-2 border-brand-red w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-red rotate-[-3deg]">
                 <Trash2 size={28} />
               </div>
-              <h3 className="text-3xl font-black uppercase tracking-tight mb-2">Delete Address</h3>
-              <p className="text-gray-500 font-medium mb-8 text-sm leading-relaxed">
+              <h3 className="text-3xl font-black uppercase tracking-tight mb-2 text-brand-black dark:text-zinc-100">Delete Address</h3>
+              <p className="text-gray-500 dark:text-zinc-400 font-medium mb-8 text-sm leading-relaxed">
                 Are you sure you want to remove this address? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -832,14 +832,14 @@ export default function Account() {
                     setShowDeleteConfirm(false);
                     setAddressToDelete(null);
                   }}
-                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white text-brand-black hover:bg-gray-100 transition-colors comic-border border-brand-black"
+                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors comic-border border-brand-black dark:border-zinc-700"
                 >
                   Cancel
                 </button>
                 <button 
                   autoFocus
                   onClick={handleDeleteConfirm}
-                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-red text-white hover:bg-brand-black transition-colors comic-border border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-red text-white hover:bg-brand-black dark:hover:bg-red-600 transition-colors comic-border border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
                   Delete
                 </button>

@@ -30,12 +30,12 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
       <div className="w-full">
         <div className="relative w-full">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-            <Lock size={18} className="text-gray-400" />
+            <Lock size={18} className="text-gray-400 dark:text-zinc-500" />
           </div>
           <input
             type={showPassword ? 'text' : 'password'}
             ref={ref}
-            className={`block w-full pl-10 pr-12 py-3 border-2 border-brand-black bg-white focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 transition-all duration-200 text-brand-black font-medium ${className}`}
+            className={`block w-full pl-10 pr-12 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 transition-all duration-200 text-brand-black dark:text-zinc-100 font-medium ${className}`}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
             {...props}
@@ -43,7 +43,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           <button
             type="button"
             onClick={toggleVisibility}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-brand-black focus:outline-none transition-colors z-10 cursor-pointer h-full"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-zinc-500 hover:text-brand-black dark:hover:text-zinc-100 focus:outline-none transition-colors z-10 cursor-pointer h-full"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
             style={{ width: '44px', justifyContent: 'center' }}
           >

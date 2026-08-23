@@ -75,7 +75,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
               height={1333}
               loading="eager"
               fetchPriority="high"
-              className="w-auto h-full max-h-[600px] lg:max-h-[750px] object-contain comic-border border-2 border-brand-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] animate-fade-in"
+              className="w-auto h-full max-h-[600px] lg:max-h-[750px] object-contain comic-border border-2 border-brand-black dark:border-zinc-700 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] dark:shadow-[16px_16px_0px_0px_rgba(230,57,70,0.5)] animate-fade-in"
             />
             <div className="absolute top-4 left-4 bg-brand-red text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest rotate-[-2deg] comic-border border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               {product.genre}
@@ -87,15 +87,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
         <div className="w-full lg:w-[52%] flex flex-col space-y-8 bg-transparent">
           <div className="flex justify-between items-start gap-6">
             <div className="flex-1 space-y-4">
-              <h1 className="text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-none text-brand-black">{getProductDisplayName(product)}</h1>
-              <p className="text-gray-600 font-medium text-base leading-relaxed max-w-xl">{product.description}</p>
+              <h1 className="text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-none text-brand-black dark:text-zinc-100">{getProductDisplayName(product)}</h1>
+              <p className="text-gray-600 dark:text-zinc-300 font-medium text-base leading-relaxed max-w-xl">{product.description}</p>
             </div>
             <div className="flex gap-2 shrink-0">
               <button
                 ref={wishlistBtnRef1}
                 onClick={handleWishlistToggle}
-                className={`p-4 border-2 border-brand-black transition-all active:scale-95 cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none ${
-                  wishlisted ? 'bg-brand-red border-brand-red text-white' : 'bg-white text-brand-black hover:text-brand-red'
+                className={`p-4 border-2 border-brand-black dark:border-zinc-700 transition-all active:scale-95 cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-none ${
+                  wishlisted ? 'bg-brand-red border-brand-red text-white' : 'bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:text-brand-red dark:hover:text-brand-red'
                 }`}
                 aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
               >
@@ -104,7 +104,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
               <button
                 ref={shareBtnRef1}
                 onClick={handleShareClick}
-                className="p-4 bg-white text-brand-black hover:text-brand-red border-2 border-brand-black transition-all active:scale-95 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+                className="p-4 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:text-brand-red dark:hover:text-brand-red border-2 border-brand-black dark:border-zinc-700 transition-all active:scale-95 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-none cursor-pointer"
                 aria-label="Share poster"
               >
                 <Share2 size={20} />
@@ -124,15 +124,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                     <button
                       key={option.id}
                       onClick={() => setSelectedSize(option)}
-                      className={`p-4 border-2 text-left transition-all flex justify-between items-center ${
+                      className={`p-4 border-2 text-left transition-all flex justify-between items-center cursor-pointer ${
                         selectedSize.id === option.id 
-                          ? 'border-brand-black bg-brand-black text-white shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
-                          : 'border-brand-black/20 bg-white hover:border-brand-red hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]'
+                          ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
+                          : 'border-brand-black/20 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                       }`}
                     >
                       <div>
                         <p className="font-black text-sm uppercase">{option.name}</p>
-                        <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                        <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                           {option.postersCount} A5 posters
                         </p>
                       </div>
@@ -146,14 +146,14 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                     <button
                       key={size.id}
                       onClick={() => setSelectedSize(size)}
-                      className={`p-4 border-2 text-left transition-all ${
+                      className={`p-4 border-2 text-left transition-all cursor-pointer ${
                         selectedSize.id === size.id 
-                          ? 'border-brand-black bg-brand-black text-white shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
-                          : 'border-brand-black/20 bg-white hover:border-brand-red hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]'
+                          ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
+                          : 'border-brand-black/20 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                       }`}
                     >
                       <p className="font-black text-sm uppercase">{size.name}</p>
-                      <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                      <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                         {size.dimensions}
                       </p>
                     </button>
@@ -172,15 +172,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   <button
                     key={material.id}
                     onClick={() => setSelectedMaterial(material)}
-                    className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between ${
+                    className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
                       selectedMaterial.id === material.id 
-                        ? 'border-brand-black bg-brand-black text-white shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
-                        : 'border-brand-black/20 bg-white hover:border-brand-red hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]'
+                        ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)]' 
+                        : 'border-brand-black/20 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                     }`}
                   >
                     <div>
                       <p className="font-black text-sm uppercase">{material.name}</p>
-                      <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-300' : 'text-gray-500'}`}>
+                      <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-300' : 'text-gray-500 dark:text-zinc-400'}`}>
                         {material.desc}
                       </p>
                     </div>
@@ -194,9 +194,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             <CustomPosterCTA />
           </div>
 
-          <div className="pt-8 border-t-2 border-brand-black/10 flex items-center justify-between gap-6">
+          <div className="pt-8 border-t-2 border-brand-black/10 dark:border-zinc-800 flex items-center justify-between gap-6">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400 mb-1">Price</p>
               <p className="text-4xl md:text-5xl font-black text-brand-red leading-none">
                 ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
               </p>
@@ -204,7 +204,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             <RippleWrapper delay={2} className="flex-1">
               <button 
                 onClick={handleQuickAdd}
-                className="w-full py-5 bg-brand-black text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)] hover:shadow-none cursor-pointer"
+                className="w-full py-5 bg-brand-black dark:bg-brand-red text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red dark:hover:bg-red-600 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)] hover:shadow-none cursor-pointer"
               >
                 <ShoppingCart size={24} /> Add to Bag
               </button>
@@ -216,9 +216,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
   }
 
   return (
-    <div className="w-full flex flex-col md:flex-row">
+    <div className="w-full flex flex-col md:flex-row bg-brand-white dark:bg-zinc-900 text-brand-black dark:text-zinc-100">
       {/* Product Image Gallery */}
-      <div className="w-full md:w-1/2 bg-gray-100 relative protected-area animate-fade-in" style={{ aspectRatio: '3/4' }}>
+      <div className="w-full md:w-1/2 bg-gray-100 dark:bg-zinc-800 relative protected-area animate-fade-in" style={{ aspectRatio: '3/4' }}>
         <ProtectedImage 
           src={getStorefrontImage(product, 'preview')} 
           alt={product.name} 
@@ -238,15 +238,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
       }`}>
         <div className="mb-8 flex justify-between items-start gap-4">
           <div className="flex-1">
-            <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">{getProductDisplayName(product)}</h2>
-            <p className="text-gray-500 font-medium text-sm leading-relaxed">{product.description}</p>
+            <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 text-brand-black dark:text-zinc-100">{getProductDisplayName(product)}</h2>
+            <p className="text-gray-500 dark:text-zinc-400 font-medium text-sm leading-relaxed">{product.description}</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <button
               ref={wishlistBtnRef2}
               onClick={handleWishlistToggle}
-              className={`p-3 border-2 border-brand-black transition-all active:scale-95 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none ${
-                wishlisted ? 'bg-brand-red border-brand-red text-white' : 'bg-white text-brand-black hover:text-brand-red'
+              className={`p-3 border-2 border-brand-black dark:border-zinc-700 transition-all active:scale-95 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none ${
+                wishlisted ? 'bg-brand-red border-brand-red text-white' : 'bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:text-brand-red dark:hover:text-brand-red'
               }`}
               aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
             >
@@ -255,7 +255,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
             <button
               ref={shareBtnRef2}
               onClick={handleShareClick}
-              className="p-3 bg-white text-brand-black hover:text-brand-red border-2 border-brand-black transition-all active:scale-95 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+              className="p-3 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:text-brand-red dark:hover:text-brand-red border-2 border-brand-black dark:border-zinc-700 transition-all active:scale-95 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
               aria-label="Share poster"
             >
               <Share2 size={18} />
@@ -275,15 +275,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   <button
                     key={option.id}
                     onClick={() => setSelectedSize(option)}
-                    className={`p-3 border-2 text-left transition-all flex justify-between items-center ${
+                    className={`p-3 border-2 text-left transition-all flex justify-between items-center cursor-pointer ${
                       selectedSize.id === option.id 
-                        ? 'border-brand-black bg-brand-black text-white' 
-                        : 'border-gray-200 bg-white hover:border-brand-red'
+                        ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white' 
+                        : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                     }`}
                   >
                     <div>
                       <p className="font-black text-sm uppercase">{option.name}</p>
-                      <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                      <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                         {option.postersCount} A5 posters
                       </p>
                     </div>
@@ -297,14 +297,14 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                   <button
                     key={size.id}
                     onClick={() => setSelectedSize(size)}
-                    className={`p-3 border-2 text-left transition-all ${
+                    className={`p-3 border-2 text-left transition-all cursor-pointer ${
                       selectedSize.id === size.id 
-                        ? 'border-brand-black bg-brand-black text-white' 
-                        : 'border-gray-200 bg-white hover:border-brand-red'
+                        ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white' 
+                        : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                     }`}
                   >
                     <p className="font-black text-sm uppercase">{size.name}</p>
-                    <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                    <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                       {size.dimensions}
                     </p>
                   </button>
@@ -323,15 +323,15 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
                 <button
                   key={material.id}
                   onClick={() => setSelectedMaterial(material)}
-                  className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between ${
+                  className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
                     selectedMaterial.id === material.id 
-                      ? 'border-brand-black bg-brand-black text-white' 
-                      : 'border-gray-200 bg-white hover:border-brand-red'
+                      ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white' 
+                      : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                   }`}
                 >
                   <div>
                     <p className="font-black text-sm uppercase">{material.name}</p>
-                    <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-300' : 'text-gray-500 dark:text-zinc-400'}`}>
                       {material.desc}
                     </p>
                   </div>
@@ -345,9 +345,9 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           <CustomPosterCTA />
         </div>
 
-        <div className="mt-10 pt-8 border-t-2 border-gray-100 flex items-center justify-between gap-6">
+        <div className="mt-10 pt-8 border-t-2 border-gray-100 dark:border-zinc-800 flex items-center justify-between gap-6">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400 mb-1">Price</p>
             <p className="text-4xl font-black text-brand-red leading-none">
               ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
             </p>
@@ -355,7 +355,7 @@ export const ProductDetailContent: React.FC<ProductDetailContentProps> = ({
           <RippleWrapper delay={2} className="flex-1">
             <button 
               onClick={handleQuickAdd}
-              className="w-full py-5 bg-brand-black text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none cursor-pointer"
+              className="w-full py-5 bg-brand-black dark:bg-brand-red text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red dark:hover:bg-red-600 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none cursor-pointer"
             >
               <ShoppingCart size={24} /> Add to Bag
             </button>

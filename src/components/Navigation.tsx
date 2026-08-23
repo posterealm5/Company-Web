@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, ShoppingCart, User, Heart, Mail, Phone, Copy, MessageCircle } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, Heart, Mail, Phone, Copy, MessageCircle, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useTheme } from '../context/ThemeContext';
 
 const AuthModal = React.lazy(() => import('./auth/AuthModal').then(module => ({ default: module.AuthModal })));
 
+export const ThemeToggle: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
 
-
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-brand-black dark:text-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red flex items-center justify-center shrink-0"
+      title={isDark ? 'Enable light mode' : 'Enable dark mode'}
+      aria-label={isDark ? 'Enable light mode' : 'Enable dark mode'}
+    >
+      {isDark ? (
+        <Sun size={24} className="text-yellow-400 hover:text-yellow-300 transition-colors" />
+      ) : (
+        <Moon size={24} className="text-brand-black dark:text-zinc-100 hover:text-brand-red transition-colors" />
+      )}
+    </button>
+  );
+};
 
 export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +46,7 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
   ];
 
   return (
-    <nav className={`fixed left-0 w-full z-50 bg-brand-white border-b-2 border-brand-black transition-all duration-300 ${isShifted ? 'top-10' : 'top-0'}`}>
+    <nav className={`fixed left-0 w-full z-50 bg-brand-white dark:bg-[#0D0D0D] border-b-2 border-brand-black dark:border-zinc-800 transition-all duration-300 ${isShifted ? 'top-10' : 'top-0'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex-shrink-0 flex items-center overflow-hidden h-20">
@@ -37,7 +56,7 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
                 alt="Posterealm Logo" 
                 width={160}
                 height={160}
-                className="w-auto object-contain"
+                className="w-auto object-contain dark:invert transition-all"
                 style={{ height: '160px' }}
               />
             </Link>
@@ -50,7 +69,7 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
                 to={link.path}
                 className={({ isActive }) => 
                   `text-sm font-bold uppercase tracking-widest transition-colors hover:text-brand-red ${
-                    isActive ? 'text-brand-red decoration-2 underline underline-offset-8' : 'text-brand-black'
+                    isActive ? 'text-brand-red decoration-2 underline underline-offset-8' : 'text-brand-black dark:text-zinc-200'
                   }`
                 }
               >
@@ -59,13 +78,16 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Desktop Controls: Account -> Wishlist -> Cart -> Dark Mode */}
+          <div className="hidden md:flex items-center space-x-3">
             <div className="relative">
               <button 
                 onClick={() => user ? setIsProfileDropdownOpen(!isProfileDropdownOpen) : setIsAuthModalOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors focus:outline-none"
+                title="Account"
+                aria-label="Account"
               >
-                <User size={24} className={user ? "text-brand-red" : "text-brand-black"} />
+                <User size={24} className={user ? "text-brand-red" : "text-brand-black dark:text-zinc-100"} />
               </button>
               
               <AnimatePresence>
@@ -74,29 +96,29 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white border-2 border-brand-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] py-2 z-50"
+                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] py-2 z-50"
                   >
                     <Link 
                       to="/account" 
-                      className="block px-4 py-2 text-sm font-bold text-brand-black hover:bg-gray-100 hover:text-brand-red transition-colors uppercase tracking-wider"
+                      className="block px-4 py-2 text-sm font-bold text-brand-black dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-brand-red dark:hover:text-brand-red transition-colors uppercase tracking-wider"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
                       Account
                     </Link>
                     <Link 
                       to="/account/orders" 
-                      className="block px-4 py-2 text-sm font-bold text-brand-black hover:bg-gray-100 hover:text-brand-red transition-colors uppercase tracking-wider"
+                      className="block px-4 py-2 text-sm font-bold text-brand-black dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-brand-red dark:hover:text-brand-red transition-colors uppercase tracking-wider"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
                       Orders
                     </Link>
-                    <div className="border-t border-gray-200 my-1"></div>
+                    <div className="border-t border-gray-200 dark:border-zinc-800 my-1"></div>
                     <button 
                       onClick={() => {
                         signOut();
                         setIsProfileDropdownOpen(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-sm font-bold text-brand-black hover:bg-gray-100 hover:text-brand-red transition-colors uppercase tracking-wider"
+                      className="block w-full text-left px-4 py-2 text-sm font-bold text-brand-black dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-brand-red dark:hover:text-brand-red transition-colors uppercase tracking-wider"
                     >
                       Logout
                     </button>
@@ -105,8 +127,8 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
               </AnimatePresence>
             </div>
 
-            <Link to="/wishlist" className="p-2 hover:bg-gray-100 rounded-full transition-colors relative" title="Wishlist">
-              <Heart size={24} className="text-brand-black" />
+            <Link to="/wishlist" className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors relative text-brand-black dark:text-zinc-100" title="Wishlist" aria-label="Wishlist">
+              <Heart size={24} />
               {wishlistCount > 0 && (
                 <span className="absolute top-0 right-0 bg-brand-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                   {wishlistCount}
@@ -114,21 +136,26 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
               )}
             </Link>
 
-            <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full transition-colors relative">
+            <Link to="/cart" className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors relative text-brand-black dark:text-zinc-100" title="Cart" aria-label="Cart">
               <ShoppingCart size={24} />
               <span className="absolute top-0 right-0 bg-brand-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                 {cartCount}
               </span>
             </Link>
+
+            <ThemeToggle />
           </div>
 
-          <div className="md:hidden flex items-center space-x-2">
+          {/* Mobile Controls: Account -> Wishlist -> Cart -> Dark Mode -> Menu */}
+          <div className="md:hidden flex items-center space-x-1 sm:space-x-2">
             <div className="relative">
               <button 
                 onClick={() => user ? setIsProfileDropdownOpen(!isProfileDropdownOpen) : setIsAuthModalOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors focus:outline-none"
+                title="Account"
+                aria-label="Account"
               >
-                <User size={24} className={user ? "text-brand-red" : "text-brand-black"} />
+                <User size={22} className={user ? "text-brand-red" : "text-brand-black dark:text-zinc-100"} />
               </button>
               
               <AnimatePresence>
@@ -137,29 +164,29 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white border-2 border-brand-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] py-2 z-50"
+                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] py-2 z-50"
                   >
                     <Link 
                       to="/account" 
-                      className="block px-4 py-2 text-sm font-bold text-brand-black hover:bg-gray-100 hover:text-brand-red transition-colors uppercase tracking-wider text-left"
+                      className="block px-4 py-2 text-sm font-bold text-brand-black dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-brand-red dark:hover:text-brand-red transition-colors uppercase tracking-wider text-left"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
                       Account
                     </Link>
                     <Link 
                       to="/account/orders" 
-                      className="block px-4 py-2 text-sm font-bold text-brand-black hover:bg-gray-100 hover:text-brand-red transition-colors uppercase tracking-wider text-left"
+                      className="block px-4 py-2 text-sm font-bold text-brand-black dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-brand-red dark:hover:text-brand-red transition-colors uppercase tracking-wider text-left"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
                       Orders
                     </Link>
-                    <div className="border-t border-gray-200 my-1"></div>
+                    <div className="border-t border-gray-200 dark:border-zinc-800 my-1"></div>
                     <button 
                       onClick={() => {
                         signOut();
                         setIsProfileDropdownOpen(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-sm font-bold text-brand-black hover:bg-gray-100 hover:text-brand-red transition-colors uppercase tracking-wider"
+                      className="block w-full text-left px-4 py-2 text-sm font-bold text-brand-black dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-brand-red dark:hover:text-brand-red transition-colors uppercase tracking-wider"
                     >
                       Logout
                     </button>
@@ -167,8 +194,9 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
                 )}
               </AnimatePresence>
             </div>
-            <Link to="/wishlist" className="p-2 hover:bg-gray-100 rounded-full transition-colors relative" title="Wishlist">
-              <Heart size={24} className="text-brand-black" />
+
+            <Link to="/wishlist" className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors relative text-brand-black dark:text-zinc-100" title="Wishlist" aria-label="Wishlist">
+              <Heart size={22} />
               {wishlistCount > 0 && (
                 <span className="absolute top-0 right-0 bg-brand-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                   {wishlistCount}
@@ -176,17 +204,21 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
               )}
             </Link>
 
-            <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full transition-colors relative">
-              <ShoppingCart size={24} />
+            <Link to="/cart" className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors relative text-brand-black dark:text-zinc-100" title="Cart" aria-label="Cart">
+              <ShoppingCart size={22} />
               <span className="absolute top-0 right-0 bg-brand-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                 {cartCount}
               </span>
             </Link>
+
+            <ThemeToggle />
+
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-brand-black hover:bg-gray-100 focus:outline-none"
+              className="p-2 rounded-md text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
             >
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
+              {isOpen ? <X size={26} /> : <Menu size={26} />}
             </button>
           </div>
         </div>
@@ -198,7 +230,7 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-brand-white border-t border-brand-black"
+            className="md:hidden bg-brand-white dark:bg-[#0D0D0D] border-t border-brand-black dark:border-zinc-800"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
               {navLinks.map((link) => (
@@ -207,8 +239,8 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
                   to={link.path}
                   onClick={() => setIsOpen(false)}
                   className={({ isActive }) => 
-                    `block px-3 py-4 text-xl font-display font-bold uppercase tracking-wider border-b border-gray-100 ${
-                      isActive ? 'text-brand-red' : 'text-brand-black'
+                    `block px-3 py-4 text-xl font-display font-bold uppercase tracking-wider border-b border-gray-100 dark:border-zinc-800 ${
+                      isActive ? 'text-brand-red' : 'text-brand-black dark:text-zinc-200'
                     }`
                   }
                 >
@@ -253,9 +285,9 @@ const XIcon = () => (
 export const Footer = () => {
   const { triggerNotification } = useCart();
   return (
-    <footer className="bg-brand-black text-brand-white pt-16 pb-8">
+    <footer className="bg-brand-black dark:bg-[#070707] text-brand-white pt-16 pb-8 border-t border-transparent dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-12 text-left">
           <div className="col-span-1 sm:col-span-2 md:col-span-4">
             <div className="mb-6 flex items-center overflow-hidden" style={{ height: '80px' }}>
               <img 
@@ -267,7 +299,7 @@ export const Footer = () => {
                 style={{ height: '200px', filter: 'invert(1)' }}
               />
             </div>
-            <p className="text-gray-400 max-w-md">
+            <p className="text-gray-400 dark:text-zinc-400 max-w-md">
               Revolutionizing the way you decorate your walls. From custom designs to 
               rigid board materials, we bring your vision to life with bold aesthetics 
               and premium quality.
@@ -276,33 +308,33 @@ export const Footer = () => {
           
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-bold uppercase mb-6 text-brand-red">Shop</h3>
-            <ul className="space-y-4 text-gray-400">
-              <li><Link to="/customize" className="hover:text-white transition-colors">Custom Designs</Link></li>
-              <li><Link to="/collections" className="hover:text-white transition-colors">All Posters</Link></li>
-              <li><Link to="/collections" className="hover:text-white transition-colors">New Arrivals</Link></li>
-              <li><Link to="/collections" className="hover:text-white transition-colors">Bestsellers</Link></li>
+            <ul className="space-y-4 text-gray-400 dark:text-zinc-400">
+              <li><Link to="/customize" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Custom Designs</Link></li>
+              <li><Link to="/collections" className="hover:text-white dark:hover:text-zinc-100 transition-colors">All Posters</Link></li>
+              <li><Link to="/collections" className="hover:text-white dark:hover:text-zinc-100 transition-colors">New Arrivals</Link></li>
+              <li><Link to="/collections" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Bestsellers</Link></li>
             </ul>
           </div>
 
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-bold uppercase mb-6 text-brand-red">Company</h3>
-            <ul className="space-y-4 text-gray-400">
-              <li><Link to="/how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
-              <li><Link to="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link></li>
+            <ul className="space-y-4 text-gray-400 dark:text-zinc-400">
+              <li><Link to="/how-it-works" className="hover:text-white dark:hover:text-zinc-100 transition-colors">How it Works</Link></li>
+              <li><Link to="/faq" className="hover:text-white dark:hover:text-zinc-100 transition-colors">FAQ</Link></li>
+              <li><Link to="/privacy-policy" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-service" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-bold uppercase mb-6 text-brand-red">Socials</h3>
-            <ul className="space-y-4 text-gray-400">
+            <ul className="space-y-4 text-gray-400 dark:text-zinc-400">
               <li>
                 <a 
                   href="https://www.instagram.com/posterealm.store/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
+                  className="flex items-center gap-2 hover:text-white dark:hover:text-zinc-100 transition-colors"
                 >
                   <InstagramIcon />
                   <span>Instagram</span>
@@ -313,7 +345,7 @@ export const Footer = () => {
                   href="https://www.threads.com/@posterealm.store" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
+                  className="flex items-center gap-2 hover:text-white dark:hover:text-zinc-100 transition-colors"
                 >
                   <ThreadsIcon />
                   <span>Threads</span>
@@ -324,7 +356,7 @@ export const Footer = () => {
                   href="https://x.com/posterealm" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
+                  className="flex items-center gap-2 hover:text-white dark:hover:text-zinc-100 transition-colors"
                 >
                   <XIcon />
                   <span>X (Twitter)</span>
@@ -335,12 +367,12 @@ export const Footer = () => {
 
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-bold uppercase mb-6 text-brand-red">Contact</h3>
-            <ul className="space-y-4 text-gray-400 text-sm">
+            <ul className="space-y-4 text-gray-400 dark:text-zinc-400 text-sm">
               <li>
                 <div className="flex items-center gap-2">
                   <a 
                     href="mailto:posterealm5@gmail.com" 
-                    className="flex items-center gap-2 hover:text-white transition-colors break-all"
+                    className="flex items-center gap-2 hover:text-white dark:hover:text-zinc-100 transition-colors break-all"
                   >
                     <Mail size={16} className="shrink-0" />
                     <span>posterealm5@gmail.com</span>
@@ -367,7 +399,7 @@ export const Footer = () => {
                       }
                       triggerNotification('Email copied successfully');
                     }}
-                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                    className="p-1 text-gray-400 dark:text-zinc-400 hover:text-white dark:hover:text-zinc-100 transition-colors cursor-pointer"
                     title="Copy Email"
                   >
                     <Copy size={14} />
@@ -379,7 +411,7 @@ export const Footer = () => {
                   href="https://wa.me/918949923501?text=Hi%20Posterealm,%20I%20need%20assistance." 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
+                  className="flex items-center gap-2 hover:text-white dark:hover:text-zinc-100 transition-colors"
                 >
                   <MessageCircle size={16} className="shrink-0" />
                   <span>WhatsApp Support</span>
@@ -389,7 +421,7 @@ export const Footer = () => {
           </div>
         </div>
         
-        <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+        <div className="mt-16 pt-8 border-t border-gray-800 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-center text-gray-500 dark:text-zinc-400 text-sm">
           <p>© 2026 POSTEREALM. ALL RIGHTS RESERVED.</p>
           <p className="mt-4 md:mt-0">MADE FOR COLLECTORS, BY COLLECTORS.</p>
         </div>

@@ -87,18 +87,18 @@ export default function RecentlyViewed() {
   const displayedProducts = recentProducts.slice(0, 4);
 
   return (
-    <section className="py-24 bg-brand-white border-t-4 border-brand-black">
+    <section className="py-24 bg-brand-white dark:bg-[#0D0D0D] border-t-4 border-brand-black dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-6 mb-16">
           <div>
-            <h2 className="text-6xl font-black uppercase mb-4">RECENTLY <span className="text-brand-red">VIEWED</span></h2>
-            <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">
+            <h2 className="text-6xl font-black uppercase mb-4 text-brand-black dark:text-zinc-100">RECENTLY <span className="text-brand-red">VIEWED</span></h2>
+            <p className="text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-widest text-xs">
               Continue exploring posters you recently viewed.
             </p>
           </div>
           <button
             onClick={handleClearHistory}
-            className="self-start sm:self-auto px-4 py-2 border-2 border-brand-black text-brand-black font-bold uppercase text-xs hover:bg-brand-black hover:text-white transition-all comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5"
+            className="self-start sm:self-auto px-4 py-2 border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 font-bold uppercase text-xs hover:bg-brand-black dark:hover:bg-zinc-800 hover:text-white transition-all comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 cursor-pointer"
           >
             Clear History
           </button>
@@ -112,7 +112,7 @@ export default function RecentlyViewed() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               key={product.id}
-              className="flex-shrink-0 w-[280px] sm:w-auto snap-start bg-white comic-border transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between group"
+              className="flex-shrink-0 w-[280px] sm:w-auto snap-start bg-white dark:bg-zinc-900 comic-border transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between group"
             >
               <div className="relative overflow-hidden aspect-[3/4] protected-area">
                 <ProtectedImage
@@ -130,19 +130,19 @@ export default function RecentlyViewed() {
                 <div className="mb-4">
                   <div className="flex justify-between items-start mb-2">
                     <p className="text-[10px] font-black uppercase text-brand-red tracking-[0.2em]">{product.genre}</p>
-                    <p className="font-mono text-xs font-black uppercase tracking-wider text-gray-500">
+                    <p className="font-mono text-xs font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400">
                       {product.genre?.toLowerCase() === 'bundle'
                         ? `Starting From ₹${BUNDLE_OPTIONS[0].price}`
                         : `Starting From ₹${POSTER_PRICING.A5}`}
                     </p>
                   </div>
-                  <h3 className="font-display text-2xl font-black uppercase tracking-tight group-hover:text-brand-red transition-colors line-clamp-1">
+                  <h3 className="font-display text-2xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100 group-hover:text-brand-red dark:group-hover:text-brand-red transition-colors line-clamp-1">
                     {getProductDisplayName(product)}
                   </h3>
                 </div>
                 <button
                   onClick={() => handleOpenQuickAdd(product)}
-                  className="w-full py-3 bg-brand-black text-white font-display text-xl uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red transition-all"
+                  className="w-full py-3 bg-brand-black dark:bg-brand-red text-white font-display text-xl uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red dark:hover:bg-red-600 transition-all cursor-pointer"
                 >
                   <ShoppingCart size={18} /> Quick Add
                 </button>
@@ -168,7 +168,7 @@ export default function RecentlyViewed() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-brand-white w-full max-w-4xl comic-border overflow-hidden flex flex-col md:flex-row shadow-2xl z-[120] my-auto"
+              className="relative bg-brand-white dark:bg-zinc-900 text-brand-black dark:text-zinc-100 w-full max-w-4xl comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden flex flex-col md:flex-row shadow-2xl z-[120] my-auto"
             >
               <button
                 onClick={() => setSelectedProduct(null)}
@@ -178,7 +178,7 @@ export default function RecentlyViewed() {
                 <X size={24} />
               </button>
 
-              <div className="w-full md:w-1/2 bg-gray-100 relative protected-area">
+              <div className="w-full md:w-1/2 bg-gray-100 dark:bg-zinc-800 relative protected-area">
                 <ProtectedImage
                   src={getStorefrontImage(selectedProduct, 'preview')}
                   alt={selectedProduct.name}
@@ -194,8 +194,8 @@ export default function RecentlyViewed() {
 
               <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col max-h-[80vh] overflow-y-auto">
                 <div className="mb-8">
-                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">{getProductDisplayName(selectedProduct)}</h2>
-                  <p className="text-gray-500 font-medium">{selectedProduct.description}</p>
+                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 text-brand-black dark:text-zinc-100">{getProductDisplayName(selectedProduct)}</h2>
+                  <p className="text-gray-500 dark:text-zinc-400 font-medium">{selectedProduct.description}</p>
                 </div>
 
                 <div className="space-y-8 flex-grow">
@@ -210,14 +210,14 @@ export default function RecentlyViewed() {
                           <button
                             key={option.id}
                             onClick={() => setSelectedSize(option)}
-                            className={`p-3 border-2 text-left transition-all flex justify-between items-center ${selectedSize.id === option.id
-                              ? 'border-brand-black bg-brand-black text-white'
-                              : 'border-gray-200 bg-white hover:border-brand-red'
+                            className={`p-3 border-2 text-left transition-all flex justify-between items-center cursor-pointer ${selectedSize.id === option.id
+                              ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white'
+                              : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                               }`}
                           >
                             <div>
                               <p className="font-black text-sm uppercase">{option.name}</p>
-                              <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                              <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                                 {option.postersCount} A5 posters
                               </p>
                             </div>
@@ -231,13 +231,13 @@ export default function RecentlyViewed() {
                           <button
                             key={size.id}
                             onClick={() => setSelectedSize(size)}
-                            className={`p-3 border-2 text-left transition-all ${selectedSize.id === size.id
-                              ? 'border-brand-black bg-brand-black text-white'
-                              : 'border-gray-200 bg-white hover:border-brand-red'
+                            className={`p-3 border-2 text-left transition-all cursor-pointer ${selectedSize.id === size.id
+                              ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white'
+                              : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                               }`}
                           >
                             <p className="font-black text-sm uppercase">{size.name}</p>
-                            <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red' : 'text-gray-400'}`}>
+                            <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red dark:text-zinc-200' : 'text-gray-400 dark:text-zinc-400'}`}>
                               {size.dimensions}
                             </p>
                           </button>
@@ -256,14 +256,14 @@ export default function RecentlyViewed() {
                         <button
                           key={material.id}
                           onClick={() => setSelectedMaterial(material)}
-                          className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between ${selectedMaterial.id === material.id
-                            ? 'border-brand-black bg-brand-black text-white'
-                            : 'border-gray-200 bg-white hover:border-brand-red'
+                          className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between cursor-pointer ${selectedMaterial.id === material.id
+                            ? 'border-brand-black dark:border-zinc-600 bg-brand-black dark:bg-brand-red text-white'
+                            : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:border-brand-red'
                             }`}
                         >
                           <div>
                             <p className="font-black text-sm uppercase">{material.name}</p>
-                            <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-300' : 'text-gray-500 dark:text-zinc-400'}`}>
                               {material.desc}
                             </p>
                           </div>
@@ -277,9 +277,9 @@ export default function RecentlyViewed() {
                   <CustomPosterCTA onClick={() => setSelectedProduct(null)} />
                 </div>
 
-                <div className="mt-10 pt-8 border-t-2 border-gray-100 flex items-center justify-between gap-6">
+                <div className="mt-10 pt-8 border-t-2 border-gray-100 dark:border-zinc-800 flex items-center justify-between gap-6">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400 mb-1">Price</p>
                     <p className="text-4xl font-black text-brand-red leading-none">
                       ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
                     </p>
@@ -287,7 +287,7 @@ export default function RecentlyViewed() {
                   <RippleWrapper delay={2} className="flex-1">
                     <button
                       onClick={handleQuickAdd}
-                      className="w-full py-5 bg-brand-black text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none"
+                      className="w-full py-5 bg-brand-black dark:bg-brand-red text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red dark:hover:bg-red-600 transition-all flex items-center justify-center gap-3 active:scale-95 cursor-pointer"
                     >
                       <ShoppingCart size={24} /> Add to Bag
                     </button>

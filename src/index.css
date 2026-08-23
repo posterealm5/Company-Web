@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Big Shoulders Display", sans-serif;
@@ -8,11 +10,18 @@
   --color-brand-red: #E63946;
   --color-brand-black: #000000;
   --color-brand-white: #F1F1F1;
+  --color-dark-bg: #0D0D0D;
+  --color-dark-surface: #18181B;
+  --color-dark-border: #27272A;
 }
 
 @layer base {
   body {
-    @apply bg-brand-white text-brand-black font-sans selection:bg-brand-red selection:text-white;
+    @apply bg-brand-white text-brand-black font-sans selection:bg-brand-red selection:text-white transition-colors duration-200;
+  }
+
+  html.dark body {
+    @apply bg-[#0D0D0D] text-zinc-100 selection:bg-brand-red selection:text-white;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -47,6 +56,11 @@
 .comic-border {
   border: 3px solid black;
   box-shadow: 8px 8px 0px 0px rgba(230, 57, 70, 1);
+}
+
+html.dark .comic-border {
+  border-color: #27272A;
+  box-shadow: 8px 8px 0px 0px rgba(230, 57, 70, 0.9);
 }
 
 @keyframes marquee {

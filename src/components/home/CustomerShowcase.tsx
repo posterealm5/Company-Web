@@ -27,14 +27,14 @@ export default function CustomerShowcase() {
   if (loading || entries.length === 0) return null;
 
   return (
-    <section className="py-24 bg-brand-white border-t-4 border-brand-black">
+    <section className="py-24 bg-brand-white dark:bg-[#0D0D0D] border-t-4 border-brand-black dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-black text-brand-black uppercase italic tracking-tighter"
+            className="text-5xl md:text-7xl font-black text-brand-black dark:text-zinc-100 uppercase italic tracking-tighter"
           >
             REAL WALLS. <span className="text-brand-red">REAL CUSTOMERS.</span>
           </motion.h2>
@@ -43,7 +43,7 @@ export default function CustomerShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-gray-500 font-bold uppercase tracking-widest text-sm mt-4"
+            className="text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-widest text-sm mt-4"
           >
             See how PosteRealm posters look in real spaces.
           </motion.p>
@@ -57,9 +57,9 @@ export default function CustomerShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.5 }}
-              className="break-inside-avoid bg-white comic-border p-4 mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-300 group flex flex-col"
+              className="break-inside-avoid bg-white dark:bg-zinc-900 comic-border p-4 mb-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-300 group flex flex-col"
             >
-              <div className="overflow-hidden comic-border border-2 border-brand-black mb-4 relative aspect-[3/4] protected-area">
+              <div className="overflow-hidden comic-border border-2 border-brand-black dark:border-zinc-700 mb-4 relative aspect-[3/4] protected-area">
                 <ProtectedImage
                   src={getOptimizedImageUrl(entry.image_url, 450, 600)}
                   alt={entry.customer_name || 'Room Setup'}
@@ -76,16 +76,16 @@ export default function CustomerShowcase() {
               </div>
 
               <div>
-                <h4 className="font-black text-lg uppercase tracking-tight text-brand-black flex items-center justify-between gap-2">
+                <h4 className="font-black text-lg uppercase tracking-tight text-brand-black dark:text-zinc-100 flex items-center justify-between gap-2">
                   {entry.customer_name || 'Anonymous'}
                 </h4>
                 {entry.city && (
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                  <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-400 uppercase tracking-widest flex items-center gap-1 mt-0.5">
                     <MapPin size={10} className="text-brand-red" /> {entry.city}
                   </p>
                 )}
                 {entry.caption && (
-                  <p className="text-sm font-medium text-gray-600 mt-3 italic leading-relaxed">
+                  <p className="text-sm font-medium text-gray-600 dark:text-zinc-300 mt-3 italic leading-relaxed">
                     "{entry.caption}"
                   </p>
                 )}

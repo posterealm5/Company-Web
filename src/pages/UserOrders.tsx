@@ -48,22 +48,22 @@ const Timeline: React.FC<{ status: string; deliveryMethod?: 'local' | 'courier' 
                 transition={step.current ? { repeat: Infinity, duration: 2 } : {}}
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm comic-border border-2 transition-all duration-500 ${
                   step.active 
-                    ? 'bg-brand-red text-white border-brand-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' 
-                    : 'bg-white text-gray-300 border-gray-200'
+                    ? 'bg-brand-red text-white border-brand-black dark:border-zinc-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' 
+                    : 'bg-white dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 border-gray-200 dark:border-zinc-700'
                 } ${step.current ? 'ring-4 ring-brand-red/30' : ''}`}
               >
                 {step.active ? '✓' : idx + 1}
               </motion.div>
               <span className={`text-[9px] font-black uppercase tracking-wider mt-3 text-center transition-colors duration-500 max-w-[80px] leading-tight ${
-                step.active ? 'text-brand-black' : 'text-gray-300'
-              } ${step.current ? 'text-brand-red font-black' : ''}`}>
+                step.active ? 'text-brand-black dark:text-zinc-100' : 'text-gray-400 dark:text-zinc-500'
+              } ${step.current ? 'text-brand-red dark:text-brand-red font-black' : ''}`}>
                 {step.label}
               </span>
             </div>
             {idx < steps.length - 1 && (
               <div className="absolute top-5 left-0 right-0 h-1 -z-0 flex items-center" style={{ left: `${(idx * 2 + 1) * 12.5}%`, right: `${100 - ((idx + 1) * 2 + 1) * 12.5}%` }}>
                 <div className={`h-1 w-full transition-all duration-1000 ${
-                  steps[idx + 1].active ? 'bg-brand-black' : 'bg-gray-200'
+                  steps[idx + 1].active ? 'bg-brand-black dark:bg-zinc-100' : 'bg-gray-200 dark:bg-zinc-800'
                 }`} />
               </div>
             )}
@@ -187,13 +187,12 @@ export default function UserOrders() {
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
-      setErrorState(null);
-      
       if (!user) {
         setLoading(false);
         return;
       }
+      
+      setErrorState(null);
       
       try {
         if (id) {
@@ -203,16 +202,35 @@ export default function UserOrders() {
             setLoading(false);
             return;
           }
-          
+
+          // Retain/use existing cached order if present to eliminate skeleton flash
+          const cachedInSingle = singleOrder && singleOrder.id === orderIdNum ? singleOrder : null;
+          const cachedInList = orders.find(o => o.id === orderIdNum);
+          const existingOrder = cachedInSingle || cachedInList;
+
+          if (existingOrder) {
+            setSingleOrder(existingOrder);
+            setLoading(false);
+          } else {
+            setLoading(true);
+          }
+
           const order = await getOrderById(orderIdNum);
           if (!order) {
-            setErrorState("Order not found.");
+            if (!existingOrder) setErrorState("Order not found.");
           } else if (order.user_id !== user.id) {
-            setErrorState("Access Denied: You do not have permission to view this order.");
+            if (!existingOrder) setErrorState("Access Denied: You do not have permission to view this order.");
           } else {
             setSingleOrder(order);
           }
         } else {
+          // List View: use existing cached orders if available
+          if (orders.length > 0) {
+            setLoading(false);
+          } else {
+            setLoading(true);
+          }
+
           const data = await getUserOrders(user.id);
           setOrders(data);
         }
@@ -228,17 +246,19 @@ export default function UserOrders() {
 
   if (loading) {
     return (
-      <div className="pt-32 pb-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[80vh] space-y-8">
-        <SEO metadata={getNonIndexableMetadata('My Orders', location.pathname)} />
-        <div className="h-10 w-48 bg-gray-200 animate-pulse comic-border mb-4" />
-        <div className="h-16 w-full bg-gray-200 animate-pulse comic-border mb-8" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div className="h-64 bg-gray-200 animate-pulse comic-border" />
-            <div className="h-48 bg-gray-200 animate-pulse comic-border" />
-          </div>
-          <div className="space-y-6">
-            <div className="h-96 bg-gray-200 animate-pulse comic-border" />
+      <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] min-h-screen text-brand-black dark:text-zinc-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <SEO metadata={getNonIndexableMetadata('My Orders', location.pathname)} />
+          <div className="h-10 w-48 bg-gray-200 dark:bg-zinc-800 animate-pulse comic-border border-gray-300 dark:border-zinc-700 mb-4" />
+          <div className="h-16 w-full bg-gray-200 dark:bg-zinc-800 animate-pulse comic-border border-gray-300 dark:border-zinc-700 mb-8" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="h-64 bg-gray-200 dark:bg-zinc-800 animate-pulse comic-border border-gray-300 dark:border-zinc-700" />
+              <div className="h-48 bg-gray-200 dark:bg-zinc-800 animate-pulse comic-border border-gray-300 dark:border-zinc-700" />
+            </div>
+            <div className="space-y-6">
+              <div className="h-96 bg-gray-200 dark:bg-zinc-800 animate-pulse comic-border border-gray-300 dark:border-zinc-700" />
+            </div>
           </div>
         </div>
       </div>
@@ -247,28 +267,30 @@ export default function UserOrders() {
 
   if (errorState) {
     return (
-      <div className="pt-32 pb-24 max-w-xl mx-auto px-4 min-h-[70vh] flex flex-col items-center justify-center text-center">
-        <SEO metadata={getNonIndexableMetadata('My Orders', location.pathname)} />
-        <div className="bg-white comic-border p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
-          <div className="w-16 h-16 bg-brand-red/10 text-brand-red rounded-full flex items-center justify-center mx-auto border-2 border-brand-black">
-            <Package size={32} />
+      <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] min-h-screen text-brand-black dark:text-zinc-100 flex flex-col items-center justify-center text-center">
+        <div className="max-w-xl w-full px-4">
+          <SEO metadata={getNonIndexableMetadata('My Orders', location.pathname)} />
+          <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6 text-brand-black dark:text-zinc-100">
+            <div className="w-16 h-16 bg-brand-red/10 dark:bg-brand-red/20 text-brand-red rounded-full flex items-center justify-center mx-auto border-2 border-brand-black dark:border-zinc-700">
+              <Package size={32} />
+            </div>
+            <h2 className="text-2xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100">
+              {errorState.includes("Denied") ? "Access Denied" : "Error"}
+            </h2>
+            <p className="text-gray-600 dark:text-zinc-300 font-bold uppercase text-xs tracking-wider leading-relaxed">
+              {errorState}
+            </p>
+            <button
+              onClick={() => {
+                setErrorState(null);
+                setSingleOrder(null);
+                navigate('/account/orders', { replace: true });
+              }}
+              className="inline-block bg-brand-black dark:bg-zinc-800 text-white font-black uppercase text-xs tracking-widest px-6 py-3 comic-border border-2 border-brand-black dark:border-zinc-700 hover:bg-brand-red dark:hover:bg-brand-red transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
+            >
+              Back to Orders
+            </button>
           </div>
-          <h2 className="text-2xl font-black uppercase tracking-tight text-brand-black">
-            {errorState.includes("Denied") ? "Access Denied" : "Error"}
-          </h2>
-          <p className="text-gray-600 font-bold uppercase text-xs tracking-wider leading-relaxed">
-            {errorState}
-          </p>
-          <button
-            onClick={() => {
-              setErrorState(null);
-              setSingleOrder(null);
-              navigate('/account/orders', { replace: true });
-            }}
-            className="inline-block bg-brand-black text-white font-black uppercase text-xs tracking-widest px-6 py-3 comic-border hover:bg-brand-red transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-          >
-            Back to Orders
-          </button>
         </div>
       </div>
     );
@@ -278,33 +300,33 @@ export default function UserOrders() {
   if (id && singleOrder) {
     const badge = getStatusBadge(singleOrder.status);
     return (
-      <div className="pt-32 pb-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[75vh]">
+      <div className="pt-32 pb-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[75vh] bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100">
         <SEO metadata={getNonIndexableMetadata('My Orders', location.pathname)} />
         {/* Back navigation */}
         <div className="text-left mb-8">
           <button
             onClick={handleBackToOrders}
-            className="inline-flex items-center gap-2 px-4 py-2 border-2 border-brand-black bg-white hover:bg-gray-50 font-black uppercase text-xs tracking-widest comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 text-brand-black dark:text-zinc-100 font-black uppercase text-xs tracking-widest comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
           >
             <ArrowLeft size={16} /> Back to My Orders
           </button>
         </div>
 
         {/* Order Heading Card */}
-        <div className="bg-white comic-border p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8 text-left">
+        <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] mb-8 text-left text-brand-black dark:text-zinc-100">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <p className="text-xs font-black uppercase tracking-widest text-gray-400">Order Reference</p>
-              <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-1">
+              <p className="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400">Order Reference</p>
+              <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mt-1 text-brand-black dark:text-zinc-100">
                 Order #{singleOrder.id.toString().padStart(6, '0')}
               </h1>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2">
+              <p className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest mt-2">
                 Placed: {new Date(singleOrder.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
               </p>
             </div>
             <div className="flex flex-wrap gap-4 items-center">
               <div className="text-left md:text-right">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Grand Total</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400">Grand Total</p>
                 <p className="text-2xl font-black text-brand-red mt-0.5">₹{singleOrder.total}</p>
               </div>
               <div className={`px-4 py-2 text-xs font-black uppercase tracking-widest border-2 comic-border ${badge.color} flex items-center gap-2`}>
@@ -313,7 +335,7 @@ export default function UserOrders() {
               </div>
               <button
                 onClick={() => downloadInvoice(singleOrder)}
-                className="px-4 py-2 text-xs font-black uppercase tracking-widest border-2 border-brand-black bg-white text-brand-black hover:bg-brand-red hover:text-white hover:border-brand-black transition-all comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] flex items-center gap-1.5"
+                className="px-4 py-2 text-xs font-black uppercase tracking-widest border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-brand-red hover:text-white hover:border-brand-black transition-all comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] flex items-center gap-1.5"
               >
                 <Download size={13} />
                 Download Invoice
@@ -337,270 +359,195 @@ export default function UserOrders() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
           {/* Left Column: Timeline, Delivery & Address */}
           <div className="space-y-8">
-            {/* Visual Timeline Box */}
-            <div className="bg-white comic-border p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 pb-2">
-                Delivery Timeline
-              </h3>
-              <Timeline status={singleOrder.status} deliveryMethod={singleOrder.delivery_method || 'courier'} />
-            </div>
+        {/* Visual Timeline Box */}
+        <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(230,57,70,0.4)] space-y-4 text-brand-black dark:text-zinc-100">
+          <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 dark:border-zinc-800 pb-2">
+            Delivery Timeline
+          </h3>
+          <Timeline status={singleOrder.status} deliveryMethod={singleOrder.delivery_method || 'courier'} />
+        </div>
 
-            {/* Delivery Information Info Box */}
-            <div className="bg-white comic-border p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-4">
-              <div className="flex justify-between items-center border-b-2 border-gray-100 pb-2">
-                <h3 className="text-sm font-black uppercase tracking-widest text-brand-red">
-                  Delivery Details
-                </h3>
-                <span className="text-[9px] font-black uppercase tracking-widest bg-brand-black text-white px-2 py-0.5 comic-border">
-                  {(singleOrder.delivery_method || 'courier') === 'local' ? 'Local Delivery' : 'Courier Delivery'}
-                </span>
-              </div>
-
-              {(singleOrder.delivery_method || 'courier') === 'courier' ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Courier Partner</p>
-                      <p className="font-black text-sm uppercase mt-1">{singleOrder.courier_name || 'Preparing Shipment'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Tracking Code</p>
-                      {singleOrder.tracking_number ? (
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="font-mono text-sm font-bold bg-gray-50 px-2 py-0.5 comic-border border-gray-200">
-                            {singleOrder.tracking_number}
-                          </span>
-                          <button
-                            onClick={() => handleCopyTracking(singleOrder.tracking_number!)}
-                            className="p-1.5 hover:bg-brand-black hover:text-white transition-all comic-border border-gray-200"
-                            title="Copy Code"
-                          >
-                            <Copy size={12} />
-                          </button>
-                        </div>
-                      ) : (
-                        <p className="text-xs font-bold text-gray-400 uppercase mt-1">Not Available Yet</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {singleOrder.tracking_number && (
-                    <a
-                      href={getTrackingLink(singleOrder.courier_name || '', singleOrder.tracking_number)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-3 bg-brand-black hover:bg-brand-red text-white font-black uppercase text-xs tracking-widest comic-border border-brand-black flex items-center justify-center transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
-                    >
-                      Track Shipment
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Delivery Status</p>
-                  <p className="font-black text-sm uppercase text-brand-red">
-                    {singleOrder.status === 'out_for_delivery' ? 'Out For Delivery' : singleOrder.status}
-                  </p>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 leading-relaxed">
-                    Our local agent in Udaipur will deliver this order directly to your shipping address.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Shipping Address Box */}
-            <div className="bg-white comic-border p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 pb-2 flex items-center gap-2">
-                <MapPin size={16} /> Delivery Information
-              </h3>
-              <div className="space-y-2">
-                <p className="font-black text-sm">{singleOrder.customer_name}</p>
-                <p className="text-xs font-bold text-gray-600 leading-relaxed uppercase">{singleOrder.shipping_address}</p>
-                <p className="text-xs font-black uppercase tracking-widest mt-2 pt-2 border-t border-gray-100">
-                  Phone: <span className="font-bold font-mono">{singleOrder.customer_phone}</span>
-                </p>
-              </div>
-            </div>
+        {/* Delivery Information Info Box */}
+        <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(230,57,70,0.4)] space-y-4 text-brand-black dark:text-zinc-100">
+          <div className="flex justify-between items-center border-b-2 border-gray-100 dark:border-zinc-800 pb-2">
+            <h3 className="text-sm font-black uppercase tracking-widest text-brand-red">
+              Delivery Details
+            </h3>
+            <span className="text-[9px] font-black uppercase tracking-widest bg-brand-black dark:bg-zinc-800 text-white px-2 py-0.5 comic-border border-gray-700">
+              {(singleOrder.delivery_method || 'courier') === 'local' ? 'Local Delivery' : 'Courier Delivery'}
+            </span>
           </div>
 
-          {/* Right Column: Products & Summary */}
-          <div className="space-y-8">
-            {/* Products Box */}
-            <div className="bg-white comic-border p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 pb-2">
-                Ordered Products
-              </h3>
-              <div className="space-y-4 max-h-[360px] overflow-y-auto pr-1">
-                {singleOrder.items.map((item, idx) => (
-                  <div key={idx} className="flex gap-4 items-center bg-white p-4 comic-border border-gray-200">
-                    <div className="w-16 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0 border border-gray-200">
-                      <img 
-                        src={getStorefrontImage(item, 'thumbnail')} 
-                        alt={item.name} 
-                        width={80}
-                        height={80}
-                        loading="lazy"
-                        className="w-full h-full object-cover" 
-                      />
+          {(singleOrder.delivery_method || 'courier') === 'courier' ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400">Courier Partner</p>
+                  <p className="font-black text-sm uppercase mt-1 text-brand-black dark:text-zinc-100">{singleOrder.courier_name || 'Preparing Shipment'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400">Tracking Code</p>
+                  {singleOrder.tracking_number ? (
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="font-mono text-sm font-bold bg-gray-50 dark:bg-zinc-800 px-2 py-0.5 comic-border border-gray-200 dark:border-zinc-700 text-brand-black dark:text-zinc-100">
+                        {singleOrder.tracking_number}
+                      </span>
+                      <button
+                        onClick={() => handleCopyTracking(singleOrder.tracking_number!)}
+                        className="p-1.5 hover:bg-brand-black hover:text-white transition-all comic-border border-gray-200 dark:border-zinc-700 text-brand-black dark:text-zinc-100"
+                        title="Copy Code"
+                      >
+                        <Copy size={12} />
+                      </button>
                     </div>
-                    <div className="flex-grow text-left">
-                      <p className="font-black uppercase text-xs">{item.name}</p>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-                        {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      {item.isFreeItem ? (
-                        <>
-                          <p className="font-black text-green-600 text-sm">FREE</p>
-                          <span className="text-xs text-gray-400 line-through block mt-0.5">
-                            ₹{(item.unit_price || item.price) * item.quantity}
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <p className="font-black text-brand-red text-sm">₹{item.line_total || (item.price * item.quantity)}</p>
-                          <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest block mt-0.5">
-                            Unit Price: ₹{item.unit_price || item.price}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  ) : (
+                    <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 uppercase mt-1">Not Available Yet</p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Summary Totals Box */}
-            <div className="bg-white comic-border p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 pb-2">
-                Order Summary
-              </h3>
-              <div className="space-y-2 text-xs font-bold uppercase tracking-wider">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Subtotal</span>
-                  <span>₹{singleOrder.subtotal}</span>
+              {singleOrder.tracking_number && (
+                <a
+                  href={getTrackingLink(singleOrder.courier_name || '', singleOrder.tracking_number)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 bg-brand-black dark:bg-zinc-800 hover:bg-brand-red dark:hover:bg-brand-red text-white font-black uppercase text-xs tracking-widest comic-border border-brand-black dark:border-zinc-700 flex items-center justify-center transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+                >
+                  Track Shipment
+                </a>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400">Delivery Status</p>
+              <p className="font-black text-sm uppercase text-brand-red">
+                {singleOrder.status === 'out_for_delivery' ? 'Out For Delivery' : singleOrder.status}
+              </p>
+              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-400 uppercase tracking-widest mt-2 leading-relaxed">
+                Our local agent in Udaipur will deliver this order directly to your shipping address.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Shipping Address Box */}
+        <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(230,57,70,0.4)] space-y-4 text-brand-black dark:text-zinc-100">
+          <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 dark:border-zinc-800 pb-2 flex items-center gap-2">
+            <MapPin size={16} /> Delivery Information
+          </h3>
+          <div className="space-y-2">
+            <p className="font-black text-sm text-brand-black dark:text-zinc-100">{singleOrder.customer_name}</p>
+            <p className="text-xs font-bold text-gray-600 dark:text-zinc-300 leading-relaxed uppercase">{singleOrder.shipping_address}</p>
+            <p className="text-xs font-black uppercase tracking-widest mt-2 pt-2 border-t border-gray-100 dark:border-zinc-800 text-brand-black dark:text-zinc-100">
+              Phone: <span className="font-bold font-mono">{singleOrder.customer_phone}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column: Products & Summary */}
+      <div className="space-y-8">
+        {/* Products Box */}
+        <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(230,57,70,0.4)] space-y-4 text-brand-black dark:text-zinc-100">
+          <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 dark:border-zinc-800 pb-2">
+            Ordered Products
+          </h3>
+          <div className="space-y-4 max-h-[360px] overflow-y-auto pr-1">
+            {singleOrder.items.map((item, idx) => (
+              <div key={idx} className="flex gap-4 items-center bg-white dark:bg-zinc-800 p-4 comic-border border-gray-200 dark:border-zinc-700 text-brand-black dark:text-zinc-100">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-700 rounded overflow-hidden flex-shrink-0 border border-gray-200 dark:border-zinc-600">
+                  <img 
+                    src={getStorefrontImage(item, 'thumbnail')} 
+                    alt={item.name} 
+                    width={80}
+                    height={80}
+                    loading="lazy"
+                    className="w-full h-full object-cover" 
+                  />
                 </div>
-                {singleOrder.coupon_code && singleOrder.discount_amount && Number(singleOrder.discount_amount) > 0 ? (
-                  <div className="flex justify-between text-green-600 font-black">
-                    <span className="text-gray-400 font-bold">Coupon ({singleOrder.coupon_code})</span>
-                    <span>-₹{singleOrder.discount_amount}</span>
-                  </div>
-                ) : null}
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Shipping Charge</span>
-                  <span>₹{singleOrder.shipping_charge}</span>
+                <div className="flex-grow text-left">
+                  <p className="font-black uppercase text-xs text-brand-black dark:text-zinc-100">{item.name}</p>
+                  <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-400 uppercase tracking-widest mt-1">
+                    {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
+                  </p>
                 </div>
-                <div className="border-t-2 border-dashed border-gray-200 my-2 pt-2 flex justify-between text-sm font-black text-brand-black">
-                  <span>Grand Total</span>
-                  <span className="text-brand-red">₹{singleOrder.total}</span>
+                <div className="text-right">
+                  {item.isFreeItem ? (
+                    <>
+                      <p className="font-black text-green-600 dark:text-green-400 text-sm">FREE</p>
+                      <span className="text-xs text-gray-400 dark:text-zinc-500 line-through block mt-0.5">
+                        ₹{(item.unit_price || item.price) * item.quantity}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-black text-brand-red text-sm">₹{item.line_total || (item.price * item.quantity)}</p>
+                      <span className="text-[8px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest block mt-0.5">
+                        Unit Price: ₹{item.unit_price || item.price}
+                      </span>
+                    </>
+                  )}
                 </div>
-                <div className="border-t border-gray-100 pt-3 mt-3 grid grid-cols-2 gap-2 text-[9px]">
-                  <div>
-                    <span className="text-gray-400 block font-black">Payment Method</span>
-                    <span className="font-black text-brand-black uppercase mt-0.5 block">{singleOrder.payment_method || 'N/A'}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-400 block font-black">Payment Status</span>
-                    <span className={`font-black uppercase mt-0.5 block ${singleOrder.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-500'}`}>{singleOrder.payment_status || 'N/A'}</span>
-                  </div>
-                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Summary Totals Box */}
+        <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(230,57,70,0.4)] space-y-4 text-brand-black dark:text-zinc-100">
+          <h3 className="text-sm font-black uppercase tracking-widest text-brand-red border-b-2 border-gray-100 dark:border-zinc-800 pb-2">
+            Order Summary
+          </h3>
+          <div className="space-y-2 text-xs font-bold uppercase tracking-wider">
+            <div className="flex justify-between">
+              <span className="text-gray-400 dark:text-zinc-400">Subtotal</span>
+              <span className="text-brand-black dark:text-zinc-100">₹{singleOrder.subtotal}</span>
+            </div>
+            {singleOrder.coupon_code && singleOrder.discount_amount && Number(singleOrder.discount_amount) > 0 ? (
+              <div className="flex justify-between text-green-600 dark:text-green-400 font-black">
+                <span className="text-gray-400 dark:text-zinc-400 font-bold">Coupon ({singleOrder.coupon_code})</span>
+                <span>-₹{singleOrder.discount_amount}</span>
+              </div>
+            ) : null}
+            <div className="flex justify-between">
+              <span className="text-gray-400 dark:text-zinc-400">Shipping Charge</span>
+              <span className="text-brand-black dark:text-zinc-100">₹{singleOrder.shipping_charge}</span>
+            </div>
+            <div className="border-t-2 border-dashed border-gray-200 dark:border-zinc-700 my-2 pt-2 flex justify-between text-sm font-black text-brand-black dark:text-zinc-100">
+              <span>Grand Total</span>
+              <span className="text-brand-red">₹{singleOrder.total}</span>
+            </div>
+            <div className="border-t border-gray-100 dark:border-zinc-800 pt-3 mt-3 grid grid-cols-2 gap-2 text-[9px]">
+              <div>
+                <span className="text-gray-400 dark:text-zinc-400 block font-black">Payment Method</span>
+                <span className="font-black text-brand-black dark:text-zinc-100 uppercase mt-0.5 block">{singleOrder.payment_method || 'N/A'}</span>
+              </div>
+              <div>
+                <span className="text-gray-400 dark:text-zinc-400 block font-black">Payment Status</span>
+                <span className={`font-black uppercase mt-0.5 block ${singleOrder.payment_status === 'Paid' ? 'text-green-600 dark:text-green-400' : 'text-orange-500'}`}>{singleOrder.payment_status || 'N/A'}</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Toast Alert */}
-        <AnimatePresence>
-          {toastMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.9 }}
-              className="fixed bottom-8 right-8 z-[999] bg-brand-black text-white px-6 py-4 comic-border border-white shadow-2xl flex items-start gap-3 max-w-[calc(100vw-2rem)] md:max-w-md"
-            >
-              <span className="w-2 h-2 rounded-full bg-brand-red animate-ping mt-1.5 shrink-0" />
-              <div className="flex flex-col text-left">
-                <p className="font-display font-black uppercase tracking-widest text-xs leading-tight">
-                  {toastMessage.title}
-                </p>
-                {toastMessage.message && (
-                  <p className="text-xs text-gray-400 font-medium mt-1 leading-normal font-sans normal-case">
-                    {toastMessage.message}
-                  </p>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Cancellation Confirmation Modal */}
-        <AnimatePresence>
-          {orderToCancel && (
-            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setOrderToCancel(null)}
-                className="absolute inset-0 bg-brand-black/60 backdrop-blur-sm"
-              />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white border-4 border-brand-black p-6 md:p-8 max-w-md w-full relative z-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-left"
-              >
-                <h2 className="text-2xl font-black uppercase tracking-tight text-brand-black mb-4">
-                  Cancel Order?
-                </h2>
-                <p className="text-gray-700 font-sans font-medium text-sm leading-relaxed mb-6">
-                  This action cannot be undone. Your order will be cancelled immediately.
-                </p>
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => setOrderToCancel(null)}
-                    disabled={cancelling}
-                    className="flex-1 bg-white hover:bg-gray-50 text-brand-black font-black uppercase text-xs tracking-widest py-3 border-2 border-brand-black comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all disabled:opacity-50"
-                  >
-                    Keep Order
-                  </button>
-                  <button
-                    onClick={() => handleCancelOrder(orderToCancel.id)}
-                    disabled={cancelling}
-                    className="flex-grow-2 flex-1 bg-brand-red hover:bg-brand-black text-white font-black uppercase text-xs tracking-widest py-3 border-2 border-brand-black comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {cancelling ? (
-                      <>
-                        <Loader2 className="animate-spin" size={14} />
-                        <span>Cancelling...</span>
-                      </>
-                    ) : (
-                      <span>Cancel Order</span>
-                    )}
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
       </div>
-    );
-  }
+    </div>
+  </div>
+  );
+}
 
   // MODE A: Order List View
   return (
-    <div className="pt-32 pb-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[70vh]">
+    <div className="pt-32 pb-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[70vh] bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('My Orders', location.pathname)} />
       <div className="flex items-center gap-4 mb-12">
         <button 
           onClick={() => navigate(-1)}
-          className="p-2 border-2 border-brand-black hover:bg-gray-100 transition-colors bg-white focus:outline-none flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+          className="p-2 border-2 border-brand-black dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors bg-white dark:bg-zinc-800 focus:outline-none flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
           aria-label="Go back"
         >
-          <ArrowLeft size={24} className="text-brand-black" />
+          <ArrowLeft size={24} className="text-brand-black dark:text-zinc-100" />
         </button>
-        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter text-left">
+        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter text-left text-brand-black dark:text-zinc-100">
           MY <span className="text-brand-red">ORDERS</span>
         </h1>
       </div>
@@ -609,18 +556,18 @@ export default function UserOrders() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-brand-white border-2 border-brand-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-12 text-center"
+          className="bg-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] p-12 text-center text-brand-black dark:text-zinc-100"
         >
           <div className="flex justify-center mb-6">
-            <Package size={64} className="text-gray-300" />
+            <Package size={64} className="text-gray-300 dark:text-zinc-600" />
           </div>
-          <h2 className="text-2xl font-black uppercase tracking-tight mb-4">No orders found yet.</h2>
-          <p className="text-gray-600 font-bold uppercase text-[10px] tracking-wider mb-8 max-w-md mx-auto leading-relaxed">
+          <h2 className="text-2xl font-black uppercase tracking-tight mb-4 text-brand-black dark:text-zinc-100">No orders found yet.</h2>
+          <p className="text-gray-600 dark:text-zinc-400 font-bold uppercase text-[10px] tracking-wider mb-8 max-w-md mx-auto leading-relaxed">
             When you place an order, it will appear here. You can track its status, courier shipment progress, or Udaipur local dispatch updates.
           </p>
           <Link 
             to="/collections" 
-            className="inline-block bg-brand-black text-brand-white font-black uppercase tracking-widest text-xs px-8 py-4 hover:bg-brand-red transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]"
+            className="inline-block bg-brand-black dark:bg-zinc-800 text-brand-white font-black uppercase tracking-widest text-xs px-8 py-4 hover:bg-brand-red dark:hover:bg-brand-red transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] comic-border border-brand-black dark:border-zinc-700"
           >
             Browse Collections
           </Link>
@@ -635,19 +582,19 @@ export default function UserOrders() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="bg-white comic-border overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all"
+                className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.4)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all text-brand-black dark:text-zinc-100"
               >
                 <div className="p-5 md:p-6 flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                   {/* Left Column: Order ID & Poster Count */}
                   <div className="flex items-start gap-4 text-left">
-                    <div className="w-12 h-12 bg-brand-red/10 border-2 border-brand-black rounded flex items-center justify-center text-brand-red shrink-0">
+                    <div className="w-12 h-12 bg-brand-red/10 border-2 border-brand-black dark:border-zinc-700 rounded flex items-center justify-center text-brand-red shrink-0">
                       <Package size={24} />
                     </div>
                     <div>
-                      <p className="text-xs font-black uppercase text-gray-400 tracking-widest">
+                      <p className="text-xs font-black uppercase text-gray-400 dark:text-zinc-400 tracking-widest">
                         Order ID: #{order.id.toString().padStart(6, '0')}
                       </p>
-                      <p className="font-black text-sm uppercase mt-0.5">
+                      <p className="font-black text-sm uppercase mt-0.5 text-brand-black dark:text-zinc-100">
                         {order.items.length} {order.items.length === 1 ? 'Poster' : 'Posters'}
                       </p>
                     </div>
@@ -658,18 +605,18 @@ export default function UserOrders() {
                     {/* Stats Row */}
                     <div className="flex flex-wrap items-center gap-x-8 gap-y-3 md:justify-end">
                       <div>
-                        <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Order Date</p>
-                        <div className="flex items-center gap-1.5 font-bold text-xs uppercase mt-0.5">
+                        <p className="text-[9px] font-black uppercase text-gray-400 dark:text-zinc-400 tracking-widest">Order Date</p>
+                        <div className="flex items-center gap-1.5 font-bold text-xs uppercase mt-0.5 text-brand-black dark:text-zinc-100">
                           <Calendar size={13} className="text-brand-red" />
                           {new Date(order.created_at).toLocaleDateString()}
                         </div>
                       </div>
                       <div>
-                        <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Total Amount</p>
+                        <p className="text-[9px] font-black uppercase text-gray-400 dark:text-zinc-400 tracking-widest">Total Amount</p>
                         <p className="font-black text-base text-brand-red mt-0.5">₹{order.total}</p>
                       </div>
                       <div>
-                        <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Status</p>
+                        <p className="text-[9px] font-black uppercase text-gray-400 dark:text-zinc-400 tracking-widest">Status</p>
                         <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest border comic-border mt-0.5 inline-block ${badge.color}`}>
                           {badge.label}
                         </div>
@@ -680,7 +627,7 @@ export default function UserOrders() {
                     <div className="flex flex-wrap gap-3 md:justify-end">
                       <button
                         onClick={() => downloadInvoice(order)}
-                        className="bg-white text-brand-black hover:bg-brand-red hover:text-white font-black uppercase text-[10px] tracking-widest px-5 py-2.5 comic-border border-brand-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-center cursor-pointer flex items-center gap-1.5"
+                        className="bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-brand-red hover:text-white font-black uppercase text-[10px] tracking-widest px-5 py-2.5 comic-border border-brand-black dark:border-zinc-700 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-center cursor-pointer flex items-center gap-1.5"
                       >
                         <Download size={11} /> Download Invoice
                       </button>
@@ -688,7 +635,7 @@ export default function UserOrders() {
                       {order.status !== 'cancelled' && (
                         <Link
                           to={`/account/order/${order.id}`}
-                          className="bg-brand-black text-white font-black uppercase text-[10px] tracking-widest px-5 py-2.5 comic-border hover:bg-brand-red transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-center"
+                          className="bg-brand-black dark:bg-zinc-800 text-white font-black uppercase text-[10px] tracking-widest px-5 py-2.5 comic-border border-brand-black dark:border-zinc-700 hover:bg-brand-red transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-center"
                         >
                           Track Order
                         </Link>
@@ -697,7 +644,7 @@ export default function UserOrders() {
                       {order.status !== 'cancelled' && ['pending', 'confirmed'].includes(order.status) && (
                         <button
                           onClick={() => setOrderToCancel(order)}
-                          className="bg-white text-brand-red hover:bg-brand-red hover:text-white font-black uppercase text-[10px] tracking-widest px-5 py-2.5 comic-border border-brand-red hover:border-brand-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-center cursor-pointer"
+                          className="bg-white dark:bg-zinc-800 text-brand-red hover:bg-brand-red hover:text-white font-black uppercase text-[10px] tracking-widest px-5 py-2.5 comic-border border-brand-red hover:border-brand-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-center cursor-pointer"
                         >
                           Cancel Order
                         </button>
@@ -750,26 +697,26 @@ export default function UserOrders() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white border-4 border-brand-black p-6 md:p-8 max-w-md w-full relative z-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-left"
+              className="bg-white dark:bg-zinc-900 border-4 border-brand-black dark:border-zinc-700 p-6 md:p-8 max-w-md w-full relative z-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-left text-brand-black dark:text-zinc-100"
             >
-              <h2 className="text-2xl font-black uppercase tracking-tight text-brand-black mb-4">
+              <h2 className="text-2xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100 mb-4">
                 Cancel Order?
               </h2>
-              <p className="text-gray-700 font-sans font-medium text-sm leading-relaxed mb-6">
+              <p className="text-gray-700 dark:text-zinc-300 font-sans font-medium text-sm leading-relaxed mb-6">
                 This action cannot be undone. Your order will be cancelled immediately.
               </p>
               <div className="flex gap-4">
                 <button
                   onClick={() => setOrderToCancel(null)}
                   disabled={cancelling}
-                  className="flex-1 bg-white hover:bg-gray-50 text-brand-black font-black uppercase text-xs tracking-widest py-3 border-2 border-brand-black comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all disabled:opacity-50"
+                  className="flex-1 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 text-brand-black dark:text-zinc-100 font-black uppercase text-xs tracking-widest py-3 border-2 border-brand-black dark:border-zinc-700 comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all disabled:opacity-50"
                 >
                   Keep Order
                 </button>
                 <button
                   onClick={() => handleCancelOrder(orderToCancel.id)}
                   disabled={cancelling}
-                  className="flex-grow-2 flex-1 bg-brand-red hover:bg-brand-black text-white font-black uppercase text-xs tracking-widest py-3 border-2 border-brand-black comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-grow-2 flex-1 bg-brand-red hover:bg-brand-black text-white font-black uppercase text-xs tracking-widest py-3 border-2 border-brand-black dark:border-zinc-700 comic-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {cancelling ? (
                     <>

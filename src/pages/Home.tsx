@@ -320,7 +320,7 @@ const Hero: React.FC<HeroProps> = ({
 
 const ObjectiveSection = () => {
   return (
-    <section className="pt-24 pb-28 sm:pb-32 lg:pb-36 bg-brand-white overflow-x-clip relative">
+    <section className="pt-24 pb-28 sm:pb-32 lg:pb-36 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 overflow-x-clip relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <motion.div
@@ -329,13 +329,13 @@ const ObjectiveSection = () => {
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-6xl font-black uppercase mb-8">OUR <span className="text-brand-red">OBJECTIVE</span></h2>
-            <p className="text-2xl text-gray-800 font-medium leading-relaxed mb-8">
+            <h2 className="text-6xl font-black uppercase mb-8 text-brand-black dark:text-zinc-100">OUR <span className="text-brand-red">OBJECTIVE</span></h2>
+            <p className="text-2xl text-gray-800 dark:text-zinc-200 font-medium leading-relaxed mb-8">
               At Posterealm, our mission is to redefine your walls. We're dedicated to delivering
               <span className="text-brand-red"> high-quality, premium-look posters </span>
               that turn your personal creative vision into a reality.
             </p>
-            <p className="text-lg text-gray-600 leading-relaxed mb-10">
+            <p className="text-lg text-gray-600 dark:text-zinc-300 leading-relaxed mb-10">
               We believe that unique, custom art shouldn't be out of reach. That's why we bring
               together top-tier materials and personalized designs at an affordable range, ensuring
               that every home can step into its own realm of inspiration.
@@ -343,11 +343,11 @@ const ObjectiveSection = () => {
             <div className="grid grid-cols-2 md:flex gap-6 md:gap-8 justify-items-center md:justify-start w-full">
               <div className="text-center">
                 <p className="text-4xl font-black text-brand-red">100%</p>
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Quality</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-400">Quality</p>
               </div>
               <div className="text-center">
                 <p className="text-4xl font-black text-brand-red">Personalized</p>
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Designs</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-400">Designs</p>
               </div>
             </div>
           </motion.div>
@@ -360,7 +360,7 @@ const ObjectiveSection = () => {
             className="relative lg:pl-8 lg:mt-3"
           >
             <div
-              className="comic-border p-3 sm:p-4 bg-white transform rotate-2 hover:rotate-0 transition-transform duration-500 w-full max-w-xl mx-auto lg:max-w-none"
+              className="comic-border p-3 sm:p-4 bg-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 transform rotate-2 hover:rotate-0 transition-transform duration-500 w-full max-w-xl mx-auto lg:max-w-none"
             >
               <ProtectedImage
                 src={objectiveImage}
@@ -380,10 +380,10 @@ const ObjectiveSection = () => {
                 }}
               />
               <div className="mt-4 px-1 sm:px-2 pb-1 sm:pb-2">
-                <h3 className="text-2xl sm:text-3xl font-black uppercase text-black tracking-tight mb-2 text-left">
+                <h3 className="text-2xl sm:text-3xl font-black uppercase text-black dark:text-zinc-100 tracking-tight mb-2 text-left">
                   TEAM POSTEREALM
                 </h3>
-                <p className="text-base text-gray-700 leading-relaxed text-left">
+                <p className="text-base text-gray-700 dark:text-zinc-300 leading-relaxed text-left">
                   {"These people aren’t just part of the team—they’re family. The ones who helped turn PosterRealm from an idea into reality, standing by it, believing in it, and contributing in every way possible."}
                 </p>
               </div>
@@ -493,7 +493,7 @@ const CollectionCard: React.FC<{
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ delay: index * 0.1, duration: 0.6 }}
-        className="relative aspect-[4/5] bg-brand-black overflow-hidden group cursor-pointer comic-border text-left"
+        className="relative aspect-[4/5] bg-brand-black overflow-hidden group cursor-pointer comic-border border-2 border-brand-black dark:border-zinc-700 text-left"
       >
         {/* Slot A */}
         {slotA && (
@@ -547,7 +547,7 @@ const CollectionsSection: React.FC<{
   ], [animeData, moviesData, pinterestyData]);
 
   return (
-    <section className="py-24 bg-brand-white relative overflow-hidden">
+    <section className="py-24 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -555,7 +555,7 @@ const CollectionsSection: React.FC<{
           viewport={{ once: false, amount: 0.2 }}
           className="mb-16 text-left"
         >
-          <h2 className="text-6xl font-black uppercase mb-4">OUR <span className="text-brand-red">COLLECTIONS</span></h2>
+          <h2 className="text-6xl font-black uppercase mb-4 text-brand-black dark:text-zinc-100">OUR <span className="text-brand-red">COLLECTIONS</span></h2>
           <div className="w-24 h-2 bg-brand-red"></div>
         </motion.div>
 
@@ -581,7 +581,7 @@ const CollectionsSection: React.FC<{
           <Link
             to="/collections"
           >
-            <span className="inline-flex items-center gap-3 px-12 py-5 bg-brand-black text-white font-display text-2xl uppercase tracking-widest comic-border hover:bg-brand-red transition-colors group">
+            <span className="inline-flex items-center gap-3 px-12 py-5 bg-brand-black dark:bg-zinc-800 text-white font-display text-2xl uppercase tracking-widest comic-border border-2 border-brand-black dark:border-zinc-700 hover:bg-brand-red dark:hover:bg-brand-red transition-colors group cursor-pointer">
               Explore More
               <ArrowRight className="group-hover:translate-x-2 transition-transform" />
             </span>
@@ -702,7 +702,7 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.8 }}
-        className="py-24 bg-brand-white"
+        className="py-24 bg-brand-white dark:bg-[#0D0D0D]"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-brand-red p-12 md:p-24 comic-border flex flex-col md:flex-row items-center justify-between gap-12">

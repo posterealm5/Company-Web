@@ -121,97 +121,99 @@ export default function Wishlist() {
   const isBundleModal = selectedProduct?.genre?.toLowerCase() === 'bundle';
 
   return (
-    <div className="pt-32 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-32 pb-24 min-h-screen bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('Wishlist', '/wishlist')} />
-      {/* Header with BACK button */}
-      <div className="flex flex-col gap-4 mb-12">
-        <div>
-          <button 
-            onClick={handleBack}
-            className="group px-4 py-2 border-2 border-brand-black hover:bg-gray-100 transition-all bg-white font-bold uppercase text-xs tracking-widest flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] cursor-pointer"
-          >
-            <ArrowLeft size={16} /> Back
-          </button>
-        </div>
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase">
-          MY <span className="text-brand-red">WISHLIST</span>
-        </h1>
-      </div>
-
-      {wishlist.length === 0 ? (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center text-center py-20 bg-white comic-border p-8 md:p-16 max-w-2xl mx-auto shadow-[8px_8px_0px_0px_rgba(230,57,70,0.1)]">
-          <div className="w-24 h-24 bg-red-50 border-2 border-brand-red flex items-center justify-center text-brand-red rounded-full mb-8 rotate-[-6deg]">
-            <Heart size={48} className="fill-brand-red" />
-          </div>
-          <h2 className="text-3xl font-black uppercase tracking-tight mb-4">Your wishlist is empty</h2>
-          <p className="text-gray-500 font-medium text-sm mb-8 max-w-md">
-            Save products you love and view them later.
-          </p>
-          <button
-            onClick={() => navigate('/collections')}
-            className="px-8 py-4 bg-brand-red text-white font-black uppercase text-sm tracking-widest comic-border border-white hover:bg-brand-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
-          >
-            Browse Collections
-          </button>
-        </div>
-      ) : (
-        /* Product Grid */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {wishlist.map((item) => (
-            <WishlistCard 
-              key={item.product_id}
-              item={item}
-              onOpenModal={handleOpenModal}
-              onRemoveFromWishlist={handleRemoveFromWishlist}
-              setRef={setRef}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Product Selection Modal */}
-      <AnimatePresence>
-        {selectedProduct && (
-          <div className="fixed inset-0 z-[110] flex items-start justify-center px-4 overflow-y-auto pt-20 pb-10">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleCloseModal}
-              className="fixed inset-0 bg-brand-black/80 backdrop-blur-sm"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-brand-white w-full max-w-4xl comic-border overflow-hidden flex flex-col md:flex-row shadow-2xl z-[120] my-auto"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header with BACK button */}
+        <div className="flex flex-col gap-4 mb-12 text-left">
+          <div>
+            <button 
+              onClick={handleBack}
+              className="group px-4 py-2 border-2 border-brand-black dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all bg-white dark:bg-zinc-900 text-brand-black dark:text-zinc-100 font-bold uppercase text-xs tracking-widest flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] cursor-pointer"
             >
-              <button 
-                onClick={handleCloseModal}
-                className="fixed top-4 right-4 md:absolute md:top-4 md:right-4 z-[130] w-12 h-12 flex items-center justify-center bg-brand-black text-white hover:bg-brand-red transition-colors comic-border border-white active:scale-95 cursor-pointer"
-                aria-label="Close modal"
-              >
-                <X size={24} />
-              </button>
+              <ArrowLeft size={16} /> Back
+            </button>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase text-brand-black dark:text-zinc-100">
+            MY <span className="text-brand-red">WISHLIST</span>
+          </h1>
+        </div>
 
-              <ProductDetailContent
-                product={selectedProduct}
-                selectedSize={selectedSize}
-                setSelectedSize={setSelectedSize}
-                selectedMaterial={selectedMaterial}
-                setSelectedMaterial={setSelectedMaterial}
-                handleQuickAdd={handleConfirmAddToCart}
-                SIZES={SIZES}
-                MATERIALS={MATERIALS}
-                isBundle={isBundleModal}
-                layoutMode="modal"
+        {wishlist.length === 0 ? (
+          /* Empty State */
+          <div className="flex flex-col items-center justify-center text-center py-20 bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-8 md:p-16 max-w-2xl mx-auto shadow-[8px_8px_0px_0px_rgba(230,57,70,0.1)]">
+            <div className="w-24 h-24 bg-red-50 dark:bg-zinc-800 border-2 border-brand-red flex items-center justify-center text-brand-red rounded-full mb-8 rotate-[-6deg]">
+              <Heart size={48} className="fill-brand-red" />
+            </div>
+            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-brand-black dark:text-zinc-100">Your wishlist is empty</h2>
+            <p className="text-gray-500 dark:text-zinc-400 font-medium text-sm mb-8 max-w-md">
+              Save products you love and view them later.
+            </p>
+            <button
+              onClick={() => navigate('/collections')}
+              className="px-8 py-4 bg-brand-red text-white font-black uppercase text-sm tracking-widest comic-border border-white hover:bg-brand-black dark:hover:bg-zinc-100 dark:hover:text-brand-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+            >
+              Browse Collections
+            </button>
+          </div>
+        ) : (
+          /* Product Grid */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {wishlist.map((item) => (
+              <WishlistCard 
+                key={item.product_id}
+                item={item}
+                onOpenModal={handleOpenModal}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                setRef={setRef}
               />
-            </motion.div>
+            ))}
           </div>
         )}
-      </AnimatePresence>
+
+        {/* Product Selection Modal */}
+        <AnimatePresence>
+          {selectedProduct && (
+            <div className="fixed inset-0 z-[110] flex items-start justify-center px-4 overflow-y-auto pt-20 pb-10">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={handleCloseModal}
+                className="fixed inset-0 bg-brand-black/80 backdrop-blur-sm"
+              />
+              
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative bg-brand-white dark:bg-zinc-900 text-brand-black dark:text-zinc-100 w-full max-w-4xl comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden flex flex-col md:flex-row shadow-2xl z-[120] my-auto"
+              >
+                <button 
+                  onClick={handleCloseModal}
+                  className="fixed top-4 right-4 md:absolute md:top-4 md:right-4 z-[130] w-12 h-12 flex items-center justify-center bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red transition-colors comic-border border-white dark:border-zinc-700 active:scale-95 cursor-pointer"
+                  aria-label="Close modal"
+                >
+                  <X size={24} />
+                </button>
+
+                <ProductDetailContent
+                  product={selectedProduct}
+                  selectedSize={selectedSize}
+                  setSelectedSize={setSelectedSize}
+                  selectedMaterial={selectedMaterial}
+                  setSelectedMaterial={setSelectedMaterial}
+                  handleQuickAdd={handleConfirmAddToCart}
+                  SIZES={SIZES}
+                  MATERIALS={MATERIALS}
+                  isBundle={isBundleModal}
+                  layoutMode="modal"
+                />
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -241,11 +243,11 @@ const WishlistCard: React.FC<WishlistCardProps> = React.memo(({ item, onOpenModa
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group bg-white comic-border transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between protected-area"
+      className="group bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between protected-area"
     >
       <div 
         onClick={handleOpen}
-        className="relative aspect-[3/4] overflow-hidden bg-gray-100 protected-area cursor-pointer"
+        className="relative aspect-[3/4] overflow-hidden bg-gray-100 dark:bg-zinc-800 protected-area cursor-pointer"
       >
         <ProtectedImage 
           src={getStorefrontImage(item, 'card')} 
@@ -260,7 +262,7 @@ const WishlistCard: React.FC<WishlistCardProps> = React.memo(({ item, onOpenModa
         <button 
           ref={(el) => setRef(item.product_id, el)}
           onClick={handleRemove}
-          className="absolute top-4 right-4 p-2 bg-white rounded-full transition-all hover:scale-110 text-brand-red shadow-md cursor-pointer z-10"
+          className="absolute top-4 right-4 p-2 bg-white dark:bg-zinc-800 rounded-full transition-all hover:scale-110 text-brand-red shadow-md cursor-pointer z-10"
           aria-label="Remove from wishlist"
         >
           <Heart size={20} className="fill-brand-red text-brand-red" />
@@ -268,17 +270,17 @@ const WishlistCard: React.FC<WishlistCardProps> = React.memo(({ item, onOpenModa
         <div className="absolute inset-0 bg-brand-red/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
       </div>
 
-      <div className="p-6 flex-1 flex flex-col justify-between">
+      <div className="p-6 flex-1 flex flex-col justify-between text-left">
         <div className="mb-4">
           <h3 
             onClick={handleOpen}
             className="font-display text-2xl font-black uppercase tracking-tight group-hover:text-brand-red transition-colors line-clamp-1 mb-2 cursor-pointer"
           >
-            <span className="hover:text-brand-red text-brand-black">
+            <span className="hover:text-brand-red text-brand-black dark:text-zinc-100 dark:hover:text-brand-red">
               {item.title}
             </span>
           </h3>
-          <p className="font-mono text-xs font-black uppercase tracking-wider text-gray-500 mb-2">
+          <p className="font-mono text-xs font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-2">
             {item.genre?.toLowerCase() === 'bundle'
               ? `Starting From ₹${BUNDLE_OPTIONS[0].price}`
               : `Starting From ₹${POSTER_PRICING.A5}`}
@@ -288,7 +290,7 @@ const WishlistCard: React.FC<WishlistCardProps> = React.memo(({ item, onOpenModa
         {/* Move to Cart button */}
         <button 
           onClick={handleOpen}
-          className="w-full py-3 mb-2 bg-brand-red text-white font-display text-lg uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-black transition-all cursor-pointer"
+          className="w-full py-3 mb-2 bg-brand-red text-white font-display text-lg uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-black dark:hover:bg-zinc-800 transition-all cursor-pointer"
         >
           <ShoppingCart size={18} /> Move To Cart
         </button>
@@ -297,13 +299,13 @@ const WishlistCard: React.FC<WishlistCardProps> = React.memo(({ item, onOpenModa
         <div className="flex gap-2">
           <button 
             onClick={handleOpen}
-            className="flex-1 py-3 bg-brand-black text-white font-display text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red transition-all cursor-pointer inline-flex"
+            className="flex-1 py-3 bg-brand-black dark:bg-zinc-800 text-white font-display text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red dark:hover:bg-brand-red transition-all cursor-pointer inline-flex"
           >
             <Eye size={16} /> View Product
           </button>
           <button 
             onClick={handleRemove}
-            className="py-3 px-4 border-2 border-brand-black text-brand-black font-display text-xs font-black uppercase tracking-widest flex items-center justify-center hover:bg-brand-red hover:text-white hover:border-brand-red transition-all cursor-pointer"
+            className="py-3 px-4 border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 font-display text-xs font-black uppercase tracking-widest flex items-center justify-center hover:bg-brand-red dark:hover:bg-brand-red hover:text-white dark:hover:text-white hover:border-brand-red dark:hover:border-brand-red transition-all cursor-pointer"
             aria-label="Remove from wishlist"
           >
             Remove

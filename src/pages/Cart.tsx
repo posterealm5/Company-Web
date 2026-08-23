@@ -167,25 +167,25 @@ export default function Cart() {
   }
 
   return (
-    <div className="pt-32 pb-24 px-4 min-h-screen">
+    <div className="pt-32 pb-24 px-4 min-h-screen bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('Shopping Cart', '/cart')} />
       <div className="max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="mb-12"
+          className="mb-12 text-left"
         >
-          <Link to="/collections" className="inline-flex items-center gap-2 text-brand-black hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-sm">
+          <Link to="/collections" className="inline-flex items-center gap-2 text-brand-black dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-sm">
             <ArrowLeft size={18} />
             Back to Store
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-4">
-            <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter">
+            <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter text-brand-black dark:text-zinc-100">
               YOUR <span className="text-brand-red">BAG</span>
             </h1>
             <button 
               onClick={() => setShowClearConfirm(true)}
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-xs mb-2 group"
+              className="inline-flex items-center gap-2 text-gray-400 dark:text-zinc-400 hover:text-brand-red dark:hover:text-brand-red transition-colors font-bold uppercase tracking-widest text-xs mb-2 group cursor-pointer"
             >
               <Trash2 size={14} />
               Clear Bag
@@ -197,7 +197,7 @@ export default function Cart() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-6">
             {paidSelectedItems.length === 0 && (
-              <div className="p-8 text-center bg-white comic-border uppercase tracking-widest font-black text-xs text-gray-500">
+              <div className="p-8 text-center bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 uppercase tracking-widest font-black text-xs text-gray-500 dark:text-zinc-400">
                 Please select items in your bag to proceed.
               </div>
             )}
@@ -207,19 +207,19 @@ export default function Cart() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="comic-border p-4 md:p-6 bg-white flex flex-col md:flex-row gap-6 relative group text-brand-black"
+                className="comic-border border-2 border-brand-black dark:border-zinc-700 p-4 md:p-6 bg-white dark:bg-zinc-900 flex flex-col md:flex-row gap-6 relative group text-brand-black dark:text-zinc-100"
               >
                 {/* Selection Checkbox */}
                 <button 
                   onClick={() => toggleSelection(item.id)}
-                  className={`absolute -left-3 top-1/2 -translate-y-1/2 w-8 h-8 comic-border z-10 flex items-center justify-center transition-all ${
-                    item.selected ? 'bg-brand-red border-brand-black text-white' : 'bg-white border-gray-300 text-transparent'
+                  className={`absolute -left-3 top-1/2 -translate-y-1/2 w-8 h-8 comic-border z-10 flex items-center justify-center transition-all cursor-pointer ${
+                    item.selected ? 'bg-brand-red border-brand-black dark:border-zinc-700 text-white' : 'bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-600 text-transparent'
                   }`}
                 >
                   <Check size={16} strokeWidth={4} />
                 </button>
 
-                <div className={`w-full md:w-32 aspect-[3/4] bg-gray-100 flex-shrink-0 border-2 border-brand-black overflow-hidden transition-opacity ${!item.selected ? 'opacity-40 grayscale' : ''}`}>
+                <div className={`w-full md:w-32 aspect-[3/4] bg-gray-100 dark:bg-zinc-800 flex-shrink-0 border-2 border-brand-black dark:border-zinc-700 overflow-hidden transition-opacity ${!item.selected ? 'opacity-40 grayscale' : ''}`}>
                   <img 
                     src={getStorefrontImage(item, 'thumbnail')} 
                     alt={item.name} 
@@ -232,23 +232,23 @@ export default function Cart() {
                 
                 <div className={`flex-grow transition-opacity ${!item.selected ? 'opacity-40' : ''}`}>
                   <div className="flex justify-between items-start mb-2 text-left">
-                    <h3 className="text-2xl font-black uppercase tracking-tight">
+                    <h3 className="text-2xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100">
                       {item.name}
                     </h3>
                     <p className="text-xl font-black tracking-tight text-brand-red text-right flex flex-col items-end">
                       {item.isFreeItem ? (
                         <>
-                          <span className="bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-2 py-0.5 mb-1.5 comic-border border-brand-black">
+                          <span className="bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-2 py-0.5 mb-1.5 comic-border border-brand-black dark:border-zinc-700">
                             FREE
                           </span>
-                          <span className="text-xs text-gray-400 line-through">
+                          <span className="text-xs text-gray-400 dark:text-zinc-500 line-through">
                             ₹{(item.unit_price || item.price)}
                           </span>
                           <span className="text-xl font-black text-brand-red mt-0.5">
                             ₹0
                           </span>
                           {item.quantity > 1 && (
-                            <span className="text-xs text-gray-400 font-bold block mt-0.5">
+                            <span className="text-xs text-gray-400 dark:text-zinc-500 font-bold block mt-0.5">
                               Total: ₹0 (Saved ₹{(item.unit_price || item.price) * item.quantity})
                             </span>
                           )}
@@ -257,7 +257,7 @@ export default function Cart() {
                         <>
                           ₹{item.unit_price || item.price}
                           {item.quantity > 1 && (
-                            <span className="text-xs text-gray-400 font-bold block">
+                            <span className="text-xs text-gray-400 dark:text-zinc-500 font-bold block">
                               Total: ₹{item.line_total || (item.price * item.quantity)}
                             </span>
                           )}
@@ -267,26 +267,26 @@ export default function Cart() {
                   </div>
                   
                   <div className="flex flex-wrap gap-4 mb-6">
-                    <div className="bg-gray-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200">
+                    <div className="bg-gray-100 dark:bg-zinc-800 text-brand-black dark:text-zinc-200 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200 dark:border-zinc-700">
                       Size: {getSizeDisplayLabel(item.size)}
                     </div>
-                    <div className="bg-gray-100 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200">
+                    <div className="bg-gray-100 dark:bg-zinc-800 text-brand-black dark:text-zinc-200 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200 dark:border-zinc-700">
                       Material: {item.material}
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between mt-auto">
-                    <div className="flex items-center border-2 border-brand-black">
+                    <div className="flex items-center border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100">
                       <button 
                         onClick={() => updateQuantity(item.id, -1)}
-                        className="p-2 hover:bg-gray-100 transition-colors border-right-2 border-brand-black"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors border-r-2 border-brand-black dark:border-zinc-700 cursor-pointer"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-12 text-center font-black">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item.id, 1)}
-                        className="p-2 hover:bg-gray-100 transition-colors border-left-2 border-brand-black"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors border-l-2 border-brand-black dark:border-zinc-700 cursor-pointer"
                       >
                         <Plus size={16} />
                       </button>
@@ -295,14 +295,14 @@ export default function Cart() {
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={() => setEditingItem(item)}
-                        className="transition-colors p-2 text-gray-400 hover:text-brand-red"
+                        className="transition-colors p-2 text-gray-400 dark:text-zinc-400 hover:text-brand-red dark:hover:text-brand-red cursor-pointer"
                         title="Edit Item"
                       >
                         <span className="text-xs font-bold uppercase tracking-widest mr-1">Edit</span>
                       </button>
                       <button 
                         onClick={() => removeFromCart(item.id)}
-                        className="text-gray-400 hover:text-brand-red transition-colors p-2"
+                        className="text-gray-400 dark:text-zinc-400 hover:text-brand-red dark:hover:text-brand-red transition-colors p-2 cursor-pointer"
                         title="Remove Item"
                       >
                         <Trash2 size={20} />
@@ -315,9 +315,9 @@ export default function Cart() {
 
             {/* Free Poster Slots Section */}
             {appliedCoupon?.type === 'buy_x_get_y' && numSlots > 0 && (
-              <div className="mt-12 space-y-6">
-                <div className="border-b-4 border-brand-black pb-2 flex justify-between items-end">
-                  <h2 className="text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+              <div className="mt-12 space-y-6 text-left">
+                <div className="border-b-4 border-brand-black dark:border-zinc-700 pb-2 flex justify-between items-end">
+                  <h2 className="text-3xl font-black uppercase tracking-tight flex items-center gap-2 text-brand-black dark:text-zinc-100">
                     <Sparkles className="text-brand-red animate-pulse" />
                     Free Poster Slots
                   </h2>
@@ -326,7 +326,7 @@ export default function Cart() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-brand-black">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-brand-black dark:text-zinc-100">
                   {Array.from({ length: numSlots }).map((_, i) => {
                     const freeItem = freeSelectedItems.find(item => item.slotIndex === i);
                     if (freeItem) {
@@ -335,9 +335,9 @@ export default function Cart() {
                           key={`free-slot-${i}`}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="comic-border p-4 bg-green-50/55 border-green-600 flex gap-4 relative text-left"
+                          className="comic-border border-2 p-4 bg-green-50/55 dark:bg-green-950/40 border-green-600 dark:border-green-500 flex gap-4 relative text-left"
                         >
-                          <div className="w-20 aspect-[3/4] bg-gray-100 flex-shrink-0 border-2 border-brand-black overflow-hidden">
+                          <div className="w-20 aspect-[3/4] bg-gray-100 dark:bg-zinc-800 flex-shrink-0 border-2 border-brand-black dark:border-zinc-700 overflow-hidden">
                             <img 
                               src={getStorefrontImage(freeItem, 'thumbnail')} 
                               alt={freeItem.name} 
@@ -350,7 +350,7 @@ export default function Cart() {
                           <div className="flex-grow flex flex-col justify-between">
                             <div>
                               <div className="flex justify-between items-start">
-                                <h3 className="font-black uppercase tracking-tight text-sm pr-6">
+                                <h3 className="font-black uppercase tracking-tight text-sm pr-6 text-brand-black dark:text-zinc-100">
                                   {freeItem.name.replace(' (Free Poster)', '')}
                                 </h3>
                                 <span className="bg-green-600 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5">
@@ -358,10 +358,10 @@ export default function Cart() {
                                 </span>
                               </div>
                               <div className="flex gap-2 mt-2">
-                                <span className="bg-white border border-gray-300 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                                <span className="bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-black dark:text-zinc-200">
                                   Size: {freeItem.size}
                                 </span>
-                                <span className="bg-white border border-gray-300 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                                <span className="bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-black dark:text-zinc-200">
                                   Material: {freeItem.material}
                                 </span>
                               </div>
@@ -369,14 +369,14 @@ export default function Cart() {
                             <div className="flex gap-2 justify-end mt-4">
                               <button
                                 onClick={() => setSelectingSlotIndex(i)}
-                                className="text-[10px] font-black uppercase tracking-widest text-brand-black hover:text-brand-red transition-colors"
+                                className="text-[10px] font-black uppercase tracking-widest text-brand-black dark:text-zinc-300 hover:text-brand-red dark:hover:text-brand-red transition-colors cursor-pointer"
                               >
                                 Change Design
                               </button>
-                              <span className="text-gray-300">|</span>
+                              <span className="text-gray-300 dark:text-zinc-600">|</span>
                               <button
                                 onClick={() => removeFreePosterDesign(i)}
-                                className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-brand-red transition-colors"
+                                className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-zinc-400 hover:text-brand-red dark:hover:text-brand-red transition-colors cursor-pointer"
                               >
                                 Clear Slot
                               </button>
@@ -391,16 +391,16 @@ export default function Cart() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           onClick={() => setSelectingSlotIndex(i)}
-                          className="comic-border p-6 bg-white border-dashed border-gray-400 hover:border-brand-red hover:bg-gray-50 flex items-center justify-center gap-4 group transition-all text-left h-32"
+                          className="comic-border border-2 p-6 bg-white dark:bg-zinc-900 border-dashed border-gray-400 dark:border-zinc-700 hover:border-brand-red dark:hover:border-brand-red hover:bg-gray-50 dark:hover:bg-zinc-800 flex items-center justify-center gap-4 group transition-all text-left h-32 cursor-pointer"
                         >
-                          <div className="w-12 h-16 bg-gray-100 flex-shrink-0 border-2 border-dashed border-gray-400 group-hover:border-brand-red flex items-center justify-center text-gray-400 group-hover:text-brand-red">
+                          <div className="w-12 h-16 bg-gray-100 dark:bg-zinc-800 flex-shrink-0 border-2 border-dashed border-gray-400 dark:border-zinc-700 group-hover:border-brand-red flex items-center justify-center text-gray-400 dark:text-zinc-500 group-hover:text-brand-red">
                             <Plus size={20} />
                           </div>
                           <div>
-                            <h3 className="font-black uppercase tracking-wider text-xs text-gray-500 group-hover:text-brand-red mb-1">
+                            <h3 className="font-black uppercase tracking-wider text-xs text-gray-500 dark:text-zinc-300 group-hover:text-brand-red mb-1">
                               Slot #{i + 1}: Choose Free Design
                             </h3>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase">
+                            <p className="text-[10px] text-gray-400 dark:text-zinc-400 font-bold uppercase">
                               Auto-assigned as {paidSelectedItems.length > 0 ? 'majority size/material' : 'A5/Matte'}
                             </p>
                           </div>
@@ -422,7 +422,7 @@ export default function Cart() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="comic-border p-8 bg-brand-black text-white sticky top-32"
+              className="comic-border border-2 border-brand-black dark:border-zinc-700 p-8 bg-brand-black dark:bg-zinc-900 text-white sticky top-32"
             >
               <h2 className="text-3xl font-black uppercase mb-8 border-b-2 border-white/10 pb-4">Order Summary</h2>
               
@@ -721,11 +721,11 @@ export default function Cart() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-brand-white w-full max-w-4xl comic-border overflow-hidden flex flex-col md:flex-row shadow-2xl z-10 my-auto"
+              className="relative bg-brand-white dark:bg-zinc-900 text-brand-black dark:text-zinc-100 w-full max-w-4xl comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden flex flex-col md:flex-row shadow-2xl z-10 my-auto"
             >
               <button 
                 onClick={() => setEditingItem(null)}
-                className="absolute top-4 right-4 z-20 p-2 bg-brand-black text-white hover:bg-brand-red transition-colors comic-border border-white"
+                className="absolute top-4 right-4 z-20 p-2 bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red transition-colors comic-border border-white dark:border-zinc-700 cursor-pointer"
               >
                 <X size={24} />
               </button>
@@ -914,17 +914,17 @@ export default function Cart() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white comic-border p-8 max-w-md w-full shadow-2xl z-10"
+              className="relative bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 p-8 max-w-md w-full shadow-2xl z-10"
             >
-              <h3 className="text-3xl font-black uppercase tracking-tight mb-4">Clear Bag?</h3>
-              <p className="text-gray-600 font-medium mb-8 text-lg text-left">
+              <h3 className="text-3xl font-black uppercase tracking-tight mb-4 text-brand-black dark:text-zinc-100">Clear Bag?</h3>
+              <p className="text-gray-600 dark:text-zinc-400 font-medium mb-8 text-lg text-left">
                 Are you sure you want to clear the bag?
               </p>
               <div className="flex gap-4">
                 <button 
                   autoFocus
                   onClick={() => setShowClearConfirm(false)}
-                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black text-white hover:bg-brand-red transition-colors comic-border focus:outline-none focus:ring-4 focus:ring-brand-red/50"
+                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red transition-colors comic-border focus:outline-none focus:ring-4 focus:ring-brand-red/50 cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -933,7 +933,7 @@ export default function Cart() {
                     clearCart();
                     setShowClearConfirm(false);
                   }}
-                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white text-brand-black hover:bg-gray-100 transition-colors comic-border border-brand-black"
+                  className="flex-1 py-4 font-display text-xl uppercase tracking-widest bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors comic-border border-brand-black dark:border-zinc-700 cursor-pointer"
                 >
                   Sure
                 </button>
@@ -1149,12 +1149,12 @@ const CartRecommendations = () => {
   const isBundle = selectedProduct?.genre?.toLowerCase() === 'bundle';
 
   return (
-    <div className="mt-16 pt-12 border-t-4 border-brand-black">
+    <div className="mt-16 pt-12 border-t-4 border-brand-black dark:border-zinc-700">
       <div className="mb-10 text-left">
-        <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-2">
+        <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-2 text-brand-black dark:text-zinc-100">
           Complete <span className="text-brand-red">Your Collection</span>
         </h2>
-        <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">
+        <p className="text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-widest text-xs">
           You might also like these posters.
         </p>
       </div>
@@ -1167,7 +1167,7 @@ const CartRecommendations = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             key={product.id}
-            className="flex-shrink-0 w-[240px] sm:w-auto snap-start bg-white comic-border transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between group"
+            className="flex-shrink-0 w-[240px] sm:w-auto snap-start bg-white comic-border border-2 border-brand-black transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between group"
           >
             <div className="relative overflow-hidden aspect-[3/4]">
               <img 
@@ -1186,19 +1186,19 @@ const CartRecommendations = () => {
               <div className="mb-3">
                 <div className="flex justify-between items-start mb-1">
                   <p className="text-[9px] font-black uppercase text-brand-red tracking-[0.2em]">{product.genre}</p>
-                  <p className="font-mono text-[10px] font-black uppercase tracking-wider text-gray-500">
+                  <p className="font-mono text-[10px] font-black uppercase tracking-wider text-gray-700">
                     {product.genre?.toLowerCase() === 'bundle'
                       ? `From ₹${BUNDLE_OPTIONS[0].price}`
                       : `From ₹${POSTER_PRICING.A5}`}
                   </p>
                 </div>
-                <h3 className="font-display text-lg font-black uppercase tracking-tight group-hover:text-brand-red transition-colors line-clamp-1">
+                <h3 className="font-display text-lg font-black uppercase tracking-tight text-brand-black group-hover:text-brand-red transition-colors line-clamp-1">
                   {getProductDisplayName(product)}
                 </h3>
               </div>
               <button 
                 onClick={() => handleOpenQuickAdd(product)}
-                className="w-full py-2 bg-brand-black text-white font-display text-lg uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red transition-all"
+                className="w-full py-2 bg-brand-black text-white font-display text-lg uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red transition-all cursor-pointer"
               >
                 <ShoppingCart size={14} /> Quick Add
               </button>

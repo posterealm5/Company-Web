@@ -10,35 +10,35 @@ const Step = ({ icon, title, desc, delay }: { icon: ReactNode, title: string, de
     whileInView={{ opacity: 1, x: 0 }}
     viewport={{ once: true }}
     transition={{ delay, duration: 0.6 }}
-    className="flex gap-6 items-start"
+    className="flex gap-6 items-start text-left"
   >
-    <div className="flex-shrink-0 w-16 h-16 bg-brand-black text-brand-red flex items-center justify-center border-2 border-brand-black shadow-[4px_4px_0px_0px_rgba(230,57,70,1)]">
+    <div className="flex-shrink-0 w-16 h-16 bg-brand-black dark:bg-zinc-900 text-brand-red flex items-center justify-center border-2 border-brand-black dark:border-zinc-700 shadow-[4px_4px_0px_0px_rgba(230,57,70,1)]">
       {icon}
     </div>
     <div>
-      <h3 className="text-2xl font-black uppercase mb-2">{title}</h3>
-      <p className="text-gray-600 font-medium leading-relaxed">{desc}</p>
+      <h3 className="text-2xl font-black uppercase mb-2 text-brand-black dark:text-zinc-100">{title}</h3>
+      <p className="text-gray-600 dark:text-zinc-400 font-medium leading-relaxed">{desc}</p>
     </div>
   </motion.div>
 );
 
 const MaterialCard = ({ title, desc, image }: { title: string, desc: string, image: string }) => (
-  <div className="bg-white comic-border overflow-hidden group">
-    <div className="h-64 bg-gray-200 overflow-hidden relative">
+  <div className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden group text-left">
+    <div className="h-64 bg-gray-200 dark:bg-zinc-800 overflow-hidden relative">
       <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
-      <div className="absolute bottom-0 left-0 bg-brand-black text-white px-4 py-2 font-display text-xl uppercase">
+      <div className="absolute bottom-0 left-0 bg-brand-black dark:bg-zinc-900 text-white px-4 py-2 font-display text-xl uppercase border-t-2 border-r-2 border-brand-black dark:border-zinc-700">
         {title}
       </div>
     </div>
     <div className="p-8">
-      <p className="text-gray-500 font-medium">{desc}</p>
+      <p className="text-gray-500 dark:text-zinc-400 font-medium">{desc}</p>
     </div>
   </div>
 );
 
 export default function HowItWorks() {
   return (
-    <div className="pt-32 pb-24 bg-brand-white">
+    <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 min-h-screen">
       <SEO metadata={getStaticPageMetadata('How It Works', 'How It Works | Posterealm', 'Learn how Posterealm\'s custom poster printing works from uploading designs to delivery.')} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
@@ -47,8 +47,8 @@ export default function HowItWorks() {
           viewport={{ once: false, amount: 0.1 }}
           className="mb-20 text-center max-w-3xl mx-auto"
         >
-          <h1 className="text-6xl md:text-8xl font-black mb-6">HOW IT <span className="text-brand-red">WORKS</span></h1>
-          <p className="text-xl text-gray-600 font-medium">
+          <h1 className="text-6xl md:text-8xl font-black mb-6 text-brand-black dark:text-zinc-100">HOW IT <span className="text-brand-red">WORKS</span></h1>
+          <p className="text-xl text-gray-600 dark:text-zinc-400 font-medium">
             From your screen to your walls. We've simplified the journey 
             of getting high-end custom posters.
           </p>
@@ -87,7 +87,7 @@ export default function HowItWorks() {
            </div>
            
            <div className="relative">
-              <div className="aspect-square bg-gray-100 comic-border p-4 transform rotate-3">
+              <div className="aspect-square bg-gray-100 dark:bg-zinc-800 comic-border border-2 border-brand-black dark:border-zinc-700 p-4 transform rotate-3">
                  <img 
                    src="/crafting-printer.jpg" 
                    alt="Mimaki CJV150-160BS poster printing setup" 
@@ -95,7 +95,7 @@ export default function HowItWorks() {
                    referrerPolicy="no-referrer"
                  />
               </div>
-              <div className="absolute -bottom-10 -right-10 bg-brand-red text-white p-10 font-display text-5xl font-black uppercase leading-none shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+              <div className="absolute -bottom-10 -right-10 bg-brand-red text-white p-10 font-display text-5xl font-black uppercase leading-none shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] dark:shadow-[10px_10px_0px_0px_rgba(255,255,255,0.1)]">
                  24HR<br />CRAFTING
               </div>
            </div>
@@ -104,8 +104,8 @@ export default function HowItWorks() {
         {/* Materials Insight */}
         <div className="mb-20">
           <div className="flex items-center gap-6 mb-12">
-             <h2 className="text-5xl font-black uppercase">THE <span className="text-brand-red">MATERIALS</span></h2>
-             <div className="flex-1 h-1 bg-brand-black"></div>
+             <h2 className="text-5xl font-black uppercase text-brand-black dark:text-zinc-100">THE <span className="text-brand-red">MATERIALS</span></h2>
+             <div className="flex-1 h-1 bg-brand-black dark:bg-zinc-700"></div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -128,11 +128,11 @@ export default function HowItWorks() {
         </div>
         
         {/* Sizing Guide */}
-        <section className="bg-brand-black text-brand-white p-12 md:p-20 comic-border">
+        <section className="bg-brand-black dark:bg-zinc-900 text-brand-white p-12 md:p-20 comic-border border-2 border-brand-black dark:border-zinc-700">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-             <div>
-                <h2 className="text-5xl font-black uppercase mb-6">SIZING <span className="text-brand-red">GUIDE</span></h2>
-                <p className="text-gray-400 mb-10 text-lg">
+             <div className="text-left">
+                <h2 className="text-5xl font-black uppercase mb-6 text-white dark:text-zinc-100">SIZING <span className="text-brand-red">GUIDE</span></h2>
+                <p className="text-gray-400 dark:text-zinc-400 mb-10 text-lg">
                   Unsure which size fits your space? We've standardized our sizing 
                   to match common frame sizes worldwide, but our Rigid Board XL 
                   is designed specifically for maximum impact.
@@ -147,15 +147,15 @@ export default function HowItWorks() {
                      <div key={i} className="flex items-center gap-4 group">
                         <div className="w-2 h-2 bg-brand-red group-hover:scale-150 transition-transform"></div>
                         <div>
-                           <span className="font-mono font-bold text-xl">{sz.l}</span>
-                           <span className="text-gray-500 ml-4 hidden md:inline">— {sz.d}</span>
+                           <span className="font-mono font-bold text-xl text-white dark:text-zinc-100">{sz.l}</span>
+                           <span className="text-gray-500 dark:text-zinc-400 ml-4 hidden md:inline">— {sz.d}</span>
                         </div>
                      </div>
                    ))}
                 </div>
              </div>
-             <div className="bg-white/5 p-4 md:p-12 border border-white/10 relative overflow-hidden w-full">
-                <div className="flex items-end justify-center gap-3 md:gap-6 h-60 md:h-80 border-b border-white/20 pb-0 w-full">
+             <div className="bg-white/5 dark:bg-zinc-800/50 p-4 md:p-12 border border-white/10 dark:border-zinc-700 relative overflow-hidden w-full">
+                <div className="flex items-end justify-center gap-3 md:gap-6 h-60 md:h-80 border-b border-white/20 dark:border-zinc-700 pb-0 w-full">
                    {[
                      { name: 'A5', w: 'w-7 md:w-10', h: 'h-11 md:h-16', dim: '5.8" × 8.3"', color: 'bg-brand-red/40' },
                      { name: 'A4', w: 'w-10 md:w-14', h: 'h-16 md:h-24', dim: '8.3" × 11.7"', color: 'bg-brand-red/60' },
@@ -163,7 +163,7 @@ export default function HowItWorks() {
                      { name: 'A2', w: 'w-20 md:w-28', h: 'h-40 md:h-56', dim: '16" × 23"', color: 'bg-brand-red' }
                    ].map((sz, i) => (
                      <div key={i} className="flex flex-col items-center gap-2">
-                        <span className="text-[9px] md:text-[10px] font-mono text-gray-500">{sz.dim}</span>
+                        <span className="text-[9px] md:text-[10px] font-mono text-gray-500 dark:text-zinc-400">{sz.dim}</span>
                         <div className={`${sz.w} ${sz.h} ${sz.color} border border-brand-red flex items-center justify-center relative group`}>
                            <span className="font-black text-[10px] md:text-sm text-white">{sz.name}</span>
                            {sz.name === 'A2' && (
@@ -173,7 +173,7 @@ export default function HowItWorks() {
                      </div>
                    ))}
                 </div>
-                <p className="text-center mt-8 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-gray-500">Visual Scale Comparison (Inches)</p>
+                <p className="text-center mt-8 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-gray-500 dark:text-zinc-400">Visual Scale Comparison (Inches)</p>
              </div>
           </div>
         </section>
