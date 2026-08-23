@@ -23,9 +23,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (savedTheme === 'dark' || savedTheme === 'light') {
         return savedTheme;
       }
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
     }
     return 'light';
   });
@@ -44,23 +41,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     applyThemeToDOM(theme, isAdmin);
   }, [theme, isAdmin, applyThemeToDOM]);
-
-  // Listen for system theme changes if user hasn't explicitly set a preference
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      const savedTheme = localStorage.getItem(STORAGE_KEY);
-      if (!savedTheme) {
-        const nextTheme: Theme = e.matches ? 'dark' : 'light';
-        setThemeState(nextTheme);
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
