@@ -726,11 +726,12 @@ export default function Cart() {
               <button 
                 onClick={() => setEditingItem(null)}
                 className="absolute top-4 right-4 z-20 p-2 bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red transition-colors comic-border border-white dark:border-zinc-700 cursor-pointer"
+                aria-label="Close modal"
               >
                 <X size={24} />
               </button>
 
-              <div className="w-full md:w-1/2 bg-gray-100 relative" style={{ aspectRatio: '3/4' }}>
+              <div className="w-full md:w-1/2 bg-gray-100 dark:bg-zinc-800 relative" style={{ aspectRatio: '3/4' }}>
                 <img 
                   src={getStorefrontImage(editingItem, 'preview')} 
                   alt={editingItem.name} 
@@ -741,10 +742,10 @@ export default function Cart() {
                 />
               </div>
 
-              <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col max-h-[80vh] overflow-y-auto">
+              <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col max-h-[80vh] overflow-y-auto text-brand-black dark:text-zinc-100">
                 <div className="mb-8 text-left">
-                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">{editingItem.name}</h2>
-                  <p className="text-gray-500 font-medium">Customize your selection.</p>
+                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 text-brand-black dark:text-zinc-100">{editingItem.name}</h2>
+                  <p className="text-gray-500 dark:text-zinc-400 font-medium">Customize your selection.</p>
                 </div>
 
                 <div className="space-y-8 flex-grow text-left">
@@ -760,79 +761,85 @@ export default function Cart() {
                       }
                     </p>
                     {(editingItem.size.toLowerCase().includes('x') || editingItem.size === 'Custom') ? (
-                      <div className="p-4 border-2 border-brand-black bg-brand-black text-white">
+                      <div className="p-4 border-2 border-brand-black dark:border-zinc-700 bg-brand-black dark:bg-zinc-800 text-white dark:text-zinc-100">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-black text-sm uppercase">Custom Dimensions</p>
+                            <p className="font-black text-sm uppercase text-white dark:text-zinc-100">Custom Dimensions</p>
                             <p className="text-[10px] font-bold text-brand-red">{editingItem.size}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Custom Size</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-400">Custom Size</span>
                           </div>
                         </div>
                       </div>
                     ) : BUNDLE_OPTIONS.some(opt => opt.name === editingItem.size) ? (
                       <div className="grid grid-cols-1 gap-2">
-                        {BUNDLE_OPTIONS.map((option) => (
-                          <button
-                            key={option.id}
-                            onClick={() => {
-                              const updated = { ...editingItem, size: option.name, selected_size: option.name };
-                              const newPrice = getEditingItemPrice(updated);
-                              updateItem(editingItem.id, { 
-                                size: option.name,
-                                selected_size: option.name,
-                                price: newPrice,
-                                unit_price: newPrice,
-                                line_total: newPrice * editingItem.quantity
-                              });
-                              setEditingItem({ ...updated, price: newPrice });
-                            }}
-                            className={`p-3 border-2 text-left transition-all flex justify-between items-center ${
-                              editingItem.size === option.name 
-                                ? 'border-brand-black bg-brand-black text-white' 
-                                : 'border-gray-200 bg-white hover:border-brand-red'
-                            }`}
-                          >
-                            <div>
-                              <p className="font-black text-sm uppercase">{option.name}</p>
-                              <p className={`text-[10px] font-bold ${editingItem.size === option.name ? 'text-brand-red' : 'text-gray-400'}`}>
-                                {option.postersCount} A5 posters
-                              </p>
-                            </div>
-                            <span className="font-mono text-sm font-bold">₹{option.price}</span>
-                          </button>
-                        ))}
+                        {BUNDLE_OPTIONS.map((option) => {
+                          const isSelected = editingItem.size === option.name;
+                          return (
+                            <button
+                              key={option.id}
+                              onClick={() => {
+                                const updated = { ...editingItem, size: option.name, selected_size: option.name };
+                                const newPrice = getEditingItemPrice(updated);
+                                updateItem(editingItem.id, { 
+                                  size: option.name,
+                                  selected_size: option.name,
+                                  price: newPrice,
+                                  unit_price: newPrice,
+                                  line_total: newPrice * editingItem.quantity
+                                });
+                                setEditingItem({ ...updated, price: newPrice });
+                              }}
+                              className={`p-3 border-2 text-left transition-all flex justify-between items-center cursor-pointer ${
+                                isSelected 
+                                  ? 'border-brand-black dark:border-brand-red bg-brand-black dark:bg-zinc-800 text-white dark:text-white' 
+                                  : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 text-brand-black dark:text-zinc-200 hover:border-brand-red dark:hover:border-brand-red'
+                              }`}
+                            >
+                              <div>
+                                <p className="font-black text-sm uppercase">{option.name}</p>
+                                <p className={`text-[10px] font-bold ${isSelected ? 'text-brand-red' : 'text-gray-400 dark:text-zinc-400'}`}>
+                                  {option.postersCount} A5 posters
+                                </p>
+                              </div>
+                              <span className="font-mono text-sm font-bold">₹{option.price}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 gap-2">
-                        {SIZES.map((size) => (
-                          <button
-                            key={size.id}
-                            onClick={() => {
-                              const updated = { ...editingItem, size: size.name, selected_size: size.name };
-                              const newPrice = getEditingItemPrice(updated);
-                              updateItem(editingItem.id, { 
-                                size: size.name,
-                                selected_size: size.name,
-                                price: newPrice,
-                                unit_price: newPrice,
-                                line_total: newPrice * editingItem.quantity
-                              });
-                              setEditingItem({ ...updated, price: newPrice });
-                            }}
-                            className={`p-3 border-2 text-left transition-all ${
-                              editingItem.size === size.name 
-                                ? 'border-brand-black bg-brand-black text-white' 
-                                : 'border-gray-200 bg-white hover:border-brand-red'
-                            }`}
-                          >
-                            <p className="font-black text-sm uppercase">{size.name}</p>
-                            <p className={`text-[10px] font-bold ${editingItem.size === size.name ? 'text-brand-red' : 'text-gray-400'}`}>
-                              {getSizeDimension(size.name)}
-                            </p>
-                          </button>
-                        ))}
+                        {SIZES.map((size) => {
+                          const isSelected = editingItem.size === size.name;
+                          return (
+                            <button
+                              key={size.id}
+                              onClick={() => {
+                                const updated = { ...editingItem, size: size.name, selected_size: size.name };
+                                const newPrice = getEditingItemPrice(updated);
+                                updateItem(editingItem.id, { 
+                                  size: size.name,
+                                  selected_size: size.name,
+                                  price: newPrice,
+                                  unit_price: newPrice,
+                                  line_total: newPrice * editingItem.quantity
+                                });
+                                setEditingItem({ ...updated, price: newPrice });
+                              }}
+                              className={`p-3 border-2 text-left transition-all cursor-pointer ${
+                                isSelected 
+                                  ? 'border-brand-black dark:border-brand-red bg-brand-black dark:bg-zinc-800 text-white dark:text-white' 
+                                  : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 text-brand-black dark:text-zinc-200 hover:border-brand-red dark:hover:border-brand-red'
+                              }`}
+                            >
+                              <p className="font-black text-sm uppercase">{size.name}</p>
+                              <p className={`text-[10px] font-bold ${isSelected ? 'text-brand-red' : 'text-gray-400 dark:text-zinc-400'}`}>
+                                {getSizeDimension(size.name)}
+                              </p>
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -843,43 +850,50 @@ export default function Cart() {
                       <Layers size={14} /> Select Material
                     </p>
                     <div className="space-y-2">
-                      {MATERIALS.map((material) => (
-                        <button
-                          key={material.id}
-                          onClick={() => {
-                            const updated = { ...editingItem, material: material.name, selected_material: material.name };
-                            const newPrice = getEditingItemPrice(updated);
-                            updateItem(editingItem.id, { 
-                              material: material.name,
-                              selected_material: material.name,
-                              price: newPrice,
-                              unit_price: newPrice,
-                              line_total: newPrice * editingItem.quantity
-                            });
-                            setEditingItem({ ...updated, price: newPrice });
-                          }}
-                          className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between ${
-                            editingItem.material === material.name 
-                              ? 'border-brand-black bg-brand-black text-white' 
-                              : 'border-gray-200 bg-white hover:border-brand-red'
-                          }`}
-                        >
-                          <div>
-                            <p className="font-black text-sm uppercase">{material.name}</p>
-                            <p className={`text-[10px] font-bold ${editingItem.material === material.name ? 'text-gray-400' : 'text-gray-500'}`}>
-                              {material.name === 'Matte' ? 'Non-reflective, professional finish' : material.name === 'Glossy' ? 'Vibrant colors, high shine' : 'Heavyweight archival stock, textured'}
-                            </p>
-                          </div>
-                          <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(editingItem.size, material.name)}</p>
-                        </button>
-                      ))}
+                      {MATERIALS.map((material) => {
+                        const isSelected = editingItem.material === material.name;
+                        return (
+                          <button
+                            key={material.id}
+                            onClick={() => {
+                              const updated = { ...editingItem, material: material.name, selected_material: material.name };
+                              const newPrice = getEditingItemPrice(updated);
+                              updateItem(editingItem.id, { 
+                                material: material.name,
+                                selected_material: material.name,
+                                price: newPrice,
+                                unit_price: newPrice,
+                                line_total: newPrice * editingItem.quantity
+                              });
+                              setEditingItem({ ...updated, price: newPrice });
+                            }}
+                            className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
+                              isSelected 
+                                ? 'border-brand-black dark:border-brand-red bg-brand-black dark:bg-zinc-800 text-white dark:text-white' 
+                                : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 text-brand-black dark:text-zinc-200 hover:border-brand-red dark:hover:border-brand-red'
+                            }`}
+                          >
+                            <div>
+                              <p className="font-black text-sm uppercase">{material.name}</p>
+                              <p className={`text-[10px] font-bold ${isSelected ? 'text-gray-400 dark:text-zinc-400' : 'text-gray-500 dark:text-zinc-400'}`}>
+                                {material.name === 'Matte' 
+                                  ? 'Non-reflective, professional finish' 
+                                  : material.name === 'Glossy' 
+                                    ? 'Vibrant colors, high shine' 
+                                    : 'Heavyweight archival stock, textured'}
+                              </p>
+                            </div>
+                            <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(editingItem.size, material.name)}</p>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-8 border-t-2 border-gray-100 flex items-center justify-between gap-6">
+                <div className="mt-10 pt-8 border-t-2 border-gray-100 dark:border-zinc-800 flex items-center justify-between gap-6">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400 mb-1">Price</p>
                     <p className="text-4xl font-black text-brand-red leading-none">
                       ₹{editingItem ? getEditingItemPrice(editingItem) : 0}
                     </p>
@@ -887,7 +901,7 @@ export default function Cart() {
                   <RippleWrapper delay={2} className="flex-1">
                     <button 
                       onClick={() => setEditingItem(null)}
-                      className="w-full py-5 bg-brand-black text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none"
+                      className="w-full py-5 bg-brand-black dark:bg-zinc-800 text-white font-display text-2xl uppercase tracking-widest comic-border border-white dark:border-zinc-700 hover:bg-brand-red dark:hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-none cursor-pointer"
                     >
                       Done
                     </button>
@@ -951,34 +965,35 @@ export default function Cart() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white comic-border max-w-4xl w-full max-h-[80vh] flex flex-col text-brand-black"
+              className="bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 max-w-4xl w-full max-h-[80vh] flex flex-col text-brand-black dark:text-zinc-100"
             >
-              <div className="p-6 border-b-2 border-brand-black flex justify-between items-center bg-brand-black text-white">
+              <div className="p-6 border-b-2 border-brand-black dark:border-zinc-700 flex justify-between items-center bg-brand-black dark:bg-zinc-800 text-white">
                 <h3 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
                   <Sparkles className="text-yellow-400" />
                   Select Free Design (Slot #{selectingSlotIndex + 1})
                 </h3>
                 <button 
                   onClick={() => setSelectingSlotIndex(null)}
-                  className="p-1 hover:bg-white/10 transition-colors border border-white/20"
+                  className="p-1 hover:bg-white/10 dark:hover:bg-zinc-700 transition-colors border border-white/20 dark:border-zinc-600 cursor-pointer"
+                  aria-label="Close modal"
                 >
                   <X size={24} />
                 </button>
               </div>
 
               {/* Filters */}
-              <div className="p-4 border-b-2 border-brand-black bg-gray-50 flex flex-col md:flex-row gap-4">
+              <div className="p-4 border-b-2 border-brand-black dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50 flex flex-col md:flex-row gap-4">
                 <input 
                   type="text" 
                   placeholder="Search posters..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-grow p-3 bg-white comic-border font-bold placeholder-gray-400 focus:outline-none"
+                  className="flex-grow p-3 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 comic-border border-brand-black dark:border-zinc-700 font-bold placeholder-gray-400 dark:placeholder-zinc-400 focus:outline-none"
                 />
                 <select
                   value={selectedCollection}
                   onChange={(e) => setSelectedCollection(e.target.value)}
-                  className="p-3 bg-white comic-border font-bold focus:outline-none"
+                  className="p-3 bg-white dark:bg-zinc-800 text-brand-black dark:text-zinc-100 comic-border border-brand-black dark:border-zinc-700 font-bold focus:outline-none"
                 >
                   {collections.map(genre => (
                     <option key={genre} value={genre}>{genre}</option>
@@ -989,11 +1004,11 @@ export default function Cart() {
               {/* Grid of designs */}
               <div className="flex-grow overflow-y-auto p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {loadingProducts ? (
-                  <div className="col-span-full py-12 text-center uppercase tracking-widest font-black text-xs text-gray-500">
+                  <div className="col-span-full py-12 text-center uppercase tracking-widest font-black text-xs text-gray-500 dark:text-zinc-400">
                     Loading designs...
                   </div>
                 ) : filteredProducts.length === 0 ? (
-                  <div className="col-span-full py-12 text-center uppercase tracking-widest font-black text-xs text-gray-500">
+                  <div className="col-span-full py-12 text-center uppercase tracking-widest font-black text-xs text-gray-500 dark:text-zinc-400">
                     No matching designs found.
                   </div>
                 ) : (
@@ -1005,9 +1020,9 @@ export default function Cart() {
                         setSelectingSlotIndex(null);
                         setSearchQuery('');
                       }}
-                      className="comic-border p-2 bg-white flex flex-col hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all text-left group"
+                      className="comic-border border-2 border-brand-black dark:border-zinc-700 p-2 bg-white dark:bg-zinc-800 flex flex-col hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_rgba(220,38,38,0.5)] transition-all text-left group cursor-pointer"
                     >
-                      <div className="aspect-[3/4] bg-gray-100 border-b-2 border-brand-black overflow-hidden relative">
+                      <div className="aspect-[3/4] bg-gray-100 dark:bg-zinc-700 border-b-2 border-brand-black dark:border-zinc-700 overflow-hidden relative">
                         <img 
                           src={getStorefrontImage(product, 'card')} 
                           alt={getProductDisplayName(product)} 
@@ -1018,8 +1033,8 @@ export default function Cart() {
                         />
                       </div>
                       <div className="pt-2">
-                        <h4 className="font-black uppercase tracking-tight text-xs truncate">{getProductDisplayName(product)}</h4>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase">{product.genre}</p>
+                        <h4 className="font-black uppercase tracking-tight text-xs truncate text-brand-black dark:text-zinc-100">{getProductDisplayName(product)}</h4>
+                        <p className="text-[10px] text-gray-500 dark:text-zinc-400 font-bold uppercase">{product.genre}</p>
                       </div>
                     </button>
                   ))
@@ -1167,7 +1182,7 @@ const CartRecommendations = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             key={product.id}
-            className="flex-shrink-0 w-[240px] sm:w-auto snap-start bg-white comic-border border-2 border-brand-black transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between group"
+            className="flex-shrink-0 w-[240px] sm:w-auto snap-start bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 transition-all hover:-translate-y-2 overflow-hidden flex flex-col justify-between group"
           >
             <div className="relative overflow-hidden aspect-[3/4]">
               <img 
@@ -1182,23 +1197,23 @@ const CartRecommendations = () => {
               <div className="absolute inset-0 bg-brand-red/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
             </div>
             
-            <div className="p-4 flex-grow flex flex-col justify-between">
+            <div className="p-4 flex-grow flex flex-col justify-between text-brand-black dark:text-zinc-100">
               <div className="mb-3">
                 <div className="flex justify-between items-start mb-1">
                   <p className="text-[9px] font-black uppercase text-brand-red tracking-[0.2em]">{product.genre}</p>
-                  <p className="font-mono text-[10px] font-black uppercase tracking-wider text-gray-700">
+                  <p className="font-mono text-[10px] font-black uppercase tracking-wider text-gray-700 dark:text-zinc-400">
                     {product.genre?.toLowerCase() === 'bundle'
                       ? `From ₹${BUNDLE_OPTIONS[0].price}`
                       : `From ₹${POSTER_PRICING.A5}`}
                   </p>
                 </div>
-                <h3 className="font-display text-lg font-black uppercase tracking-tight text-brand-black group-hover:text-brand-red transition-colors line-clamp-1">
+                <h3 className="font-display text-lg font-black uppercase tracking-tight text-brand-black dark:text-zinc-100 group-hover:text-brand-red dark:group-hover:text-brand-red transition-colors line-clamp-1">
                   {getProductDisplayName(product)}
                 </h3>
               </div>
               <button 
                 onClick={() => handleOpenQuickAdd(product)}
-                className="w-full py-2 bg-brand-black text-white font-display text-lg uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red transition-all cursor-pointer"
+                className="w-full py-2 bg-brand-black dark:bg-zinc-800 text-white font-display text-lg uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-red dark:hover:bg-brand-red transition-all cursor-pointer border-t border-brand-black dark:border-zinc-700"
               >
                 <ShoppingCart size={14} /> Quick Add
               </button>
@@ -1223,17 +1238,17 @@ const CartRecommendations = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-brand-white w-full max-w-4xl comic-border overflow-hidden flex flex-col md:flex-row shadow-2xl z-[260] my-auto"
+              className="relative bg-brand-white dark:bg-zinc-900 text-brand-black dark:text-zinc-100 w-full max-w-4xl comic-border border-2 border-brand-black dark:border-zinc-700 overflow-hidden flex flex-col md:flex-row shadow-2xl z-[260] my-auto"
             >
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="fixed top-4 right-4 md:absolute md:top-4 md:right-4 z-[130] w-12 h-12 flex items-center justify-center bg-brand-black text-white hover:bg-brand-red transition-colors comic-border border-white active:scale-95 cursor-pointer"
+                className="fixed top-4 right-4 md:absolute md:top-4 md:right-4 z-[130] w-12 h-12 flex items-center justify-center bg-brand-black dark:bg-zinc-800 text-white hover:bg-brand-red dark:hover:bg-brand-red transition-colors comic-border border-white dark:border-zinc-700 active:scale-95 cursor-pointer"
                 aria-label="Close modal"
               >
                 <X size={24} />
               </button>
 
-              <div className="w-full md:w-1/2 bg-gray-100 relative" style={{ aspectRatio: '3/4' }}>
+              <div className="w-full md:w-1/2 bg-gray-100 dark:bg-zinc-800 relative" style={{ aspectRatio: '3/4' }}>
                 <img 
                   src={getStorefrontImage(selectedProduct, 'preview')} 
                   alt={selectedProduct.name} 
@@ -1248,13 +1263,13 @@ const CartRecommendations = () => {
                 </div>
               </div>
 
-              <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col max-h-[80vh] overflow-y-auto text-brand-black">
-                <div className="mb-8">
-                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">{selectedProduct.name}</h2>
-                  <p className="text-gray-500 font-medium">{selectedProduct.description}</p>
+              <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col max-h-[80vh] overflow-y-auto text-brand-black dark:text-zinc-100">
+                <div className="mb-8 text-left">
+                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 text-brand-black dark:text-zinc-100">{selectedProduct.name}</h2>
+                  <p className="text-gray-500 dark:text-zinc-400 font-medium">{selectedProduct.description}</p>
                 </div>
 
-                <div className="space-y-8 flex-grow">
+                <div className="space-y-8 flex-grow text-left">
                   {/* Size Selection */}
                   <div className="space-y-4">
                     <p className="text-xs font-black uppercase tracking-[0.2em] text-brand-red flex items-center gap-2">
@@ -1262,44 +1277,50 @@ const CartRecommendations = () => {
                     </p>
                     {isBundle ? (
                       <div className="grid grid-cols-1 gap-2">
-                        {BUNDLE_OPTIONS.map((option) => (
-                          <button
-                            key={option.id}
-                            onClick={() => setSelectedSize(option)}
-                            className={`p-3 border-2 text-left transition-all flex justify-between items-center ${
-                              selectedSize.id === option.id 
-                                ? 'border-brand-black bg-brand-black text-white' 
-                                : 'border-gray-200 bg-white hover:border-brand-red'
-                            }`}
-                          >
-                            <div>
-                              <p className="font-black text-sm uppercase">{option.name}</p>
-                              <p className={`text-[10px] font-bold ${selectedSize.id === option.id ? 'text-brand-red' : 'text-gray-400'}`}>
-                                {option.postersCount} A5 posters
-                              </p>
-                            </div>
-                            <span className="font-mono text-sm font-bold">₹{option.price}</span>
-                          </button>
-                        ))}
+                        {BUNDLE_OPTIONS.map((option) => {
+                          const isSelected = selectedSize.id === option.id;
+                          return (
+                            <button
+                              key={option.id}
+                              onClick={() => setSelectedSize(option)}
+                              className={`p-3 border-2 text-left transition-all flex justify-between items-center cursor-pointer ${
+                                isSelected 
+                                  ? 'border-brand-black dark:border-brand-red bg-brand-black dark:bg-zinc-800 text-white dark:text-white' 
+                                  : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 text-brand-black dark:text-zinc-200 hover:border-brand-red dark:hover:border-brand-red'
+                              }`}
+                            >
+                              <div>
+                                <p className="font-black text-sm uppercase">{option.name}</p>
+                                <p className={`text-[10px] font-bold ${isSelected ? 'text-brand-red' : 'text-gray-400 dark:text-zinc-400'}`}>
+                                  {option.postersCount} A5 posters
+                                </p>
+                              </div>
+                              <span className="font-mono text-sm font-bold">₹{option.price}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 gap-2">
-                        {RECOMMENDATION_SIZES.map((size) => (
-                          <button
-                            key={size.id}
-                            onClick={() => setSelectedSize(size)}
-                            className={`p-3 border-2 text-left transition-all ${
-                              selectedSize.id === size.id 
-                                ? 'border-brand-black bg-brand-black text-white' 
-                                : 'border-gray-200 bg-white hover:border-brand-red'
-                            }`}
-                          >
-                            <p className="font-black text-sm uppercase">{size.name}</p>
-                            <p className={`text-[10px] font-bold ${selectedSize.id === size.id ? 'text-brand-red' : 'text-gray-400'}`}>
-                              {size.dimensions}
-                            </p>
-                          </button>
-                        ))}
+                        {RECOMMENDATION_SIZES.map((size) => {
+                          const isSelected = selectedSize?.id === size.id;
+                          return (
+                            <button
+                              key={size.id}
+                              onClick={() => setSelectedSize(size)}
+                              className={`p-3 border-2 text-left transition-all cursor-pointer ${
+                                isSelected 
+                                  ? 'border-brand-black dark:border-brand-red bg-brand-black dark:bg-zinc-800 text-white dark:text-white' 
+                                  : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 text-brand-black dark:text-zinc-200 hover:border-brand-red dark:hover:border-brand-red'
+                              }`}
+                            >
+                              <p className="font-black text-sm uppercase">{size.name}</p>
+                              <p className={`text-[10px] font-bold ${isSelected ? 'text-brand-red' : 'text-gray-400 dark:text-zinc-400'}`}>
+                                {size.dimensions}
+                              </p>
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -1310,32 +1331,35 @@ const CartRecommendations = () => {
                       <Layers size={14} /> Select Material
                     </p>
                     <div className="space-y-2">
-                      {RECOMMENDATION_MATERIALS.map((material) => (
-                        <button
-                          key={material.id}
-                          onClick={() => setSelectedMaterial(material)}
-                          className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between ${
-                            selectedMaterial.id === material.id 
-                              ? 'border-brand-black bg-brand-black text-white' 
-                              : 'border-gray-200 bg-white hover:border-brand-red'
-                          }`}
-                        >
-                          <div>
-                            <p className="font-black text-sm uppercase">{material.name}</p>
-                            <p className={`text-[10px] font-bold ${selectedMaterial.id === material.id ? 'text-gray-400' : 'text-gray-500'}`}>
-                              {material.desc}
-                            </p>
-                          </div>
-                          <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || 'A3', material.name)}</p>
-                        </button>
-                      ))}
+                      {RECOMMENDATION_MATERIALS.map((material) => {
+                        const isSelected = selectedMaterial?.id === material.id;
+                        return (
+                          <button
+                            key={material.id}
+                            onClick={() => setSelectedMaterial(material)}
+                            className={`w-full p-4 border-2 text-left transition-all flex items-center justify-between cursor-pointer ${
+                              isSelected 
+                                ? 'border-brand-black dark:border-brand-red bg-brand-black dark:bg-zinc-800 text-white dark:text-white' 
+                                : 'border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 text-brand-black dark:text-zinc-200 hover:border-brand-red dark:hover:border-brand-red'
+                            }`}
+                          >
+                            <div>
+                              <p className="font-black text-sm uppercase">{material.name}</p>
+                              <p className={`text-[10px] font-bold ${isSelected ? 'text-gray-400 dark:text-zinc-400' : 'text-gray-500 dark:text-zinc-400'}`}>
+                                {material.desc}
+                              </p>
+                            </div>
+                            <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || 'A3', material.name)}</p>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-8 border-t-2 border-gray-100 flex items-center justify-between gap-6">
+                <div className="mt-10 pt-8 border-t-2 border-gray-100 dark:border-zinc-800 flex items-center justify-between gap-6">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Price</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-zinc-400 mb-1">Price</p>
                     <p className="text-4xl font-black text-brand-red leading-none">
                       ₹{isBundle ? (selectedSize?.price || 0) : calculateSinglePosterPrice(selectedSize?.name || selectedSize?.id || '', selectedMaterial?.name || selectedMaterial?.id || '')}
                     </p>
@@ -1343,7 +1367,7 @@ const CartRecommendations = () => {
                   <RippleWrapper delay={2} className="flex-1">
                     <button 
                       onClick={handleQuickAdd}
-                      className="w-full py-5 bg-brand-black text-white font-display text-2xl uppercase tracking-widest comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none"
+                      className="w-full py-5 bg-brand-black dark:bg-zinc-800 text-white font-display text-2xl uppercase tracking-widest comic-border border-white dark:border-zinc-700 hover:bg-brand-red dark:hover:bg-brand-red transition-all flex items-center justify-center gap-3 active:scale-95 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] dark:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-none cursor-pointer"
                     >
                       <ShoppingCart size={24} /> Add to Bag
                     </button>
