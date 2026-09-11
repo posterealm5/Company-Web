@@ -201,7 +201,6 @@ serve(async (req) => {
       }
 
       if (coupon) {
-        dbCoupon = coupon;
         const now = new Date();
         let couponValid = true;
 
@@ -209,8 +208,13 @@ serve(async (req) => {
         if (coupon.start_date && now < new Date(coupon.start_date)) couponValid = false;
         if (coupon.end_date && now > new Date(coupon.end_date)) couponValid = false;
         if (coupon.max_redemptions !== null && (coupon.current_redemptions || 0) >= coupon.max_redemptions) couponValid = false;
+        if (coupon.min_subtotal && calculatedSubtotal < Number(coupon.min_subtotal)) {
+          couponValid = false;
+          console.warn(`[razorpay-verify] Coupon ${couponCode} minimum subtotal of ₹${coupon.min_subtotal} not met (current: ₹${calculatedSubtotal})`);
+        }
 
         if (couponValid) {
+          dbCoupon = coupon;
           if (coupon.type === 'percentage' || coupon.type === 'percentage_discount') {
             const pct = coupon.value || coupon.discount_percent || 0;
             calculatedDiscount = Math.round(calculatedSubtotal * (pct / 100));
@@ -286,7 +290,7 @@ serve(async (req) => {
       payment_status: 'Paid',
       razorpay_order_id: razorpay_order_id,
       razorpay_signature: rzp_signature,
-      coupon_code: couponCode || null,
+      coupon_code: dbCoupon ? (couponCode || null) : null,
       discount_amount: calculatedDiscount || null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()

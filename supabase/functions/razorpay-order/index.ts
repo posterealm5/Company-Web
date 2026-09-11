@@ -189,6 +189,11 @@ serve(async (req) => {
           console.warn(`[razorpay-order] Coupon ${couponCode} max redemptions reached`);
         }
 
+        if (coupon.min_subtotal && calculatedSubtotal < Number(coupon.min_subtotal)) {
+          couponValid = false;
+          console.warn(`[razorpay-order] Coupon ${couponCode} minimum subtotal of ₹${coupon.min_subtotal} not met (current: ₹${calculatedSubtotal})`);
+        }
+
         if (couponValid) {
           if (coupon.type === 'percentage' || coupon.type === 'percentage_discount') {
             const pct = coupon.value || coupon.discount_percent || 0;
