@@ -153,7 +153,7 @@ export default function Cart() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="pt-32 pb-24 min-h-screen px-4 flex items-center justify-center">
+      <div className="pt-32 pb-24 min-h-screen px-4 flex items-center justify-center bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100">
         <SEO metadata={getNonIndexableMetadata('Shopping Cart', '/cart')} />
         <EmptyState 
           icon={ShoppingCart}

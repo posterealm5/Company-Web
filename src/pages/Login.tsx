@@ -246,11 +246,11 @@ export default function Login() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen pt-32 pb-24 bg-brand-white flex items-center justify-center">
+      <div className="min-h-screen pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] flex items-center justify-center text-brand-black dark:text-zinc-100">
         <SEO metadata={getNonIndexableMetadata('Login', '/login')} />
         <div className="flex flex-col items-center justify-center space-y-4">
           <Loader2 className="animate-spin text-brand-red" size={48} />
-          <p className="text-gray-500 font-bold uppercase tracking-wider text-sm">Verifying Session...</p>
+          <p className="text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm">Verifying Session...</p>
         </div>
       </div>
     );
@@ -259,17 +259,17 @@ export default function Login() {
   const isAnyLoading = loadingAction || googleLoading;
 
   return (
-    <div className="pt-32 pb-24 max-w-md mx-auto px-4 sm:px-6 lg:px-8 min-h-[70vh]">
+    <div className="pt-32 pb-24 max-w-md mx-auto px-4 sm:px-6 lg:px-8 min-h-[70vh] text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('Login', '/login')} />
-      <div className="bg-brand-white border-2 border-brand-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
-        <h1 className="text-2xl font-display font-bold uppercase tracking-wider mb-6 text-center">
+      <div className="bg-brand-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] p-8">
+        <h1 className="text-2xl font-display font-bold uppercase tracking-wider mb-6 text-center text-brand-black dark:text-zinc-100">
           {mode === 'login' && 'Welcome Back'}
           {mode === 'signup' && 'Create Account'}
           {mode === 'forgot_password' && 'Reset Password'}
         </h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-brand-red flex items-start gap-3">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/40 border-l-4 border-brand-red flex items-start gap-3">
             <AlertCircle className="text-brand-red shrink-0 mt-0.5" size={20} />
             <div className="text-left">
               <h4 className="font-bold text-brand-red text-sm uppercase leading-tight">{error.title}</h4>
@@ -281,27 +281,27 @@ export default function Login() {
         {mode === 'signup' && success ? (
           <div className="text-center py-6 space-y-6">
             <div className="flex flex-col items-center justify-center space-y-3">
-              <div className="p-3 bg-green-50 rounded-full border-2 border-brand-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <Mail className="text-green-600 animate-pulse" size={32} />
+              <div className="p-3 bg-green-50 dark:bg-green-950/40 rounded-full border-2 border-brand-black dark:border-zinc-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <Mail className="text-green-600 dark:text-green-400 animate-pulse" size={32} />
               </div>
-              <h3 className="text-xl font-display font-bold uppercase tracking-wider mt-2">
+              <h3 className="text-xl font-display font-bold uppercase tracking-wider mt-2 text-brand-black dark:text-zinc-100">
                 Verify Your Email
               </h3>
             </div>
             
             <div className="space-y-4 max-w-sm mx-auto">
-              <p className="text-sm font-medium text-gray-700 leading-relaxed">
+              <p className="text-sm font-medium text-gray-700 dark:text-zinc-300 leading-relaxed">
                 We've sent a verification link to your email address.
               </p>
-              <p className="text-sm font-medium text-gray-700 leading-relaxed">
+              <p className="text-sm font-medium text-gray-700 dark:text-zinc-300 leading-relaxed">
                 Please check your inbox and click the verification link.
               </p>
-              <p className="text-xs font-bold text-brand-black uppercase tracking-wider bg-gray-50 p-3 border-2 border-brand-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <p className="text-xs font-bold text-brand-black dark:text-zinc-100 uppercase tracking-wider bg-gray-50 dark:bg-zinc-800 p-3 border-2 border-brand-black dark:border-zinc-700 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                 This page will automatically continue once your email has been verified.
               </p>
             </div>
 
-            <div className="pt-4 flex items-center justify-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
+            <div className="pt-4 flex items-center justify-center gap-2 text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest">
               <Loader2 className="animate-spin text-brand-red" size={16} />
               <span>Waiting for verification...</span>
             </div>
@@ -309,11 +309,11 @@ export default function Login() {
         ) : (
           <>
             {success && (
-              <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 flex items-start gap-3">
-                <AlertCircle className="text-green-600 shrink-0 mt-0.5" size={20} />
+              <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/40 border-l-4 border-green-500 flex items-start gap-3">
+                <AlertCircle className="text-green-600 dark:text-green-400 shrink-0 mt-0.5" size={20} />
                 <div className="text-left">
-                  <h4 className="font-bold text-green-700 text-sm uppercase leading-tight">Success</h4>
-                  <p className="text-xs text-green-700 mt-1 font-medium leading-normal">{success}</p>
+                  <h4 className="font-bold text-green-700 dark:text-green-400 text-sm uppercase leading-tight">Success</h4>
+                  <p className="text-xs text-green-700 dark:text-green-300 mt-1 font-medium leading-normal">{success}</p>
                 </div>
               </div>
             )}
@@ -321,12 +321,12 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {mode === 'signup' && (
                 <div>
-                  <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2 text-left">
+                  <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-200 mb-2 text-left">
                     Full Name
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <User size={18} className="text-gray-400" />
+                      <User size={18} className="text-gray-400 dark:text-zinc-500" />
                     </div>
                     <input
                       type="text"
@@ -334,7 +334,7 @@ export default function Login() {
                       value={fullName}
                       onChange={(e) => handleFullNameChange(e.target.value)}
                       disabled={isAnyLoading}
-                      className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black bg-white focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 transition-all duration-200 text-brand-black font-medium"
+                      className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 transition-all duration-200 text-brand-black dark:text-zinc-100 font-medium placeholder-gray-400 dark:placeholder-zinc-500"
                       placeholder="John Doe"
                     />
                   </div>
@@ -347,12 +347,12 @@ export default function Login() {
               )}
 
               <div>
-                <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2 text-left">
+                <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-200 mb-2 text-left">
                   Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail size={18} className="text-gray-400" />
+                    <Mail size={18} className="text-gray-400 dark:text-zinc-500" />
                   </div>
                   <input
                     type="email"
@@ -360,7 +360,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     disabled={isAnyLoading}
-                    className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black bg-white focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 transition-all duration-200 text-brand-black font-medium"
+                    className="block w-full pl-10 pr-3 py-3 border-2 border-brand-black dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 transition-all duration-200 text-brand-black dark:text-zinc-100 font-medium placeholder-gray-400 dark:placeholder-zinc-500"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -373,7 +373,7 @@ export default function Login() {
 
               {mode !== 'forgot_password' && (
                 <div>
-                  <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2 text-left">
+                  <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-200 mb-2 text-left">
                     Password
                   </label>
                   <PasswordInput
@@ -396,7 +396,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => handleModeChange('forgot_password')}
-                    className="text-sm font-bold text-brand-black hover:text-brand-red transition-colors underline-offset-4 hover:underline"
+                    className="text-sm font-bold text-brand-black dark:text-zinc-300 hover:text-brand-red transition-colors underline-offset-4 hover:underline"
                   >
                     Forgot Password?
                   </button>
@@ -432,20 +432,20 @@ export default function Login() {
             {(mode === 'login' || mode === 'signup') && (
               <>
                 <div className="mt-6 flex items-center">
-                  <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="flex-shrink-0 mx-4 text-gray-500 text-sm font-bold uppercase">Or</span>
-                  <div className="flex-grow border-t border-gray-300"></div>
+                  <div className="flex-grow border-t border-gray-300 dark:border-zinc-700"></div>
+                  <span className="flex-shrink-0 mx-4 text-gray-500 dark:text-zinc-400 text-sm font-bold uppercase">Or</span>
+                  <div className="flex-grow border-t border-gray-300 dark:border-zinc-700"></div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleGoogleSignIn}
                   disabled={isAnyLoading}
-                  className="mt-6 w-full bg-white border-2 border-brand-black text-brand-black font-bold uppercase tracking-wider py-3.5 hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                  className="mt-6 w-full bg-white dark:bg-zinc-800 border-2 border-brand-black dark:border-zinc-700 text-brand-black dark:text-zinc-100 font-bold uppercase tracking-wider py-3.5 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer active:scale-95"
                 >
                   {googleLoading ? (
                     <>
-                      <Loader2 className="animate-spin text-brand-black" size={20} />
+                      <Loader2 className="animate-spin text-brand-black dark:text-zinc-100" size={20} />
                       <span>Connecting to Google...</span>
                     </>
                   ) : (
@@ -466,14 +466,14 @@ export default function Login() {
         )}
 
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-zinc-400">
             {mode === 'login' ? "Don't have an account? " : 
              mode === 'signup' ? "Already have an account? " : 
              "Remember your password? "}
             <button
               type="button"
               onClick={() => handleModeChange(mode === 'login' ? 'signup' : 'login')}
-              className="font-bold text-brand-black hover:text-brand-red underline underline-offset-4 transition-colors ml-1"
+              className="font-bold text-brand-black dark:text-zinc-200 hover:text-brand-red underline underline-offset-4 transition-colors ml-1"
             >
               {mode === 'login' ? 'Sign Up' : 'Log In'}
             </button>

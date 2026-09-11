@@ -80,15 +80,15 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="pt-32 pb-24 max-w-md mx-auto px-4 sm:px-6 lg:px-8 min-h-[70vh]">
+    <div className="pt-32 pb-24 max-w-md mx-auto px-4 sm:px-6 lg:px-8 min-h-[70vh] text-brand-black dark:text-zinc-100">
       <SEO metadata={getNonIndexableMetadata('Reset Password', '/reset-password')} />
-      <div className="bg-brand-white border-2 border-brand-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
-        <h1 className="text-2xl font-display font-bold uppercase tracking-wider mb-6 text-center">
+      <div className="bg-brand-white dark:bg-zinc-900 border-2 border-brand-black dark:border-zinc-700 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(230,57,70,0.5)] p-8">
+        <h1 className="text-2xl font-display font-bold uppercase tracking-wider mb-6 text-center text-brand-black dark:text-zinc-100">
           Set New Password
         </h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-brand-red flex items-start gap-3">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/40 border-l-4 border-brand-red flex items-start gap-3">
             <AlertCircle className="text-brand-red shrink-0 mt-0.5" size={20} />
             <div className="text-left">
               <h4 className="font-bold text-brand-red text-sm uppercase leading-tight">{error.title}</h4>
@@ -99,7 +99,7 @@ export default function ResetPassword() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-bold uppercase tracking-wider text-brand-black mb-2 text-left">
+            <label className="block text-sm font-bold uppercase tracking-wider text-brand-black dark:text-zinc-200 mb-2 text-left">
               New Password
             </label>
             <PasswordInput

@@ -38,7 +38,7 @@ export default function PrivacyPolicy() {
       title: 'Introduction',
       icon: <Shield className="text-brand-red" size={24} />,
       content: (
-        <p className="text-gray-700 leading-relaxed font-medium">
+        <p className="text-gray-700 dark:text-zinc-300 leading-relaxed font-medium">
           At Posterealm, we value your privacy and are committed to protecting your personal information. This policy outlines how we handle the data you share with us.
         </p>
       )
@@ -48,7 +48,7 @@ export default function PrivacyPolicy() {
       title: 'Information We Collect',
       icon: <User className="text-brand-red" size={24} />,
       content: (
-        <div className="space-y-2 text-gray-700 font-medium">
+        <div className="space-y-2 text-gray-700 dark:text-zinc-300 font-medium">
           <p className="mb-3">We collect the following information when you interact with our website or place an order:</p>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
               'Uploaded custom design files',
               'Device and browser information'
             ].map((item, idx) => (
-              <li key={idx} className="flex items-center gap-2 bg-brand-white p-2 comic-border border-brand-black border-2 shadow-none text-sm">
+              <li key={idx} className="flex items-center gap-2 bg-brand-white dark:bg-zinc-800 p-2 comic-border border-brand-black dark:border-zinc-700 border-2 shadow-none text-sm text-brand-black dark:text-zinc-200">
                 <CheckCircle2 size={16} className="text-brand-red shrink-0" />
                 <span>{item}</span>
               </li>
@@ -74,59 +74,73 @@ export default function PrivacyPolicy() {
       title: 'How We Use Your Information',
       icon: <FileText className="text-brand-red" size={24} />,
       content: (
-        <div className="space-y-4 text-gray-700 font-medium">
+        <div className="space-y-4 text-gray-700 dark:text-zinc-300 font-medium">
           <p>We use your information to:</p>
           <ul className="list-disc pl-5 space-y-2 text-sm">
             <li>Process and fulfill orders</li>
-            <li>Deliver products</li>
-            <li>Provide customer support</li>
-            <li>Send order updates and tracking information</li>
-            <li>Improve website performance and user experience</li>
-            <li>Prevent fraud and abuse</li>
+            <li>Coordinate shipping and local delivery services</li>
+            <li>Send essential order updates, notifications, and verification links</li>
+            <li>Improve our website, product catalog, and customer experience</li>
+            <li>Prevent fraud and maintain platform security</li>
           </ul>
-          <div className="bg-brand-red text-white p-4 font-black uppercase text-xs tracking-wider comic-border border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            We do not sell your personal information.
-          </div>
         </div>
       )
     },
     {
-      id: 'payments',
-      title: 'Payments',
+      id: 'payment-processing',
+      title: 'Payment Processing',
       icon: <CreditCard className="text-brand-red" size={24} />,
       content: (
-        <div className="space-y-3 text-gray-700 font-medium">
-          <p>Payments on Posterealm are processed through trusted payment providers.</p>
-          <p className="text-sm border-l-4 border-brand-red pl-4 italic bg-brand-white/50 p-2">
-            Posterealm does not store your credit card, debit card, UPI PIN, or sensitive payment credentials.
+        <div className="space-y-3 text-gray-700 dark:text-zinc-300 font-medium">
+          <p>
+            Online payments on Posterealm are securely handled by <strong className="text-brand-black dark:text-zinc-100 font-bold">Razorpay</strong>.
+          </p>
+          <p>
+            We do not store complete card numbers, CVVs, or UPI PINs on our servers. All sensitive financial transactions are processed securely through Razorpay’s encrypted gateway compliant with RBI standards.
           </p>
         </div>
       )
     },
     {
-      id: 'cookies',
-      title: 'Cookies',
+      id: 'cookies-and-tracking',
+      title: 'Cookies and Tracking',
       icon: <Cookie className="text-brand-red" size={24} />,
       content: (
-        <div className="space-y-3 text-gray-700 font-medium">
-          <p>We may use cookies and similar technologies to:</p>
-          <ul className="list-disc pl-5 space-y-2 text-sm">
-            <li>Keep users signed in</li>
-            <li>Remember cart and wishlist data</li>
-            <li>Improve website performance</li>
-            <li>Analyze user interactions</li>
+        <div className="space-y-3 text-gray-700 dark:text-zinc-300 font-medium">
+          <p>We use local storage and essential session identifiers to:</p>
+          <ul className="list-disc pl-5 space-y-1.5 text-sm">
+            <li>Maintain your persistent shopping cart and selected products</li>
+            <li>Save your wishlist items across browsing sessions</li>
+            <li>Keep you signed into your authenticated customer account</li>
           </ul>
+          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
+            You can clear local data anytime via your browser settings, though doing so will reset your active cart and saved preferences.
+          </p>
         </div>
       )
     },
     {
-      id: 'custom-uploads',
-      title: 'Custom Uploads',
+      id: 'data-protection',
+      title: 'Data Protection & Security',
+      icon: <Shield className="text-brand-red" size={24} />,
+      content: (
+        <div className="space-y-3 text-gray-700 dark:text-zinc-300 font-medium">
+          <p>
+            We use industry-standard security measures, encrypted database connections, and row-level security protocols powered by Supabase to protect customer records from unauthorized access, disclosure, alteration, or destruction.
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 'custom-artwork-privacy',
+      title: 'Custom Artwork Privacy',
       icon: <Image className="text-brand-red" size={24} />,
       content: (
-        <div className="space-y-3 text-gray-700 font-medium">
-          <p>Images uploaded for custom poster creation are used solely for fulfilling your order and improving your experience.</p>
-          <p className="text-sm font-bold text-brand-red uppercase tracking-wider">
+        <div className="space-y-3 text-gray-700 dark:text-zinc-300 font-medium">
+          <p>
+            Images and artwork uploaded for custom posters are used strictly for printing and fulfilling your specific order.
+          </p>
+          <p className="font-bold text-brand-black dark:text-zinc-100">
             We do not claim ownership of customer-uploaded artwork.
           </p>
         </div>
@@ -137,21 +151,21 @@ export default function PrivacyPolicy() {
       title: 'Contact',
       icon: <Mail className="text-brand-red" size={24} />,
       content: (
-        <div className="space-y-4 text-gray-700 font-medium">
+        <div className="space-y-4 text-gray-700 dark:text-zinc-300 font-medium">
           <p>If you have any questions or concerns regarding our Privacy Policy, please contact support:</p>
           <div className="flex flex-col sm:flex-row gap-6">
-            <div className="flex-1 bg-brand-white p-4 comic-border border-brand-black border-2 shadow-none">
-              <h4 className="font-bold text-xs uppercase text-gray-500 tracking-wider mb-2">Email</h4>
+            <div className="flex-1 bg-brand-white dark:bg-zinc-800 p-4 comic-border border-brand-black dark:border-zinc-700 border-2 shadow-none">
+              <h4 className="font-bold text-xs uppercase text-gray-500 dark:text-zinc-400 tracking-wider mb-2">Email</h4>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <a
                   href="mailto:posterealm5@gmail.com"
-                  className="text-brand-black hover:text-brand-red font-bold transition-colors"
+                  className="text-brand-black dark:text-zinc-100 hover:text-brand-red font-bold transition-colors"
                 >
                   posterealm5@gmail.com
                 </a>
                 <button
                   onClick={(e) => handleCopyEmail(e)}
-                  className="p-1 bg-white hover:bg-brand-red hover:text-white transition-colors comic-border border-2 border-brand-black shadow-none py-0.5 px-2 text-xs font-black uppercase tracking-wider shrink-0 max-w-max flex items-center gap-1"
+                  className="p-1 bg-white dark:bg-zinc-700 text-brand-black dark:text-zinc-100 hover:bg-brand-red hover:text-white transition-colors comic-border border-2 border-brand-black dark:border-zinc-600 shadow-none py-0.5 px-2 text-xs font-black uppercase tracking-wider shrink-0 max-w-max flex items-center gap-1"
                   title="Copy Email"
                 >
                   <Copy size={12} />
@@ -159,10 +173,10 @@ export default function PrivacyPolicy() {
                 </button>
               </div>
             </div>
-            <div className="flex-1 bg-brand-white p-4 comic-border border-brand-black border-2 shadow-none">
-              <h4 className="font-bold text-xs uppercase text-gray-500 tracking-wider mb-2">WhatsApp</h4>
+            <div className="flex-1 bg-brand-white dark:bg-zinc-800 p-4 comic-border border-brand-black dark:border-zinc-700 border-2 shadow-none">
+              <h4 className="font-bold text-xs uppercase text-gray-500 dark:text-zinc-400 tracking-wider mb-2">WhatsApp</h4>
               <div className="flex flex-col gap-1 font-bold text-sm">
-                <a href="https://wa.me/918949923501?text=Hi%20Posterealm,%20I%20have%20a%20question%20regarding%20your%20Privacy%20Policy." target="_blank" rel="noopener noreferrer" className="hover:text-brand-red transition-colors">
+                <a href="https://wa.me/918949923501?text=Hi%20Posterealm,%20I%20have%20a%20question%20regarding%20your%20Privacy%20Policy." target="_blank" rel="noopener noreferrer" className="hover:text-brand-red transition-colors text-brand-black dark:text-zinc-100">
                   WhatsApp Support
                 </a>
               </div>
@@ -174,14 +188,14 @@ export default function PrivacyPolicy() {
   ];
 
   return (
-    <div className="pt-32 pb-24 bg-brand-white min-h-screen">
+    <div className="pt-32 pb-24 bg-brand-white dark:bg-[#0D0D0D] text-brand-black dark:text-zinc-100 min-h-screen">
       <SEO metadata={getStaticPageMetadata('Privacy Policy', 'Privacy Policy | Posterealm', 'Privacy Policy and customer data guidelines at Posterealm.')} />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Back Button */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-brand-black font-black uppercase tracking-wider hover:text-brand-red transition-colors mb-8 group text-xs md:text-sm"
+          className="inline-flex items-center gap-2 text-brand-black dark:text-zinc-200 font-black uppercase tracking-wider hover:text-brand-red transition-colors mb-8 group text-xs md:text-sm"
         >
           <ArrowLeft size={18} className="transform group-hover:-translate-x-1 transition-transform" />
           Back to Home
@@ -192,12 +206,12 @@ export default function PrivacyPolicy() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-12 border-b-4 border-brand-black pb-8"
+          className="mb-12 border-b-4 border-brand-black dark:border-zinc-700 pb-8"
         >
-          <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tight text-brand-black dark:text-zinc-100">
             PRIVACY <span className="text-brand-red">POLICY</span>
           </h1>
-          <p className="text-lg text-gray-600 font-medium max-w-2xl font-sans">
+          <p className="text-lg text-gray-600 dark:text-zinc-400 font-medium max-w-2xl font-sans">
             Your trust is our most valuable asset. Read about what information we collect, how it's protected, and how we use it to fulfill your orders.
           </p>
         </motion.div>
@@ -207,8 +221,8 @@ export default function PrivacyPolicy() {
 
           {/* Quick Navigation Panel */}
           <div className="hidden lg:block lg:col-span-1">
-            <div className="sticky top-36 bg-white comic-border border-brand-black border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-5">
-              <h3 className="font-display font-black text-lg uppercase tracking-tight text-brand-black border-b-2 border-brand-black pb-2 mb-4">
+            <div className="sticky top-36 bg-white dark:bg-zinc-900 comic-border border-brand-black dark:border-zinc-700 border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(230,57,70,0.5)] p-5">
+              <h3 className="font-display font-black text-lg uppercase tracking-tight text-brand-black dark:text-zinc-100 border-b-2 border-brand-black dark:border-zinc-700 pb-2 mb-4">
                 SECTIONS
               </h3>
               <nav className="space-y-2 font-display text-sm font-bold uppercase tracking-wider">
@@ -216,7 +230,7 @@ export default function PrivacyPolicy() {
                   <a
                     key={sec.id}
                     href={`#${sec.id}`}
-                    className="block text-gray-500 hover:text-brand-red transition-colors py-1 border-b border-gray-100 hover:border-brand-red"
+                    className="block text-gray-500 dark:text-zinc-400 hover:text-brand-red dark:hover:text-brand-red transition-colors py-1 border-b border-gray-100 dark:border-zinc-800 hover:border-brand-red"
                   >
                     {sec.title}
                   </a>
@@ -235,11 +249,11 @@ export default function PrivacyPolicy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="scroll-mt-36 bg-white comic-border border-brand-black border-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-6 md:p-8"
+                className="scroll-mt-36 bg-white dark:bg-zinc-900 comic-border border-brand-black dark:border-zinc-700 border-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(230,57,70,0.5)] p-6 md:p-8"
               >
-                <div className="flex items-center gap-3 border-b-2 border-brand-black pb-3 mb-6">
+                <div className="flex items-center gap-3 border-b-2 border-brand-black dark:border-zinc-700 pb-3 mb-6">
                   {sec.icon}
-                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-brand-black">
+                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100">
                     {sec.title}
                   </h2>
                 </div>

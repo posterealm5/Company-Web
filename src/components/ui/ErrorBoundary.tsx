@@ -43,21 +43,21 @@ class ErrorBoundary extends Component<Props, State> {
       const isDev = import.meta.env.DEV;
 
       return (
-        <div className="min-h-screen bg-brand-white flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white comic-border p-10 shadow-[12px_12px_0px_0px_rgba(239,68,68,1)] text-center space-y-8">
-            <div className="w-20 h-20 bg-red-100 flex items-center justify-center mx-auto comic-border border-brand-red">
+        <div className="min-h-screen bg-brand-white dark:bg-[#0D0D0D] flex items-center justify-center p-6 text-brand-black dark:text-zinc-100">
+          <div className="max-w-md w-full bg-white dark:bg-zinc-900 comic-border border-2 border-brand-black dark:border-zinc-700 p-10 shadow-[12px_12px_0px_0px_rgba(239,68,68,1)] text-center space-y-8 text-brand-black dark:text-zinc-100">
+            <div className="w-20 h-20 bg-red-100 dark:bg-red-950/40 flex items-center justify-center mx-auto comic-border border-brand-red">
               <AlertCircle size={40} className="text-brand-red" />
             </div>
             
             <div className="space-y-2">
-              <h1 className="text-4xl font-black uppercase tracking-tighter italic">Oops! Something went wrong.</h1>
-              <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">
+              <h1 className="text-4xl font-black uppercase tracking-tighter italic text-brand-black dark:text-zinc-100">Oops! Something went wrong.</h1>
+              <p className="text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-widest text-xs">
                 A temporary error occurred while loading this page.
               </p>
             </div>
 
             {isDev && this.state.error && (
-              <div className="p-4 bg-gray-50 border-2 border-brand-black text-left overflow-auto max-h-32">
+              <div className="p-4 bg-gray-50 dark:bg-zinc-800 border-2 border-brand-black dark:border-zinc-700 text-left overflow-auto max-h-32">
                 <p className="font-mono text-[10px] text-brand-red font-bold break-all">
                   {this.state.error.toString()}
                 </p>
@@ -74,7 +74,7 @@ class ErrorBoundary extends Component<Props, State> {
               
               <a 
                 href="/"
-                className="w-full py-4 bg-brand-black text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-gray-800 transition-all"
+                className="w-full py-4 bg-brand-black dark:bg-zinc-800 text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-gray-800 dark:hover:bg-zinc-700 transition-all border-2 border-brand-black dark:border-zinc-700"
               >
                 <Home size={18} /> Go Home
               </a>
