@@ -689,7 +689,6 @@ export default function Home() {
         centerPosterAlt={HERO_CONFIG.centerPosterAlt}
         rightPosterAlt={HERO_CONFIG.rightPosterAlt}
       />
-      <ObjectiveSection />
       <CollectionsSection
         animeData={animeData}
         moviesData={moviesData}
@@ -734,6 +733,8 @@ export default function Home() {
           </div>
         </div>
       </motion.section>
+
+      <ObjectiveSection />
 
       <Suspense fallback={null}>
         <CustomerShowcase />
