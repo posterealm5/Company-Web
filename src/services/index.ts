@@ -17,5 +17,6 @@ export * from './recentProducts';
 export * from './addresses';
 export * from './coupons';
 export * from './dashboard';
+export * from './analytics';
 
 

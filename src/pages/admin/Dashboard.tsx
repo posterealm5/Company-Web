@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { 
@@ -8,12 +8,15 @@ import {
   Package, 
   AlertCircle,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Activity
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { calculateTotalRevenue } from '../../services';
-
+import { fetchAdminVisitorAnalytics } from '../../services/analytics';
+import { VisitsChart } from '../../components/admin/VisitsChart';
+import type { DailyVisitItem } from '../../types/database';
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
@@ -25,6 +28,16 @@ const AdminDashboard: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // Visitor analytics state
+  const [currentVisitors, setCurrentVisitors] = useState(0);
+  const [dailyVisits, setDailyVisits] = useState<DailyVisitItem[]>([]);
+  const [analyticsDays, setAnalyticsDays] = useState(7);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
+  const [analyticsError, setAnalyticsError] = useState(false);
+  const activeDaysRef = useRef(analyticsDays);
+
+  activeDaysRef.current = analyticsDays;
 
   const fetchStats = async () => {
     setLoading(true);
@@ -62,14 +75,49 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const loadAnalytics = useCallback(async (daysToFetch: number, isInitial = false) => {
+    if (isInitial) {
+      setAnalyticsLoading(true);
+    }
+    setAnalyticsError(false);
+
+    try {
+      const data = await fetchAdminVisitorAnalytics(daysToFetch);
+      setCurrentVisitors(data.current_visitors || 0);
+      setDailyVisits(data.daily_visits || []);
+    } catch (err) {
+      console.error('Error fetching admin visitor analytics:', err);
+      setAnalyticsError(true);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, []);
+
+  const handleDaysChange = (newDays: number) => {
+    setAnalyticsDays(newDays);
+    loadAnalytics(newDays, true);
+  };
+
   useEffect(() => {
     fetchStats();
-  }, []);
+    loadAnalytics(7, true);
+
+    // Auto-refresh visitor analytics every 30 seconds while the page is active
+    const refreshInterval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'hidden') {
+        loadAnalytics(activeDaysRef.current, false);
+      }
+    }, 30000);
+
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, [loadAnalytics]);
 
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <ErrorState onRetry={fetchStats} />
+        <ErrorState onRetry={() => { fetchStats(); loadAnalytics(analyticsDays, true); }} />
       </div>
     );
   }
@@ -112,14 +160,37 @@ const AdminDashboard: React.FC = () => {
         <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Real-time overview of the Posterealm ecosystem.</p>
       </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats Grid: Current Visitors + Overview Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        {/* Live Current Visitors Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0 }}
+          className="bg-white comic-border p-6 shadow-sm hover:shadow-md transition-shadow relative"
+        >
+          <div className="flex justify-between items-start mb-4">
+            <div className="p-3 bg-emerald-50 comic-border border-emerald-100 text-emerald-600">
+              <Activity size={20} />
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-[9px] font-black uppercase tracking-widest text-emerald-700 border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Live now
+            </div>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Current Visitors</p>
+          <p className="text-3xl font-black text-gray-900">
+            {analyticsLoading && dailyVisits.length === 0 ? '—' : currentVisitors}
+          </p>
+        </motion.div>
+
+        {/* Existing Commerce Metric Cards */}
         {statCards.map((stat, idx) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
+            transition={{ delay: (idx + 1) * 0.1 }}
             className="bg-white comic-border p-6 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
@@ -136,6 +207,22 @@ const AdminDashboard: React.FC = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Visits Per Day Graph Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <VisitsChart
+          data={dailyVisits}
+          days={analyticsDays}
+          onDaysChange={handleDaysChange}
+          loading={analyticsLoading}
+          error={analyticsError}
+          onRetry={() => loadAnalytics(analyticsDays, true)}
+        />
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Recent Activity Placeholder */}

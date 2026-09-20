@@ -83,9 +83,11 @@ export default function App() {
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 import { useContentProtection } from './hooks/useContentProtection';
+import { useVisitorTracking } from './hooks/useVisitorTracking';
 
 function AppContent() {
   useContentProtection();
+  useVisitorTracking();
   
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');

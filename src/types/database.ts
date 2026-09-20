@@ -509,9 +509,73 @@ export type Database = {
         };
         Relationships: any[];
       };
+      visitor_sessions: {
+        Row: {
+          id: number;
+          session_id: string;
+          first_seen_at: string;
+          last_seen_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          session_id: string;
+          first_seen_at?: string;
+          last_seen_at?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          session_id?: string;
+          first_seen_at?: string;
+          last_seen_at?: string;
+          created_at?: string;
+        };
+        Relationships: any[];
+      };
+      visitor_daily_visits: {
+        Row: {
+          id: number;
+          session_id: string;
+          visit_date: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          session_id: string;
+          visit_date?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          session_id?: string;
+          visit_date?: string;
+          created_at?: string;
+        };
+        Relationships: any[];
+      };
     };
     Views: {};
-    Functions: {};
+    Functions: {
+      record_visitor_heartbeat: {
+        Args: {
+          p_session_id: string;
+        };
+        Returns: void;
+      };
+      get_admin_visitor_analytics: {
+        Args: {
+          p_days?: number;
+        };
+        Returns: {
+          current_visitors: number;
+          daily_visits: {
+            date: string;
+            visits: number;
+          }[];
+        };
+      };
+    };
     Enums: {};
     CompositeTypes: {};
   };
@@ -538,6 +602,16 @@ export type AddressUpdate = Database['public']['Tables']['addresses']['Update'];
 export type CouponRow = Database['public']['Tables']['coupons']['Row'];
 export type CouponInsert = Database['public']['Tables']['coupons']['Insert'];
 export type CouponUserRow = Database['public']['Tables']['coupon_users']['Row'];
+
+export interface DailyVisitItem {
+  date: string;
+  visits: number;
+}
+
+export interface VisitorAnalyticsData {
+  current_visitors: number;
+  daily_visits: DailyVisitItem[];
+}
 
 
 export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'out_for_delivery' | 'shipped' | 'delivered' | 'cancelled' | 'failed';
