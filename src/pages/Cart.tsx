@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ArrowLeft, Check, X, Maximize2, Layers, AlertCircle, Sparkles } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, ArrowLeft, Check, X, Maximize2, Layers, AlertCircle, AlertTriangle, Sparkles, Loader2 } from 'lucide-react';
 import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 
 import { motion, AnimatePresence } from 'motion/react';
@@ -10,6 +10,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { Product } from '../types/database';
 import { getProducts } from '../services/products';
 import { getProductDisplayName } from '../utils/productUrls';
+import { getCustomArtworkBlob } from '../services/posterKitStorage';
 
 import { EmptyState } from '../components/ui/EmptyState';
 
@@ -18,12 +19,130 @@ import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
 
 import { SIZES, getSizeDimension, getSizeDisplayLabel } from '../utils/sizeHelper';
+import { getPosterKitUnitPrice } from '../utils/posterKitPricing';
+
+const POSTER_KIT_SIZES = [
+  { id: 'a6', name: 'A6', dimensions: '4.1" × 5.8"' },
+  { id: 'a5', name: 'A5', dimensions: '5.8" × 8.3"' },
+  { id: 'a4', name: 'A4', dimensions: '8.3" × 11.7"' },
+  { id: 'a3', name: 'A3', dimensions: '11.7" × 16.5"' },
+];
 
 const MATERIALS = [
   { id: 'matte', name: 'Matte' },
   { id: 'glossy', name: 'Glossy' },
   { id: 'rigid_board', name: 'Rigid Board' },
 ];
+
+interface CartEditModalImageProps {
+  item: CartItem;
+  altText: string;
+}
+
+const CartEditModalImage = ({ item, altText }: CartEditModalImageProps) => {
+  const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
+
+  useEffect(() => {
+    let active = true;
+    let localBlobUrl: string | null = null;
+
+    async function resolvePreview() {
+      // 1. Poster Kit custom-upload design: resolve from verified cloud URL or IndexedDB Blob (B4)
+      if (item.customArtworkId) {
+        if (item.image && !item.image.startsWith('blob:') && item.image.startsWith('http')) {
+          setResolvedUrl(item.image);
+          setIsLoading(false);
+          return;
+        }
+        setIsLoading(true);
+        setHasError(false);
+        try {
+          const blob = await getCustomArtworkBlob(item.customArtworkId);
+          if (blob && active) {
+            localBlobUrl = URL.createObjectURL(blob);
+            setResolvedUrl(localBlobUrl);
+            setIsLoading(false);
+            return;
+          }
+
+          // Fallback if item.image is a valid remote URL
+          if (item.image && !item.image.startsWith('blob:') && active) {
+            setResolvedUrl(item.image);
+            setIsLoading(false);
+            return;
+          }
+
+          // Genuinely missing IndexedDB entry
+          if (active) {
+            setHasError(true);
+            setIsLoading(false);
+          }
+        } catch {
+          if (active) {
+            setHasError(true);
+            setIsLoading(false);
+          }
+        }
+        return;
+      }
+
+      // 2. Standard Storefront product or regular Custom Masterpiece (/customize)
+      const preview = getStorefrontImage(item, 'preview');
+      setResolvedUrl(preview || item.image || null);
+      setIsLoading(false);
+      setHasError(!preview && !item.image);
+    }
+
+    resolvePreview();
+
+    return () => {
+      active = false;
+      if (localBlobUrl) {
+        try {
+          URL.revokeObjectURL(localBlobUrl);
+        } catch {
+          // Safe fallback
+        }
+      }
+    };
+  }, [item.id, item.customArtworkId, item.image]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-gray-100 dark:bg-zinc-800">
+        <Loader2 className="w-10 h-10 animate-spin text-brand-red mb-3" />
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Loading Preview...</p>
+      </div>
+    );
+  }
+
+  if (hasError || !resolvedUrl) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gray-100 dark:bg-zinc-800">
+        <AlertCircle className="w-12 h-12 text-gray-400 mb-3" />
+        <p className="text-sm font-black uppercase tracking-wider text-brand-black dark:text-zinc-100 mb-1">
+          Custom Artwork Unavailable
+        </p>
+        <p className="text-xs text-gray-500 dark:text-zinc-400 max-w-xs">
+          The uploaded image was not found in browser storage.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={resolvedUrl} 
+      alt={altText} 
+      width={800}
+      height={1067}
+      loading="lazy"
+      className="w-full h-full object-cover aspect-[3/4] md:aspect-auto"
+    />
+  );
+};
 
 export default function Cart() {
   const { 
@@ -41,8 +160,13 @@ export default function Cart() {
     removeCoupon,
     triggerNotification,
     selectFreePosterDesign,
-    removeFreePosterDesign
+    removeFreePosterDesign,
+    refreshCartBlobs
   } = useCart();
+
+  useEffect(() => {
+    refreshCartBlobs?.();
+  }, [refreshCartBlobs]);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [editingItem, setEditingItem] = useState<CartItem | null>(null);
   const [couponInput, setCouponInput] = useState('');
@@ -72,7 +196,9 @@ export default function Cart() {
   const buyQty = appliedCoupon?.buyQty || 0;
   const freeQty = appliedCoupon?.freeQty || 0;
 
-  const selectedRegular = selectedItems.filter(item => item.slotIndex === undefined);
+  const selectedRegular = selectedItems.filter(
+    item => item.slotIndex === undefined && !Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit')
+  );
   const totalSelectedPosterQuantity = selectedRegular.reduce((sum, item) => sum + item.quantity, 0);
   const automaticFreeCount = (appliedCoupon?.type === 'buy_x_get_y' && buyQty > 0)
     ? Math.min(Math.max(totalSelectedPosterQuantity - buyQty, 0), freeQty)
@@ -113,6 +239,9 @@ export default function Cart() {
   }, [allProducts]);
 
   const getEditingItemPrice = (item: CartItem) => {
+    if (item.isPosterKit || item.posterKit || item.origin === 'poster_kit') {
+      return getPosterKitUnitPrice(item.size, item.material);
+    }
     return calculateSinglePosterPrice(item.size, item.material);
   };
 
@@ -123,10 +252,11 @@ export default function Cart() {
       return map;
     }
     
-    // Expand all selected items into a list of { id, price }
+    // Expand all eligible selected regular items into a list of { id, price }
     const itemsList: { id: number; price: number }[] = [];
     selectedItems.forEach(item => {
-      if (item.isFreeItem) return;
+      const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+      if (item.isFreeItem || isPk) return;
       const unitPrice = calculateSinglePosterPrice(item.size, item.material);
       for (let i = 0; i < item.quantity; i++) {
         itemsList.push({ id: item.id, price: unitPrice });
@@ -147,6 +277,14 @@ export default function Cart() {
     }
 
     return map;
+  };
+
+  const getItemDisplayName = (item: CartItem | any) => {
+    if (!item) return 'Poster';
+    const isPosterKit = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+    const isCustom = isPosterKit && (item.artwork_source === 'custom' || Boolean(item.customArtworkId) || (!item.productId && !item.artworkProductId));
+    if (isCustom) return 'Custom Design';
+    return item.name || item.title || 'Poster';
   };
 
   const freeItemQuantityMap = getFreeItemQuantityMap();
@@ -222,7 +360,7 @@ export default function Cart() {
                 <div className={`w-full md:w-32 aspect-[3/4] bg-gray-100 dark:bg-zinc-800 flex-shrink-0 border-2 border-brand-black dark:border-zinc-700 overflow-hidden transition-opacity ${!item.selected ? 'opacity-40 grayscale' : ''}`}>
                   <img 
                     src={getStorefrontImage(item, 'thumbnail')} 
-                    alt={item.name} 
+                    alt={getItemDisplayName(item)} 
                     width={160}
                     height={213}
                     loading="lazy"
@@ -233,7 +371,7 @@ export default function Cart() {
                 <div className={`flex-grow transition-opacity ${!item.selected ? 'opacity-40' : ''}`}>
                   <div className="flex justify-between items-start mb-2 text-left">
                     <h3 className="text-2xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100">
-                      {item.name}
+                      {getItemDisplayName(item)}
                     </h3>
                     <p className="text-xl font-black tracking-tight text-brand-red text-right flex flex-col items-end">
                       {item.isFreeItem ? (
@@ -266,13 +404,24 @@ export default function Cart() {
                     </p>
                   </div>
                   
-                  <div className="flex flex-wrap gap-4 mb-6">
+                  <div className="flex flex-wrap items-center gap-2 mb-6">
                     <div className="bg-gray-100 dark:bg-zinc-800 text-brand-black dark:text-zinc-200 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200 dark:border-zinc-700">
                       Size: {getSizeDisplayLabel(item.size)}
                     </div>
                     <div className="bg-gray-100 dark:bg-zinc-800 text-brand-black dark:text-zinc-200 px-3 py-1 text-[10px] font-black uppercase tracking-wider border border-gray-200 dark:border-zinc-700">
                       Material: {item.material}
                     </div>
+                    {(item.isPosterKit || item.posterKit || item.origin === 'poster_kit') && (
+                      <div className="bg-red-50 dark:bg-red-950/40 text-brand-red px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border border-brand-red/30">
+                        Poster Kit
+                      </div>
+                    )}
+                    {item.artworkMissing && (
+                      <div className="w-full mt-2 p-2 bg-red-50 dark:bg-red-950/40 border border-brand-red text-brand-red text-[10px] font-bold flex items-center gap-1.5">
+                        <AlertTriangle size={13} className="shrink-0" />
+                        <span>Custom artwork unavailable on this device. Please re-select your design before checkout.</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between mt-auto">
@@ -538,7 +687,9 @@ export default function Cart() {
                   </p>
                   <div className="flex flex-col gap-3">
                     {(() => {
-                      const paidSelectedItems = cartItems.filter(item => item.selected && !item.isFreeItem);
+                      const paidSelectedItems = cartItems.filter(
+                        item => item.selected && !item.isFreeItem && !Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit')
+                      );
                       const paidCount = paidSelectedItems.reduce((sum, item) => sum + item.quantity, 0);
 
                       const offersList = [
@@ -732,19 +883,12 @@ export default function Cart() {
               </button>
 
               <div className="w-full md:w-1/2 bg-gray-100 dark:bg-zinc-800 relative" style={{ aspectRatio: '3/4' }}>
-                <img 
-                  src={getStorefrontImage(editingItem, 'preview')} 
-                  alt={editingItem.name} 
-                  width={800}
-                  height={1067}
-                  loading="lazy"
-                  className="w-full h-full object-cover aspect-[3/4] md:aspect-auto"
-                />
+                <CartEditModalImage item={editingItem} altText={getItemDisplayName(editingItem)} />
               </div>
 
               <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col max-h-[80vh] overflow-y-auto text-brand-black dark:text-zinc-100">
                 <div className="mb-8 text-left">
-                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 text-brand-black dark:text-zinc-100">{editingItem.name}</h2>
+                  <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 text-brand-black dark:text-zinc-100">{getItemDisplayName(editingItem)}</h2>
                   <p className="text-gray-500 dark:text-zinc-400 font-medium">Customize your selection.</p>
                 </div>
 
@@ -810,7 +954,7 @@ export default function Cart() {
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 gap-2">
-                        {SIZES.map((size) => {
+                        {(editingItem.isPosterKit || editingItem.posterKit || editingItem.origin === 'poster_kit' ? POSTER_KIT_SIZES : SIZES).map((size) => {
                           const isSelected = editingItem.size === size.name;
                           return (
                             <button
@@ -883,7 +1027,11 @@ export default function Cart() {
                                     : 'Heavyweight archival stock, textured'}
                               </p>
                             </div>
-                            <p className="font-mono text-xs font-bold">₹{calculateSinglePosterPrice(editingItem.size, material.name)}</p>
+                            <p className="font-mono text-xs font-bold">
+                              ₹{(editingItem.isPosterKit || editingItem.posterKit || editingItem.origin === 'poster_kit')
+                                ? getPosterKitUnitPrice(editingItem.size, material.id)
+                                : calculateSinglePosterPrice(editingItem.size, material.name)}
+                            </p>
                           </button>
                         );
                       })}

@@ -163,16 +163,26 @@ const Hero: React.FC<HeroProps> = ({
               <p className="text-lg text-gray-300 max-w-xl mb-10 font-medium leading-relaxed">
                 Explore a vast collection of premium posters. From timeless classics to custom designs, we've got your walls covered with unique and premium designs.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link to="/collections">
-                  <span className="px-10 py-5 bg-brand-red text-white font-display text-2xl uppercase tracking-wider flex items-center gap-2 hover:bg-white hover:text-brand-red transition-all transform hover:-translate-y-1 inline-flex">
-                    Shop Posters <ArrowRight size={24} />
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-4 sm:mb-5">
+                <Link to="/collections" className="w-full sm:w-auto inline-block">
+                  <span className="w-full sm:w-auto px-8 sm:px-10 py-4.5 sm:py-5 bg-brand-red text-white font-display text-xl sm:text-2xl uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-white hover:text-brand-red transition-all transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap">
+                    Shop Posters <ArrowRight size={22} className="shrink-0" />
                   </span>
                 </Link>
-                <Link to="/customize">
-                  <span className="px-10 py-5 border-4 border-white text-white font-display text-2xl uppercase tracking-wider flex items-center gap-2 hover:bg-white/10 transition-all inline-flex">
-                    Create Custom Poster <Play size={24} fill="currentColor" />
+                <Link to="/customize" className="w-full sm:w-auto inline-block">
+                  <span className="w-full sm:w-auto px-8 sm:px-10 py-4.5 sm:py-5 border-2 sm:border-4 border-white text-white font-display text-xl sm:text-2xl uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-white hover:text-brand-black transition-all transform hover:-translate-y-1 active:translate-y-0 whitespace-nowrap">
+                    Create Custom Poster <Play size={20} fill="currentColor" className="shrink-0" />
                   </span>
+                </Link>
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-sm sm:text-base text-gray-300 font-medium">
+                <span>Looking to create a wall collection?</span>
+                <Link
+                  to="/poster-kit"
+                  className="group inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-brand-red hover:bg-[#c92a37] text-white font-display text-sm sm:text-base uppercase tracking-wider font-bold transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shadow-sm"
+                >
+                  <span>Build Your Poster Kit</span>
+                  <ArrowRight size={15} className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>
             </motion.div>
@@ -712,13 +722,24 @@ export default function Home() {
                 to create a poster that is uniquely yours. Choose your size, material,
                 and finish.
               </p>
-              <Link
-                to="/customize"
-              >
-                <span className="px-10 py-5 bg-black text-white font-display text-2xl uppercase tracking-widest hover:bg-white hover:text-black transition-all inline-flex">
-                  Start Designing
-                </span>
-              </Link>
+              <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 sm:gap-5 w-full">
+                <Link
+                  to="/customize"
+                  className="w-full sm:w-auto inline-block"
+                >
+                  <span className="w-full sm:w-auto px-8 sm:px-10 py-4.5 sm:py-5 bg-black text-white font-display text-xl sm:text-2xl uppercase tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center whitespace-nowrap">
+                    Start Designing
+                  </span>
+                </Link>
+                <Link
+                  to="/poster-kit"
+                  className="w-full sm:w-auto inline-block"
+                >
+                  <span className="w-full sm:w-auto px-8 sm:px-10 py-4.5 sm:py-5 bg-black text-white font-display text-xl sm:text-2xl uppercase tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center gap-2.5 whitespace-nowrap">
+                    Visual Wall Kit <ArrowRight size={22} className="stroke-[2.5] shrink-0" />
+                  </span>
+                </Link>
+              </div>
             </div>
             <div className="w-full max-w-sm aspect-square bg-black p-2 transform -rotate-3 transition-transform hover:rotate-0 duration-500" style={{ aspectRatio: '1/1' }}>
               <ProtectedImage

@@ -131,5 +131,34 @@ html.dark .comic-border {
   -webkit-touch-callout: none !important;
 }
 
+/* Poster Kit Adaptive Cardstock Container Queries */
+.poster-cardstock {
+  container-type: size;
+}
 
+@container (max-height: 95px) {
+  .poster-mm-label {
+    display: none !important;
+  }
+}
 
+@container (max-height: 75px) {
+  .poster-footer-label {
+    display: none !important;
+  }
+}
+
+@container (max-height: 55px) {
+  .poster-crop-mark {
+    display: none !important;
+  }
+  .poster-header-label {
+    display: none !important;
+  }
+}
+
+@container (max-height: 38px) {
+  .poster-dim-label {
+    display: none !important;
+  }
+}

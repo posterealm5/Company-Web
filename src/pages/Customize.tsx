@@ -1,9 +1,9 @@
 import { motion } from 'motion/react';
-import React, { useState, ChangeEvent, useRef } from 'react';
+import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { Upload, ChevronRight, Check, Sparkles, Layers, Info, RefreshCw, Maximize2, Minimize2, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { uploadCustomDesign } from '../services/storage';
+import { processCustomDesignUpload } from '../utils/imageOptimizer';
 import { useAuth } from '../context/AuthContext';
 import { AuthModal } from '../components/auth/AuthModal';
 
@@ -28,6 +28,10 @@ export default function Customize() {
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [selectedMaterial, setSelectedMaterial] = useState(MATERIALS[0]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
+  const localPreviewUrlRef = useRef<string | null>(null);
+  const uploadSeqRef = useRef<number>(0);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToCart, triggerNotification } = useCart();
@@ -51,35 +55,85 @@ export default function Customize() {
     return true;
   };
 
+  useEffect(() => {
+    return () => {
+      if (localPreviewUrlRef.current) {
+        try {
+          URL.revokeObjectURL(localPreviewUrlRef.current);
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, []);
+
   const processUpload = async (file: File) => {
+    // 1. Format and MIME validation
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    const validExts = ['jpg', 'jpeg', 'png', 'webp'];
+    if (!validTypes.includes(file.type) && (!ext || !validExts.includes(ext))) {
+      triggerNotification("Please select a valid image file (PNG, JPG, or WebP).");
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    // 2. Increment sequence to protect against asynchronous upload races (A3)
+    const currentSeq = ++uploadSeqRef.current;
+
+    // 3. Reset stale image state immediately (A2)
+    setArtworkUrl(null);
+    setImagePreview(null);
+
+    // 4. Create new local preview and cleanly manage previous URL (A2)
+    const newLocalUrl = URL.createObjectURL(file);
+    const previousLocalUrl = localPreviewUrlRef.current;
+    localPreviewUrlRef.current = newLocalUrl;
+    setLocalPreviewUrl(newLocalUrl);
+    if (previousLocalUrl) {
+      try {
+        URL.revokeObjectURL(previousLocalUrl);
+      } catch {
+        // Safe fallback
+      }
+    }
+
     setIsUploading(true);
     
     try {
-      const { url, error } = await uploadCustomDesign(file);
+      // 5. Upload newly selected file without passing previous artworkUrl (A1)
+      const res = await processCustomDesignUpload(file);
       
-      if (error) {
-        console.error(`Error details:`, error);
-        console.error(`[UPLOAD STEP] Exact request triggering error:`, {
-          operation: 'storage.upload',
-          bucket: 'custom-designs',
-          fileName: file.name,
-          fileSize: file.size,
-          fileType: file.type
-        });
-        
-        if (error.toLowerCase().includes('bucket not found')) {
+      // Guard against out-of-order race conditions: ignore if superseded by newer selection
+      if (uploadSeqRef.current !== currentSeq) {
+        return;
+      }
+
+      if (res.error || !res.artworkUrl) {
+        console.error(`[CustomPoster] Upload error:`, res.error);
+        if (res.error?.toLowerCase().includes('bucket not found')) {
           triggerNotification("Storage Error: 'custom-designs' bucket is missing. Please run the setup SQL.");
         } else {
-          triggerNotification("Upload failed: " + error);
+          triggerNotification("Upload failed: " + (res.error || 'Failed to save master artwork.'));
         }
-      } else if (url) {
-        setImagePreview(url);
+        setArtworkUrl(null);
+        setImagePreview(null);
+      } else {
+        setArtworkUrl(res.artworkUrl);
+        setImagePreview(res.previewUrl || res.artworkUrl);
       }
-    } catch (err) {
-      console.error('Upload error:', err);
+    } catch (err: any) {
+      if (uploadSeqRef.current !== currentSeq) {
+        return;
+      }
+      console.error('[CustomPoster] Unexpected upload error:', err);
       triggerNotification("An unexpected error occurred during upload.");
+      setArtworkUrl(null);
+      setImagePreview(null);
     } finally {
-      setIsUploading(false);
+      if (uploadSeqRef.current === currentSeq) {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -89,6 +143,9 @@ export default function Customize() {
       return;
     }
     const file = e.target.files?.[0];
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     if (file) {
       await processUpload(file);
     }
@@ -120,8 +177,12 @@ export default function Customize() {
   const totalPrice = calculateSinglePosterPrice(selectedSize.name, selectedMaterial.id);
 
   const handleAddToBag = () => {
-    if (!imagePreview) {
-      triggerNotification("Kindly Upload your custom design before adding item to the cart.");
+    if (isUploading) {
+      triggerNotification("Please wait for your design to finish uploading.");
+      return;
+    }
+    if (!artworkUrl || !imagePreview) {
+      triggerNotification("Kindly upload your custom design before adding item to the cart.");
       return;
     }
     
@@ -132,7 +193,10 @@ export default function Customize() {
       id: Date.now(), // Generate a unique ID for custom design
       name: 'Custom Masterpiece',
       price: finalPrice,
-      image: imagePreview,
+      image: imagePreview,             // 400px WebP preview URL
+      artwork_url: artworkUrl,         // Original high-res master print URL
+      origin: 'custom',
+      artwork_source: 'custom',
       quantity: 1,
       size: finalSizeName,
       material: selectedMaterial.name,
@@ -175,10 +239,10 @@ export default function Customize() {
                      <Loader2 size={64} className="mx-auto mb-4 text-brand-red animate-spin" />
                      <p className="text-gray-400 font-bold uppercase tracking-widest">Uploading Art...</p>
                    </div>
-                ) : imagePreview ? (
+                ) : (localPreviewUrl || imagePreview) ? (
                   <div className="relative w-full h-full group/preview">
                     <img 
-                      src={getOptimizedImageUrl(imagePreview, 1000, 1333)} 
+                      src={localPreviewUrl || imagePreview!} 
                       alt="Preview" 
                       width={1000}
                       height={1333}
@@ -187,7 +251,10 @@ export default function Customize() {
                     />
                     <button 
                       onClick={handleUploadClick}
-                      className="absolute inset-0 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2 backdrop-blur-sm cursor-pointer"
+                      disabled={isUploading}
+                      className={`absolute inset-0 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2 backdrop-blur-sm cursor-pointer ${
+                        isUploading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     >
                       <RefreshCw className="w-8 h-8" />
                       <span className="font-black uppercase tracking-widest text-sm">Change Design</span>
@@ -220,9 +287,19 @@ export default function Customize() {
               <RippleWrapper delay={2}>
                 <button 
                   onClick={handleAddToBag}
-                  className="px-8 py-4 bg-brand-red text-white hover:bg-white hover:text-brand-red dark:hover:bg-zinc-100 dark:hover:text-brand-red transition-all font-display text-2xl uppercase tracking-widest cursor-pointer"
+                  disabled={isUploading || !artworkUrl || !imagePreview}
+                  className={`px-8 py-4 bg-brand-red text-white hover:bg-white hover:text-brand-red dark:hover:bg-zinc-100 dark:hover:text-brand-red transition-all font-display text-2xl uppercase tracking-widest cursor-pointer ${
+                    (isUploading || !artworkUrl || !imagePreview) ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                  Add to Cart
+                  {isUploading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 size={24} className="animate-spin inline" />
+                      Uploading...
+                    </span>
+                  ) : (
+                    'Add to Cart'
+                  )}
                 </button>
               </RippleWrapper>
             </div>

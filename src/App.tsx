@@ -15,6 +15,7 @@ import { LoadingScreen } from './components/ui/LoadingScreen';
 import Home from './pages/Home';
 
 const Customize = lazy(() => import('./pages/Customize'));
+const PosterKit = lazy(() => import('./pages/PosterKit'));
 const Collections = lazy(() => import('./pages/Collections'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const Cart = lazy(() => import('./pages/Cart'));
@@ -165,6 +166,7 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
             <Route path="/customize" element={<ErrorBoundary><Customize /></ErrorBoundary>} />
+            <Route path="/poster-kit" element={<ErrorBoundary><PosterKit /></ErrorBoundary>} />
             <Route path="/collections" element={
               <ErrorBoundary>
                 <Collections />

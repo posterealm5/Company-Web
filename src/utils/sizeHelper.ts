@@ -1,6 +1,7 @@
 import { POSTER_PRICING } from '../config/pricing';
 
 export const SIZE_DIMENSIONS: Record<string, string> = {
+  A6: '4.1" × 5.8"',
   A5: '5.8" × 8.3"',
   A4: '8.3" × 11.7"',
   A3: '11.7" × 16.5"',
@@ -21,6 +22,7 @@ export function getSizeDimension(sizeName: string): string {
   if (upper.includes('A3')) return '11.7" × 16.5"';
   if (upper.includes('A4')) return '8.3" × 11.7"';
   if (upper.includes('A5')) return '5.8" × 8.3"';
+  if (upper.includes('A6')) return '4.1" × 5.8"';
   return sizeName;
 }
 
@@ -31,5 +33,6 @@ export function getSizeDisplayLabel(sizeName: string): string {
   if (upper.includes('A3')) return 'A3 (11.7" × 16.5")';
   if (upper.includes('A4')) return 'A4 (8.3" × 11.7")';
   if (upper.includes('A5')) return 'A5 (5.8" × 8.3")';
+  if (upper.includes('A6')) return 'A6 (4.1" × 5.8")';
   return sizeName;
 }

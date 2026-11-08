@@ -188,16 +188,33 @@ export async function createRazorpayOrder(payload: {
   couponCode: string | null;
   customerInfo: { name: string; email: string; phone: string; address: string };
   userId?: string | null;
-}) {
-  if (!isSupabaseConfigured()) return null;
+}): Promise<any> {
+  if (!isSupabaseConfigured()) {
+    throw new Error('Payment gateway service is currently unavailable. Please check configuration.');
+  }
 
   const { data, error } = await supabase.functions.invoke('razorpay-order', {
     body: payload
   });
 
   if (error) {
-    console.error('Error invoking razorpay-order:', error);
-    return null;
+    let errorDetail = error.message || 'Failed to create payment order';
+    if (typeof error === 'object' && error !== null && 'context' in error) {
+      try {
+        const body = await (error as any).context.json();
+        if (body && body.error) {
+          errorDetail = body.error;
+        }
+      } catch {
+        // fallback to error.message
+      }
+    }
+    console.error('Error invoking razorpay-order:', errorDetail);
+    throw new Error(errorDetail);
+  }
+
+  if (!data || !data.id) {
+    throw new Error(data?.error || 'Failed to create Razorpay order');
   }
 
   return data;
@@ -216,14 +233,26 @@ export async function verifyRazorpayPayment(payload: {
   couponCode: string | null;
   userId?: string | null;
 }) {
-  if (!isSupabaseConfigured()) return null;
+  if (!isSupabaseConfigured()) return { success: false, error: 'Database is not configured' };
 
   const response = await supabase.functions.invoke('razorpay-verify', {
     body: payload
   });
 
   if (response.error) {
-    console.error("VERIFY FUNCTION ERROR:", response.error);
+    let errorDetail = response.error.message || 'Verification request failed';
+    if (typeof response.error === 'object' && response.error !== null && 'context' in response.error) {
+      try {
+        const body = await (response.error as any).context.json();
+        if (body && body.error) {
+          errorDetail = body.error;
+        }
+      } catch {
+        // fallback
+      }
+    }
+    console.error("VERIFY FUNCTION ERROR:", errorDetail);
+    return { success: false, error: errorDetail };
   }
 
   return response.data || { success: false, error: response.error?.message || "Verification request failed" };

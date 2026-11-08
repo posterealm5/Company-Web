@@ -453,24 +453,28 @@ export default function UserOrders() {
             Ordered Products
           </h3>
           <div className="space-y-4 max-h-[360px] overflow-y-auto pr-1">
-            {singleOrder.items.map((item, idx) => (
-              <div key={idx} className="flex gap-4 items-center bg-white dark:bg-zinc-800 p-4 comic-border border-gray-200 dark:border-zinc-700 text-brand-black dark:text-zinc-100">
-                <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-700 rounded overflow-hidden flex-shrink-0 border border-gray-200 dark:border-zinc-600">
-                  <img 
-                    src={getStorefrontImage(item, 'thumbnail')} 
-                    alt={item.name} 
-                    width={80}
-                    height={80}
-                    loading="lazy"
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-                <div className="flex-grow text-left">
-                  <p className="font-black uppercase text-xs text-brand-black dark:text-zinc-100">{item.name}</p>
-                  <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-400 uppercase tracking-widest mt-1">
-                    {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
-                  </p>
-                </div>
+            {singleOrder.items.map((item, idx) => {
+              const isPosterKit = item.isPosterKit || (item as any).posterKit || item.origin === 'poster_kit';
+              const isCustom = item.customArtworkId || (item as any).isCustom || (!item.productId && (item as any).artwork_source !== 'collection');
+              const displayName = (isPosterKit && isCustom) ? 'Custom Design' : (item.name || 'Unknown Item');
+              return (
+                <div key={idx} className="flex gap-4 items-center bg-white dark:bg-zinc-800 p-4 comic-border border-gray-200 dark:border-zinc-700 text-brand-black dark:text-zinc-100">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-700 rounded overflow-hidden flex-shrink-0 border border-gray-200 dark:border-zinc-600">
+                    <img 
+                      src={getStorefrontImage(item, 'thumbnail')} 
+                      alt={displayName} 
+                      width={80}
+                      height={80}
+                      loading="lazy"
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                  <div className="flex-grow text-left">
+                    <p className="font-black uppercase text-xs text-brand-black dark:text-zinc-100">{displayName}</p>
+                    <p className="text-[9px] font-bold text-gray-400 dark:text-zinc-400 uppercase tracking-widest mt-1">
+                      {getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}
+                    </p>
+                  </div>
                 <div className="text-right">
                   {item.isFreeItem ? (
                     <>
@@ -489,7 +493,8 @@ export default function UserOrders() {
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

@@ -21,6 +21,8 @@ import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { ProtectedImage } from '../components/ProtectedImage';
 
 
+import { getDailySeed, shuffleWithDailySeed } from '../utils/dailyShuffle';
+
 const GENRES = ['All', 'Anime', 'Movies', 'Bike', 'Cars', 'Music', 'Pinteresty', 'Gaming', 'Bundle'];
 
 import { POSTER_PRICING, calculateSinglePosterPrice, BUNDLE_OPTIONS } from '../config/pricing';
@@ -51,13 +53,6 @@ const PRODUCTS = [
   { id: 15, name: 'Retro Gaming Pack', genre: 'Bundle', price: 1349, image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop', description: 'The definitive bundle for classic gamers, bringing the arcade vibe directly to your living space.' },
 ];
 
-const getDailySeed = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 export default function Collections() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -222,31 +217,7 @@ export default function Collections() {
   // Deterministic daily shuffle for the "All" category
   const shuffledProducts = useMemo(() => {
     if (products.length === 0) return [];
-
-    // Convert date string YYYY-MM-DD into a numeric seed
-    let numericSeed = 0;
-    for (let i = 0; i < currentDateStr.length; i++) {
-      numericSeed = (numericSeed << 5) - numericSeed + currentDateStr.charCodeAt(i);
-      numericSeed |= 0; // Convert to 32bit integer
-    }
-
-    // Seeded Mulberry32 RNG
-    const random = () => {
-      let t = numericSeed += 0x6D2B79F5;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-
-    // Fisher-Yates Shuffle
-    const shuffled = [...products];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(random() * (i + 1));
-      const temp = shuffled[i];
-      shuffled[i] = shuffled[j];
-      shuffled[j] = temp;
-    }
-    return shuffled;
+    return shuffleWithDailySeed(products, currentDateStr);
   }, [products, currentDateStr]);
 
   // Performance Optimization: Memoize the filtered products

@@ -17,6 +17,9 @@ import { getOptimizedImageUrl, getStorefrontImage } from '../utils/imageUtils';
 import { SHIPPING_CHARGE } from '../config/pricing';
 import { checkCodEligibility } from '../config/payment';
 
+import { validateCustomArtworkItems } from '../utils/customArtworkValidation';
+export { validateCustomArtworkItems };
+
 declare global {
   interface Window {
     Razorpay: any;
@@ -80,41 +83,190 @@ export default function Payment() {
     });
   };
 
+  const getPaymentItemDisplayName = (item: any) => {
+    // 1. Identify whether the item is a custom upload
+    const isCustom = Boolean(
+      item.customArtworkId ||
+      item.isCustom ||
+      (item.id && Number(item.id) >= 1000000000000) ||
+      item.artwork_source === 'custom' ||
+      item.artworkSource === 'custom' ||
+      item.name === 'Custom Design' ||
+      item.title === 'Custom Design'
+    );
+    // 2. Identify whether the item is a Poster Kit item
+    const isPosterKit = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+
+    if (isPosterKit && isCustom) {
+      return 'Custom Design';
+    }
+    return item.name;
+  };
+
   const processingRef = useRef(false);
 
+  // Temporary development-only error diagnostics & execution tracing
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
+    const handleError = (event: ErrorEvent) => {
+      emitDevDiagnostic('WINDOW_ERROR', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        stack: event.error?.stack,
+        isDuringPayment: processingRef.current,
+      });
+    };
+
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      emitDevDiagnostic('UNHANDLED_REJECTION', {
+        reason: event.reason?.message || String(event.reason),
+        stack: event.reason?.stack,
+        isDuringPayment: processingRef.current,
+      });
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleRejection);
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleRejection);
+    };
+  }, []);
+
+  const emitDevDiagnostic = (stage: string, details: Record<string, any>) => {
+    if (import.meta.env.DEV) {
+      const payload = {
+        timestamp: new Date().toISOString(),
+        stage,
+        data: details,
+      };
+      try {
+        fetch('/api/dev-diagnostics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }).catch(() => {});
+      } catch {}
+    }
+  };
+
   const handleOnlinePayment = async () => {
+    emitDevDiagnostic('1_BUTTON_CLICK', {
+      method: 'ONLINE',
+      itemCount: selectedItems.length,
+      addressEntered: Boolean(addressForm.fullName && addressForm.email && addressForm.contactNumber)
+    });
+
     if (processingRef.current) return;
     processingRef.current = true;
     setIsProcessing(true);
 
+    emitDevDiagnostic('2_HANDLE_ONLINE_PAYMENT_STARTED', {
+      subtotal,
+      total,
+      appliedCouponCode,
+    });
+
     const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
     if (!razorpayKey) {
+      emitDevDiagnostic('CONFIG_ERROR', { error: 'Razorpay Key ID is missing' });
       triggerNotification("Razorpay Key ID is missing. Please check your configuration.");
       processingRef.current = false;
       setIsProcessing(false);
       return;
     }
 
+    // Phase 3B Guard: Validate all custom artwork before initiating payment
+    const { isValid: isOnlineArtworkValid } = validateCustomArtworkItems(selectedItems);
+    if (!isOnlineArtworkValid) {
+      triggerNotification("One or more custom posters have un-uploaded, expired, or missing artwork. Please re-select your design in your bag before proceeding to payment.");
+      processingRef.current = false;
+      setIsProcessing(false);
+      navigate('/cart');
+      return;
+    }
+
+    let itemsPayload: any[] = [];
+    let backendOrderCallStarted = false;
+
     try {
-      const itemsPayload = selectedItems.map(item => ({
-        id: item.id,
-        name: item.name,
-        size: item.selected_size || item.size,
-        material: item.selected_material || item.material,
-        price: item.unit_price || item.price,
-        quantity: item.quantity,
-        image: item.image,
-        selected_size: item.selected_size || item.size,
-        selected_material: item.selected_material || item.material,
-        unit_price: item.unit_price || item.price,
-        line_total: item.line_total || (item.price * item.quantity),
-        width: item.width || null,
-        height: item.height || null,
-        area: item.area || null,
-        custom_price: item.custom_price || null,
-        isFreeItem: item.isFreeItem || null,
-        couponCode: item.couponCode || appliedCouponCode || null
-      }));
+      // 3. Cart item mapping
+      itemsPayload = selectedItems.map(item => {
+        // 1. Identify whether the item is a custom upload
+        const isCustom = Boolean(
+          item.customArtworkId ||
+          (item.id && Number(item.id) >= 1000000000000) ||
+          item.artwork_source === 'custom' ||
+          item.artworkSource === 'custom' ||
+          item.origin === 'custom' ||
+          item.name === 'Custom Design' ||
+          item.name === 'Custom Masterpiece' ||
+          item.title === 'Custom Design'
+        );
+
+        // 2. Identify whether the item is a Poster Kit item
+        const isPosterKit = Boolean(
+          item.isPosterKit ||
+          item.posterKit ||
+          (item.origin === 'poster_kit')
+        );
+
+        // 3. Resolve the real catalog product ID
+        let resolvedCatalogId: number | null = null;
+        if (!isCustom) {
+          if (item.productId && Number(item.productId) < 900000000) {
+            resolvedCatalogId = Number(item.productId);
+          } else if (item.id && Number(item.id) >= 900000000 && Number(item.id) < 1000000000) {
+            resolvedCatalogId = Number(item.id) - 900000000;
+          } else if (item.id && Number(item.id) < 900000000) {
+            resolvedCatalogId = Number(item.id);
+          }
+        }
+
+        // 4. Construct the normalized payload
+        return {
+          id: resolvedCatalogId || item.id,
+          cartItemId: item.id,
+          name: getPaymentItemDisplayName(item),
+          size: item.selected_size || item.size,
+          material: item.selected_material || item.material,
+          price: item.unit_price || item.price,
+          quantity: item.quantity,
+          image: item.image,
+          selected_size: item.selected_size || item.size,
+          selected_material: item.selected_material || item.material,
+          unit_price: item.unit_price || item.price,
+          line_total: item.line_total || (item.price * item.quantity),
+          width: item.width || null,
+          height: item.height || null,
+          area: item.area || null,
+          custom_price: item.custom_price || null,
+          isFreeItem: item.isFreeItem || null,
+          couponCode: item.couponCode || appliedCouponCode || null,
+          isPosterKit: isPosterKit,
+          posterKit: isPosterKit,
+          origin: item.origin || (isPosterKit ? 'poster_kit' : (isCustom ? 'custom' : 'storefront')),
+          customArtworkId: item.customArtworkId || null,
+          customArtworkFileName: item.customArtworkFileName || null,
+          artwork_url: item.artwork_url || item.image || null,
+          productId: resolvedCatalogId,
+          product_id: resolvedCatalogId || item.id
+        };
+      });
+
+      emitDevDiagnostic('3_CART_ITEM_MAPPING_COMPLETED', {
+        itemCount: itemsPayload.length,
+        itemsSummary: itemsPayload.map(i => ({
+          name: i.name,
+          resolvedId: i.id,
+          cartItemId: i.cartItemId,
+          isPosterKit: i.isPosterKit,
+          productId: i.productId
+        }))
+      });
 
       const customerInfo = {
         name: addressForm.fullName,
@@ -123,12 +275,26 @@ export default function Payment() {
         address: `${addressForm.address}${addressForm.nearestLandmark ? ` (Landmark: ${addressForm.nearestLandmark})` : ''}`
       };
 
-      // 1. Create Razorpay order on backend (does not insert order to DB yet)
+      // 4. Create Razorpay order on backend (does not insert order to DB yet)
+      backendOrderCallStarted = true;
+      emitDevDiagnostic('4_CREATE_RAZORPAY_ORDER_REQUEST', {
+        backendFunction: 'razorpay-order',
+        itemCount: itemsPayload.length,
+        couponCode: appliedCouponCode,
+      });
+
       const rzpOrder = await createRazorpayOrder({
         cartItems: itemsPayload,
         couponCode: appliedCouponCode,
         customerInfo,
         userId: user?.id || null
+      });
+
+      emitDevDiagnostic('4_CREATE_RAZORPAY_ORDER_RESPONSE_SUCCESS', {
+        backendFunction: 'razorpay-order',
+        rzpOrderId: rzpOrder?.id,
+        amount: rzpOrder?.amount,
+        currency: rzpOrder?.currency
       });
 
       if (!rzpOrder || !rzpOrder.id) {
@@ -186,6 +352,13 @@ export default function Payment() {
 
       paymentObject.open();
     } catch (error: any) {
+      emitDevDiagnostic('5_CHECKOUT_ERROR', {
+        errorMessage: error.message || String(error),
+        errorStack: error.stack,
+        phase: backendOrderCallStarted ? 'AFTER_BACKEND_CALL' : 'BEFORE_BACKEND_CALL',
+        backendFunction: 'razorpay-order',
+        itemCount: itemsPayload.length,
+      });
       console.error('Checkout error:', error);
       triggerNotification(error.message || "An error occurred during checkout.");
       processingRef.current = false;
@@ -198,27 +371,80 @@ export default function Payment() {
     processingRef.current = true;
     setIsProcessing(true);
 
+    // Phase 3B Guard: Validate all custom artwork before initiating COD payment
+    const { isValid: isCodArtworkValid } = validateCustomArtworkItems(selectedItems);
+    if (!isCodArtworkValid) {
+      triggerNotification("One or more custom posters have un-uploaded, expired, or missing artwork. Please re-select your design in your bag before proceeding to payment.");
+      processingRef.current = false;
+      setIsProcessing(false);
+      navigate('/cart');
+      return;
+    }
+
     try {
       const orderData = buildOrderFromCart(
-        selectedItems.map(item => ({
-          product_id: item.id,
-          name: item.name,
-          size: item.size,
-          material: item.material,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image,
-          selected_size: item.selected_size || item.size,
-          selected_material: item.selected_material || item.material,
-          unit_price: item.unit_price || item.price,
-          line_total: item.line_total || (item.price * item.quantity),
-          width: item.width || null,
-          height: item.height || null,
-          area: item.area || null,
-          custom_price: item.custom_price || null,
-          isFreeItem: item.isFreeItem || null,
-          couponCode: item.couponCode || appliedCouponCode || null
-        }) as any),
+        selectedItems.map(item => {
+          // 1. Identify whether the item is a custom upload
+          const isCustom = Boolean(
+            item.customArtworkId ||
+            (item.id && Number(item.id) >= 1000000000000) ||
+            item.artwork_source === 'custom' ||
+            item.artworkSource === 'custom' ||
+            item.origin === 'custom' ||
+            item.name === 'Custom Design' ||
+            item.name === 'Custom Masterpiece' ||
+            item.title === 'Custom Design'
+          );
+
+          // 2. Identify whether the item is a Poster Kit item
+          const isPosterKit = Boolean(
+            item.isPosterKit ||
+            item.posterKit ||
+            (item.origin === 'poster_kit')
+          );
+
+          // 3. Resolve the real catalog product ID
+          let resolvedCatalogId: number | null = null;
+          if (!isCustom) {
+            if (item.productId && Number(item.productId) < 900000000) {
+              resolvedCatalogId = Number(item.productId);
+            } else if (item.id && Number(item.id) >= 900000000 && Number(item.id) < 1000000000) {
+              resolvedCatalogId = Number(item.id) - 900000000;
+            } else if (item.id && Number(item.id) < 900000000) {
+              resolvedCatalogId = Number(item.id);
+            }
+          }
+
+          // 4. Construct normalized payload
+          return {
+            product_id: resolvedCatalogId || item.id,
+            id: resolvedCatalogId || item.id,
+            cartItemId: item.id,
+            name: getPaymentItemDisplayName(item),
+            size: item.size,
+            material: item.material,
+            price: item.unit_price || item.price,
+            quantity: item.quantity,
+            image: item.image,
+            selected_size: item.selected_size || item.size,
+            selected_material: item.selected_material || item.material,
+            unit_price: item.unit_price || item.price,
+            line_total: item.line_total || (item.price * item.quantity),
+            width: item.width || null,
+            height: item.height || null,
+            area: item.area || null,
+            custom_price: item.custom_price || null,
+            isFreeItem: item.isFreeItem || null,
+            couponCode: item.couponCode || appliedCouponCode || null,
+            isPosterKit: isPosterKit,
+            posterKit: isPosterKit,
+            origin: item.origin || (isPosterKit ? 'poster_kit' : (isCustom ? 'custom' : 'storefront')),
+            customArtworkId: item.customArtworkId || null,
+            customArtworkFileName: item.customArtworkFileName || null,
+            artwork_url: item.artwork_url || item.image || null,
+            productId: resolvedCatalogId
+          };
+        }) as any,
         {
           name: addressForm.fullName,
           email: addressForm.email,
@@ -687,14 +913,14 @@ export default function Payment() {
                       <div key={item.id} className="flex gap-3 items-center">
                         <img 
                           src={getStorefrontImage(item, 'thumbnail')} 
-                          alt={item.name} 
+                          alt={getPaymentItemDisplayName(item)} 
                           width={80}
                           height={80}
                           loading="lazy"
                           className="w-10 h-10 object-cover comic-border border-white/20 dark:border-zinc-700" 
                         />
                         <div className="flex-grow min-w-0">
-                          <p className="text-[10px] font-black uppercase truncate text-white dark:text-zinc-100">{item.name}</p>
+                          <p className="text-[10px] font-black uppercase truncate text-white dark:text-zinc-100">{getPaymentItemDisplayName(item)}</p>
                           <p className="text-[8px] font-bold text-gray-400 dark:text-zinc-400 uppercase">{item.selected_size || item.size} • Qty: {item.quantity}</p>
                         </div>
                         {item.isFreeItem ? (

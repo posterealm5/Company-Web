@@ -77,8 +77,14 @@ export function getMaterialPremium(material: string, size?: string): number {
   return 0;
 }
 
+import { getPosterKitUnitPrice } from '../utils/posterKitPricing';
+export { getPosterKitUnitPrice };
+
 /** Calculate pricing of a single poster */
-export function calculateSinglePosterPrice(size: string, material: string): number {
+export function calculateSinglePosterPrice(size: string, material: string, isPosterKit?: boolean): number {
+  if (isPosterKit) {
+    return getPosterKitUnitPrice(size, material);
+  }
   const sz = (size || '').toUpperCase();
   const normId = normalizeMaterialId(material);
   if (normId === 'rigid_board') {
@@ -93,6 +99,8 @@ export function calculateSinglePosterPrice(size: string, material: string): numb
 /**
  * Recalculate Cart Items Prices and Line Totals dynamically.
  * All pricing derives from centralized rules.
+ * Poster Kit items preserve Poster Kit price table rates.
+ * Storefront items retain standard storefront pricing table rates.
  */
 export function recalculateCartPrices(items: any[]): any[] {
   return items.map(item => {
@@ -107,7 +115,12 @@ export function recalculateCartPrices(items: any[]): any[] {
       }
     }
 
-    const unitPrice = calculateSinglePosterPrice(selectedSize, selectedMaterial);
+    const isPosterKit = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+
+    const unitPrice = isPosterKit
+      ? getPosterKitUnitPrice(selectedSize, selectedMaterial)
+      : calculateSinglePosterPrice(selectedSize, selectedMaterial);
+
     const lineTotal = unitPrice * item.quantity;
 
     return {
@@ -116,7 +129,10 @@ export function recalculateCartPrices(items: any[]): any[] {
       selected_material: selectedMaterial,
       unit_price: unitPrice,
       price: unitPrice, // keep legacy field in sync
-      line_total: lineTotal
+      line_total: lineTotal,
+      isPosterKit: isPosterKit ? true : item.isPosterKit,
+      posterKit: isPosterKit ? true : item.posterKit,
+      origin: item.origin || (isPosterKit ? 'poster_kit' : 'storefront'),
     };
   });
 }

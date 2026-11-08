@@ -41,6 +41,7 @@ async function run() {
     { loc: '/', changefreq: 'daily', priority: '1.0', lastmod: currentDate },
     { loc: '/collections', changefreq: 'daily', priority: '0.8', lastmod: currentDate },
     { loc: '/customize', changefreq: 'weekly', priority: '0.8', lastmod: currentDate },
+    { loc: '/poster-kit', changefreq: 'weekly', priority: '0.8', lastmod: currentDate },
     { loc: '/how-it-works', changefreq: 'monthly', priority: '0.5', lastmod: currentDate },
     { loc: '/faq', changefreq: 'monthly', priority: '0.5', lastmod: currentDate },
     { loc: '/privacy-policy', changefreq: 'monthly', priority: '0.3', lastmod: currentDate },

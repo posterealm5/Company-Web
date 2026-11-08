@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { RippleWrapper } from '../components/ui/RippleWrapper';
 import { getAddresses, addAddress, updateAddress } from '../services/addresses';
+import { persistCheckoutPosterKitLayout } from '../services/posterKitLayoutService';
 import type { Address } from '../types/database';
 import { SEO } from '../components/SEO';
 import { getNonIndexableMetadata } from '../services/metadata';
@@ -85,6 +86,23 @@ export default function Checkout() {
       navigate('/cart');
     }
   }, [cartItems, navigate]);
+
+  // Phase 3C Stage 2.2: Persist Poster Kit layout when checkout is initiated for authenticated users
+  const persistedLayoutRef = React.useRef(false);
+  useEffect(() => {
+    if (persistedLayoutRef.current) return;
+    if (user?.id && cartItems.length > 0) {
+      const hasPkItems = cartItems.some(
+        item => (item.isPosterKit || item.posterKit || item.origin === 'poster_kit') && item.selected !== false
+      );
+      if (hasPkItems) {
+        persistedLayoutRef.current = true;
+        persistCheckoutPosterKitLayout(user.id, cartItems).catch(err => {
+          console.warn('[Checkout] Poster Kit layout persistence encountered an error:', err);
+        });
+      }
+    }
+  }, [user?.id, cartItems]);
 
   // Sync Form Data with Profile or Loaded Addresses
   useEffect(() => {

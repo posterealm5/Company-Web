@@ -17,7 +17,8 @@ import {
   User,
   ExternalLink,
   Loader2,
-  Package
+  Package,
+  Download
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { Order } from '../../types/database';
@@ -137,6 +138,82 @@ const getCancelledByLabel = (order: Order, adminUserIds: Set<string>) => {
   }
 
   return cancelledByClean;
+};
+
+const AdminPrintMasterButton: React.FC<{ artworkUrl: string; fileName?: string }> = ({ artworkUrl, fileName }) => {
+  const [downloadState, setDownloadState] = useState<'idle' | 'downloading' | 'fallback'>('idle');
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDownloadState('downloading');
+
+    const targetFileName = fileName || 'poster-print-master.png';
+
+    try {
+      const res = await fetch(artworkUrl, { mode: 'cors' });
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = targetFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => {
+        try { URL.revokeObjectURL(blobUrl); } catch {}
+      }, 2000);
+
+      setDownloadState('idle');
+    } catch (err: any) {
+      console.warn('[AdminDownload] Direct fetch-to-blob download failed. Showing direct fallback link:', err);
+      setDownloadState('fallback');
+    }
+  };
+
+  return (
+    <div className="mt-2 space-y-1">
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={downloadState === 'downloading'}
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-black text-white hover:bg-brand-red text-[9px] font-black uppercase tracking-wider comic-border border-brand-black transition-colors cursor-pointer disabled:opacity-70"
+        title="Download original high-resolution print master"
+      >
+        {downloadState === 'downloading' ? (
+          <>
+            <Loader2 size={11} className="animate-spin" />
+            Fetching Master...
+          </>
+        ) : (
+          <>
+            <Download size={11} />
+            Download Print Master
+          </>
+        )}
+      </button>
+
+      {downloadState === 'fallback' && (
+        <div className="flex flex-col gap-1 text-[9px] pt-1">
+          <span className="text-amber-600 font-bold">
+            Direct download blocked. Click below to view/save:
+          </span>
+          <a
+            href={artworkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            download={fileName || 'poster-print-master.png'}
+            className="inline-flex items-center gap-1 text-brand-red font-black underline uppercase tracking-wider hover:text-brand-black"
+          >
+            <ExternalLink size={10} /> Open & Save Master in New Tab
+          </a>
+        </div>
+      )}
+    </div>
+  );
 };
 
 const AdminOrders: React.FC = () => {
@@ -762,21 +839,47 @@ const AdminOrders: React.FC = () => {
                           PAID ITEMS ({paidQty})
                         </p>
                         <div className="space-y-3">
-                          {paidItems.map((item, idx) => (
+                          {paidItems.map((item, idx) => {
+                            const isPosterKit = item.isPosterKit || item.posterKit || item.origin === 'poster_kit';
+                            const isCustom = Boolean(
+                              item.customArtworkId ||
+                              (!item.productId && item.artwork_source !== 'collection') ||
+                              item.origin === 'custom' ||
+                              item.name === 'Custom Masterpiece'
+                            );
+                            const displayName = (isPosterKit && isCustom) ? 'Custom Design' : (item.name || 'Unknown Item');
+                            const masterArtworkUrl = item.artwork_url || (isCustom ? item.image : null);
+                            return (
                             <div key={`paid-${idx}`} className="flex gap-4 items-center bg-gray-50 p-4 comic-border border-gray-100">
-                              {item.image && <img src={item.image} alt={item.name} className="w-12 h-16 object-cover comic-border border-gray-200" />}
+                              {item.image && <img src={item.image} alt={displayName} className="w-12 h-16 object-cover comic-border border-gray-200" />}
                               <div className="flex-grow text-left">
-                                <p className="font-black uppercase text-xs">{item.name || 'Unknown Item'}</p>
+                                <p className="font-black uppercase text-xs flex items-center gap-1.5 flex-wrap">
+                                  {displayName}
+                                  {isPosterKit && (
+                                    <span className="bg-brand-black text-white text-[8px] font-black px-1.5 py-0.5 rounded-xs tracking-wider uppercase">
+                                      POSTER KIT
+                                    </span>
+                                  )}
+                                </p>
+                                {item.customArtworkFileName && (
+                                  <span className="text-[9px] text-gray-500 font-medium block normal-case">
+                                    File: {item.customArtworkFileName}
+                                  </span>
+                                )}
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}</p>
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mt-1">
                                   Unit Price: ₹{item.unit_price || item.price}
                                 </span>
+                                {masterArtworkUrl && (
+                                  <AdminPrintMasterButton artworkUrl={masterArtworkUrl} fileName={item.customArtworkFileName} />
+                                )}
                               </div>
                               <div className="text-right">
                                 <p className="font-black text-sm text-brand-red">₹{item.line_total || ((item.price || 0) * (item.quantity || 1))}</p>
                               </div>
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -788,26 +891,45 @@ const AdminOrders: React.FC = () => {
                           FREE ITEMS ({freeQty})
                         </p>
                         <div className="space-y-3">
-                          {freeItems.map((item, idx) => (
+                          {freeItems.map((item, idx) => {
+                            const isPosterKit = item.isPosterKit || item.posterKit || item.origin === 'poster_kit';
+                            const isCustom = Boolean(
+                              item.customArtworkId ||
+                              (!item.productId && item.artwork_source !== 'collection') ||
+                              item.origin === 'custom' ||
+                              item.name === 'Custom Masterpiece'
+                            );
+                            const displayName = (isPosterKit && isCustom) ? 'Custom Design' : (item.name || 'Unknown Item');
+                            const masterArtworkUrl = item.artwork_url || (isCustom ? item.image : null);
+                            return (
                             <div key={`free-${idx}`} className="flex gap-4 items-center bg-gray-50 p-4 comic-border border-gray-100">
-                              {item.image && <img src={item.image} alt={item.name} className="w-12 h-16 object-cover comic-border border-gray-200" />}
+                              {item.image && <img src={item.image} alt={displayName} className="w-12 h-16 object-cover comic-border border-gray-200" />}
                               <div className="flex-grow text-left">
                                 <p className="font-black uppercase text-xs flex items-center gap-2 flex-wrap">
                                   <span className="bg-emerald-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full tracking-wider uppercase">
                                     FREE ITEM
                                   </span>
-                                  {item.name || 'Unknown Item'}
+                                  {displayName}
                                 </p>
+                                {item.customArtworkFileName && (
+                                  <span className="text-[9px] text-gray-500 font-medium block normal-case">
+                                    File: {item.customArtworkFileName}
+                                  </span>
+                                )}
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{getSizeDisplayLabel(item.selected_size || item.size)} • {item.selected_material || item.material} • Qty: {item.quantity}</p>
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mt-1">
                                   Unit Price: ₹0
                                 </span>
+                                {masterArtworkUrl && (
+                                  <AdminPrintMasterButton artworkUrl={masterArtworkUrl} fileName={item.customArtworkFileName} />
+                                )}
                               </div>
                               <div className="text-right">
                                 <p className="font-black text-sm text-emerald-600">₹0</p>
                               </div>
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     )}

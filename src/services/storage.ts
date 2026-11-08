@@ -31,10 +31,10 @@ export async function uploadFile(
     return { url: null, error: 'Supabase is not configured' };
   }
 
-  // Immutable cache strategy (1 year) for storefront variants; 1 hour default for raw uploads
+  // 1 year cache for immutable versioned storefront variants; 1 hour default for raw uploads
   const cacheHeader = options?.cacheControl || 
     (path.includes('storefront/') 
-      ? 'public, max-age=31536000, immutable' 
+      ? '31536000' 
       : '3600');
 
   const { error } = await supabase.storage
@@ -162,15 +162,145 @@ export async function uploadAsset(
   return uploadFile(BUCKETS.ASSETS, path, file, { upsert: true });
 }
 
-/** Upload a custom design from the Customize page */
+/** Upload a custom design raw master to the custom-designs bucket */
+export async function uploadCustomDesignOriginal(
+  file: File,
+  identifier?: { timestamp: number; random: string }
+): Promise<{ url: string | null; path: string; error: string | null }> {
+  const timestamp = identifier?.timestamp ?? Date.now();
+  const random = identifier?.random ?? Math.random().toString(36).substring(7);
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+  const path = `uploads/design-${timestamp}-${random}.${ext}`;
+  const res = await uploadFile(BUCKETS.CUSTOM_DESIGNS, path, file, { cacheControl: '3600', upsert: false });
+  return { url: res.url, path, error: res.error };
+}
+
+/** Upload a custom design 400px WebP preview to the custom-designs bucket */
+export async function uploadCustomDesignPreview(
+  blob: Blob,
+  identifier: { timestamp: number; random: string }
+): Promise<{ url: string | null; path: string; error: string | null }> {
+  const path = `previews/design-${identifier.timestamp}-${identifier.random}-400.webp`;
+  const res = await uploadFile(BUCKETS.CUSTOM_DESIGNS, path, blob, { cacheControl: '31536000', upsert: false });
+  return { url: res.url, path, error: res.error };
+}
+
+/** Upload a custom design from the Customize page (preserves uncompressed original in uploads/) */
 export async function uploadCustomDesign(
   file: File
-): Promise<{ url: string | null; error: string | null }> {
+): Promise<{ url: string | null; artworkUrl?: string | null; previewUrl?: string | null; error: string | null }> {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(7);
-  const ext = file.name.split('.').pop();
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
   const path = `uploads/design-${timestamp}-${random}.${ext}`;
-  return uploadFile(BUCKETS.CUSTOM_DESIGNS, path, file);
+  const res = await uploadFile(BUCKETS.CUSTOM_DESIGNS, path, file, { cacheControl: '3600', upsert: false });
+  return { url: res.url, artworkUrl: res.url, previewUrl: res.url, error: res.error };
+}
+
+// ============================================================================
+// Phase 3B: SHA-256 Hashing & User-Scoped Custom Artwork Registry
+// ============================================================================
+
+export const POSTER_KIT_CUSTOM_ARTWORK_REGISTRY_KEY = 'posterealm_custom_artwork_registry_v1';
+
+export interface UserScopedArtworkRecord {
+  userId: string;
+  sha256: string;
+  customArtworkId: string;
+  artwork_url: string;               // Permanent uncompressed master in uploads/
+  image: string | null;              // Permanent 400px WebP preview in previews/
+  customArtworkFileName?: string;
+  status: 'master_uploaded' | 'completed';
+  uploadedAt: number;
+  dbArtworkId?: string;
+}
+
+// In-memory registry fallback for non-browser / SSR / test environments
+const memoryRegistry = new Map<string, string>();
+
+function getRegistryStorage() {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage;
+  }
+  return {
+    getItem: (key: string) => memoryRegistry.get(key) ?? null,
+    setItem: (key: string, val: string) => memoryRegistry.set(key, val),
+    removeItem: (key: string) => memoryRegistry.delete(key),
+    clear: () => memoryRegistry.clear(),
+  };
+}
+
+/**
+ * Calculates SHA-256 hash of file bytes using Web Crypto API.
+ * In Node test environments, safely delegates to node:crypto.
+ * Throws if cryptographic hashing is completely unavailable (never substitutes a weak hash).
+ */
+export async function calculateFileSha256(file: File | Blob): Promise<string> {
+  if (typeof crypto !== 'undefined' && crypto.subtle && typeof crypto.subtle.digest === 'function') {
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Safe fallback for Node.js test runner environments
+  if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+    try {
+      const moduleName = 'node:crypto';
+      const nodeCrypto = await import(/* @vite-ignore */ moduleName);
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return nodeCrypto.createHash('sha256').update(buffer).digest('hex');
+    } catch (e: any) {
+      throw new Error(`SHA-256 calculation failed in Node environment: ${e?.message || e}`);
+    }
+  }
+
+  throw new Error('SHA-256 integrity calculation failed: Cryptographic provider is unavailable.');
+}
+
+/**
+ * Retrieves the complete custom artwork registry.
+ */
+export function getArtworkRegistry(): Record<string, UserScopedArtworkRecord> {
+  try {
+    const storage = getRegistryStorage();
+    const raw = storage.getItem(POSTER_KIT_CUSTOM_ARTWORK_REGISTRY_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Persists an artwork record into the user-scoped registry.
+ */
+export function saveArtworkRegistryRecord(record: UserScopedArtworkRecord): void {
+  try {
+    const storage = getRegistryStorage();
+    const registry = getArtworkRegistry();
+    const key = `${record.userId}:${record.sha256}`;
+    registry[key] = record;
+    storage.setItem(POSTER_KIT_CUSTOM_ARTWORK_REGISTRY_KEY, JSON.stringify(registry));
+  } catch (err) {
+    console.warn('[Storage] Failed to save artwork registry record:', err);
+  }
+}
+
+/**
+ * Retrieves a cached artwork record matching the authenticated userId and SHA-256 hash.
+ * Strict user-scoping: never returns an entry belonging to a different user.
+ */
+export function getCachedArtworkRecord(userId: string, sha256: string): UserScopedArtworkRecord | null {
+  if (!userId || !sha256) return null;
+  const registry = getArtworkRegistry();
+  const record = registry[`${userId}:${sha256}`];
+  if (!record || record.userId !== userId || record.sha256 !== sha256) {
+    return null;
+  }
+  return record;
 }
 
 export { BUCKETS };

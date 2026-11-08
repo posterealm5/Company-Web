@@ -47,6 +47,21 @@ function getMaterialPremium(material: string, size?: string): number {
   return 0;
 }
 
+const POSTER_KIT_PRICING: Record<string, Record<string, number>> = {
+  A6: { glossy: 30, matte: 30, rigid_board: 100 },
+  A5: { glossy: 79, matte: 79, rigid_board: 150 },
+  A4: { glossy: 100, matte: 100, rigid_board: 230 },
+  A3: { glossy: 130, matte: 130, rigid_board: 290 },
+};
+
+function getPosterKitUnitPrice(size: string, material: string): number {
+  const sz = (size || '').trim().toUpperCase();
+  const mat = normalizeMaterialId(material);
+  const sizePricing = POSTER_KIT_PRICING[sz];
+  if (!sizePricing) return 0;
+  return sizePricing[mat] ?? sizePricing.matte ?? 0;
+}
+
 function calculateSinglePosterPrice(size: string, material: string): number {
   const sz = (size || '').toUpperCase();
   const normId = normalizeMaterialId(material);
@@ -165,24 +180,71 @@ serve(async (req) => {
     }
 
     for (const item of paidItems) {
-      // Validate product existence and active status in DB for non-custom items
-      if (item.id && Number(item.id) < 1000000000000) {
-        const { data: product, error: productError } = await supabase
-          .from('products')
-          .select('id, is_active')
-          .eq('id', item.id)
-          .maybeSingle();
+      const isCustom = Boolean(
+        item.customArtworkId ||
+        (item.id && Number(item.id) >= 1000000000000) ||
+        item.artwork_source === 'custom' ||
+        item.artworkSource === 'custom' ||
+        item.name === 'Custom Design' ||
+        item.title === 'Custom Design'
+      );
 
-        if (productError) {
-          console.error(`[razorpay-verify] Database error looking up product ${item.id}:`, productError);
-        }
+      const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
 
-        if (!product || !product.is_active) {
-          throw new Error(`Product not found or is currently inactive: ${item.name || item.id}`);
+      // Determine the real catalog product ID (stripping synthetic Poster Kit offset if needed)
+      let catalogProductId: number | null = null;
+      if (!isCustom) {
+        if (item.productId && Number(item.productId) < 900000000) {
+          catalogProductId = Number(item.productId);
+        } else if (item.id && Number(item.id) >= 900000000 && Number(item.id) < 1000000000) {
+          catalogProductId = Number(item.id) - 900000000;
+        } else if (item.id && Number(item.id) < 900000000) {
+          catalogProductId = Number(item.id);
         }
       }
 
-      const unitPrice = calculateSinglePosterPrice(item.size, item.material);
+      console.log(`[razorpay-verify] Item Diagnostic:`, JSON.stringify({
+        name: item.name || 'Unnamed',
+        incomingItemId: item.id,
+        incomingProductId: item.productId,
+        incomingProduct_id: item.product_id,
+        resolvedCatalogProductId: catalogProductId,
+        isCustom,
+        isPosterKit: isPk
+      }));
+
+      // Validate product existence and active status in DB for standard catalog products
+      if (!isCustom && catalogProductId !== null) {
+        const { data: product, error: productError } = await supabase
+          .from('products')
+          .select('id, is_active, name')
+          .eq('id', catalogProductId)
+          .maybeSingle();
+
+        if (productError) {
+          console.error(`[razorpay-verify] Database error looking up product ${catalogProductId}:`, productError);
+        }
+
+        console.log(`[razorpay-verify] DB lookup result for ID ${catalogProductId}:`, JSON.stringify({
+          found: Boolean(product),
+          is_active: product?.is_active,
+          dbName: product?.name
+        }));
+
+        if (!product) {
+          console.error(`[razorpay-verify] Validation failed: Product with ID ${catalogProductId} not found in database.`);
+          throw new Error(`Product not found or is currently inactive: ${item.name || catalogProductId}`);
+        }
+
+        if (!product.is_active) {
+          console.error(`[razorpay-verify] Validation failed: Product with ID ${catalogProductId} is inactive in database.`);
+          throw new Error(`Product not found or is currently inactive: ${item.name || catalogProductId}`);
+        }
+      }
+
+      const size = item.size || item.selected_size || 'A5';
+      const material = item.material || item.selected_material || 'Matte';
+      const unitPrice = isPk ? getPosterKitUnitPrice(size, material) : calculateSinglePosterPrice(size, material);
       calculatedSubtotal += unitPrice * (item.quantity || 1);
     }
 

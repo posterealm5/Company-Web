@@ -1,10 +1,14 @@
-import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import { useNotification } from './NotificationContext';
 import { recalculateCartPrices, getMajoritySizeAndMaterial, calculateSinglePosterPrice, normalizeMaterialId } from '../config/pricing';
-import { Coupon, COUPONS, validateCoupon, calculateCouponDiscount } from '../config/coupons';
+import { Coupon, COUPONS, validateCoupon, calculateCouponDiscount, isPosterKitItem } from '../config/coupons';
 import { getCouponByCode } from '../services/coupons';
 import { getUserCouponRedemptionCount } from '../services/orders';
+import { PosterKitCouponModal, PosterKitCouponModalMode } from '../components/cart/PosterKitCouponModal';
+
+import { getCustomArtworkBlob } from '../services/posterKitStorage';
+import { processPosterKitCustomUpload } from '../utils/imageOptimizer';
 
 export interface CartItem {
   id: number;
@@ -28,6 +32,16 @@ export interface CartItem {
   area?: number;
   custom_price?: number;
 
+  // Poster Kit origin & design tracking fields
+  isPosterKit?: boolean;
+  posterKit?: boolean;
+  origin?: 'storefront' | 'poster_kit' | 'custom' | string;
+  customArtworkId?: string;
+  customArtworkFileName?: string;
+  artwork_url?: string;
+  artwork_source?: 'collection' | 'custom';
+  artworkMissing?: boolean;
+
   // Coupon tracking fields
   isFreeItem?: boolean;
   couponCode?: string;
@@ -39,6 +53,7 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
+  addMultipleToCart: (items: CartItem[], customNotification?: string) => void;
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, delta: number) => void;
   toggleSelection: (id: number) => void;
@@ -60,6 +75,14 @@ interface CartContextType {
   // Free poster slot management
   selectFreePosterDesign: (slotIndex: number, product: any) => void;
   removeFreePosterDesign: (slotIndex: number) => void;
+
+  // Poster Kit coupon modal management
+  posterKitCouponModal: { isOpen: boolean; mode: PosterKitCouponModalMode } | null;
+  openPosterKitCouponModal: (mode: PosterKitCouponModalMode) => void;
+  dismissPosterKitCouponModal: () => void;
+
+  // Custom artwork blob hydration
+  refreshCartBlobs: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -104,6 +127,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [userRedemptionCount, setUserRedemptionCount] = useState<number>(0);
+  const [posterKitCouponModal, setPosterKitCouponModal] = useState<{ isOpen: boolean; mode: PosterKitCouponModalMode } | null>(null);
+
+  const dismissPosterKitCouponModal = useCallback(() => {
+    setPosterKitCouponModal(null);
+  }, []);
+
+  const openPosterKitCouponModal = useCallback((mode: PosterKitCouponModalMode) => {
+    setPosterKitCouponModal({ isOpen: true, mode });
+  }, []);
 
   const syncCartState = (items: CartItem[], couponCode: string | null, activeCoupon?: Coupon | null): CartItem[] => {
     // 0. Normalize legacy material names (e.g. flagship -> Rigid Board)
@@ -117,7 +149,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     normalized.forEach(item => {
       if (item.slotIndex !== undefined) return;
       const targetId = item.originalId || item.id;
-      const existing = regularItemsMerged.find(r => r.id === targetId);
+      const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+      const existing = regularItemsMerged.find(r =>
+        (r.originalId || r.id) === targetId &&
+        (r.selected_size || r.size) === (item.selected_size || item.size) &&
+        (r.selected_material || r.material) === (item.selected_material || item.material) &&
+        Boolean(r.isPosterKit || r.posterKit || r.origin === 'poster_kit') === isPk
+      );
       if (existing) {
         existing.quantity += item.quantity;
       } else {
@@ -152,10 +190,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const buyQty = coupon.buyQty || 1;
       const freeQty = coupon.freeQty || 0;
 
-      const selectedRegular = recalculatedRegular.filter(item => item.selected);
-      const totalSelectedPosterQuantity = selectedRegular.reduce((sum, item) => sum + item.quantity, 0);
+      // Filter to ONLY eligible regular posters (excluding Poster Kit items)
+      const eligibleRegular = recalculatedRegular.filter(
+        item => item.selected && !isPosterKitItem(item)
+      );
+      const totalSelectedPosterQuantity = eligibleRegular.reduce((sum, item) => sum + item.quantity, 0);
 
-      // Centralized Reconciliation: if selected paid posters drop below buyQty, clear coupon and free items
+      // Centralized Reconciliation: if selected eligible regular posters drop below buyQty, clear coupon and free items
       if (totalSelectedPosterQuantity < buyQty) {
         setTimeout(() => {
           setAppliedCouponCode(null);
@@ -175,8 +216,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // remainingFreeSlots = Y - automaticFreeCount
       const remainingFreeSlots = freeQty - automaticFreeCount;
 
-      // Find majority size and material of paid items to inherit
-      const { size: majSize, material: majMat } = getMajoritySizeAndMaterial(selectedRegular);
+      // Find majority size and material of eligible regular items to inherit
+      const { size: majSize, material: majMat } = getMajoritySizeAndMaterial(eligibleRegular);
 
       if (automaticFreeCount > 0) {
         // Prioritize which items become free based on majority size & material
@@ -190,7 +231,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         };
 
         const units: { item: CartItem; priority: number }[] = [];
-        selectedRegular.forEach(item => {
+        eligibleRegular.forEach(item => {
           for (let i = 0; i < item.quantity; i++) {
             units.push({ item, priority: getPriority(item) });
           }
@@ -209,6 +250,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // Reconstruct regular items with splits
         const splitRegularItems: CartItem[] = [];
         recalculatedRegular.forEach(item => {
+          if (isPosterKitItem(item)) {
+            splitRegularItems.push(item);
+            return;
+          }
           const freeQty = freeCountsMap[item.id] || 0;
           if (freeQty > 0) {
             const paidQty = item.quantity - freeQty;
@@ -484,6 +529,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     const validation = validateCoupon(coupon, selectedItems, user?.id, count);
+
+    // If coupon is Buy X Get Y, handle Poster Kit checks & modal notification
+    if (coupon.type === 'buy_x_get_y') {
+      const hasPosterKit = selectedItems.some(item => isPosterKitItem(item));
+      const paidRegularItems = selectedItems.filter(item => !item.isFreeItem && !isPosterKitItem(item));
+      const paidRegularCount = paidRegularItems.reduce((acc, item) => acc + item.quantity, 0);
+
+      // Cart contains ONLY Poster Kit items
+      if (hasPosterKit && paidRegularCount === 0) {
+        setPosterKitCouponModal({ isOpen: true, mode: 'poster_kit_only' });
+        return { success: false, error: 'Coupon not applicable to Poster Kit' };
+      }
+
+      // Mixed Cart: both regular posters and Poster Kit items
+      if (hasPosterKit && paidRegularCount > 0) {
+        if (!validation.isValid) {
+          setPosterKitCouponModal({ isOpen: true, mode: 'mixed' });
+          return { success: false, error: validation.error };
+        }
+
+        // Regular posters qualify! Apply coupon to regular posters and inform customer
+        setAppliedCoupon(coupon);
+        setAppliedCouponCode(coupon.code);
+        const key = user?.id ? `appliedCouponCode_${user.id}` : 'appliedCouponCode_guest';
+        localStorage.setItem(key, coupon.code);
+        setPosterKitCouponModal({ isOpen: true, mode: 'mixed' });
+        return { success: true };
+      }
+    }
+
     if (!validation.isValid) {
       return { success: false, error: validation.error };
     }
@@ -504,7 +579,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const selectFreePosterDesign = useCallback((slotIndex: number, product: any) => {
     setCartItems(prev => {
-      const paidItems = prev.filter(item => !item.isFreeItem);
+      const paidItems = prev.filter(item => !item.isFreeItem && !isPosterKitItem(item));
       const selectedPaid = paidItems.filter(item => item.selected);
       const { size, material } = getMajoritySizeAndMaterial(selectedPaid);
       
@@ -556,9 +631,36 @@ export function CartProvider({ children }: { children: ReactNode }) {
     globalTrigger(message);
   }, [globalTrigger]);
 
+  // Track CartContext-owned object URLs: customArtworkId -> objectUrl
+  // CartContext retains independent ownership of preview URLs restored from IndexedDB (B1, B3)
+  const cartBlobUrlsRef = useRef<Map<string, string>>(new Map());
+
+  const ensureCartOwnedBlobUrl = useCallback(async (customArtworkId: string): Promise<string | null> => {
+    const existing = cartBlobUrlsRef.current.get(customArtworkId);
+    if (existing) return existing;
+    try {
+      const blob = await getCustomArtworkBlob(customArtworkId);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        cartBlobUrlsRef.current.set(customArtworkId, url);
+        return url;
+      }
+    } catch (e) {
+      console.warn('[CartContext] Failed to load custom artwork blob from IndexedDB:', e);
+    }
+    return null;
+  }, []);
+
   const addToCart = useCallback((item: CartItem) => {
+    const isCustom = Boolean(item.customArtworkId);
     setCartItems(prev => {
-      const existing = prev.find(p => p.id === item.id && p.size === item.size && p.material === item.material);
+      const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+      const existing = prev.find(p =>
+        p.id === item.id &&
+        p.size === item.size &&
+        p.material === item.material &&
+        Boolean(p.isPosterKit || p.posterKit || p.origin === 'poster_kit') === isPk
+      );
       let updated;
       if (existing) {
         updated = prev.map(p => p === existing ? { ...p, quantity: p.quantity + 1 } : p);
@@ -567,14 +669,123 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return syncCartState(updated, appliedCouponCode, appliedCoupon);
     });
+
+    // Hydrate CartContext-owned preview URL immediately for legacy custom upload item (B1, B2)
+    // Only hydrate if artwork_url or image is not already a permanent HTTPS cloud URL
+    if (isCustom && item.customArtworkId && (!item.artwork_url || item.artwork_url.startsWith('blob:') || !item.image || item.image.startsWith('blob:'))) {
+      ensureCartOwnedBlobUrl(item.customArtworkId).then((url) => {
+        if (url) {
+          setCartItems(prev =>
+            prev.map(p => {
+              if (p.customArtworkId === item.customArtworkId) {
+                const needsPreview = !p.image || p.image.startsWith('blob:');
+                const needsMaster = !p.artwork_url || p.artwork_url.startsWith('blob:');
+                if (needsPreview || needsMaster) {
+                  return {
+                    ...p,
+                    image: needsPreview ? url : p.image,
+                    artwork_url: needsMaster ? url : p.artwork_url,
+                  };
+                }
+              }
+              return p;
+            })
+          );
+        }
+      });
+    }
+
     triggerNotification(`${item.name} added to bag!`);
-  }, [appliedCouponCode, appliedCoupon, triggerNotification]);
+  }, [appliedCouponCode, appliedCoupon, triggerNotification, ensureCartOwnedBlobUrl]);
+
+  const addMultipleToCart = useCallback((items: CartItem[], customNotification?: string) => {
+    if (!items || items.length === 0) return;
+    setCartItems(prev => {
+      let updated = [...prev];
+      for (const item of items) {
+        const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+        const existingIndex = updated.findIndex(p =>
+          p.id === item.id &&
+          p.size === item.size &&
+          p.material === item.material &&
+          Boolean(p.isPosterKit || p.posterKit || p.origin === 'poster_kit') === isPk
+        );
+        if (existingIndex >= 0) {
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            quantity: updated[existingIndex].quantity + (item.quantity || 1)
+          };
+        } else {
+          updated.push({ ...item, selected: true });
+        }
+      }
+      return syncCartState(updated, appliedCouponCode, appliedCoupon);
+    });
+
+    // Asynchronously ensure CartContext-owned blob URLs ONLY for legacy custom uploads lacking permanent cloud URLs (Bug 2 Fix)
+    const legacyCustomItems = items.filter(
+      i => Boolean(i.customArtworkId) && (
+        !i.artwork_url ||
+        i.artwork_url.startsWith('blob:') ||
+        !i.image ||
+        i.image.startsWith('blob:')
+      )
+    );
+    const customIds = Array.from(new Set(legacyCustomItems.map(i => i.customArtworkId).filter(Boolean))) as string[];
+    if (customIds.length > 0) {
+      Promise.all(customIds.map(id => ensureCartOwnedBlobUrl(id))).then(() => {
+        setCartItems(prev =>
+          prev.map(p => {
+            if (
+              p.customArtworkId &&
+              customIds.includes(p.customArtworkId) &&
+              cartBlobUrlsRef.current.has(p.customArtworkId)
+            ) {
+              const url = cartBlobUrlsRef.current.get(p.customArtworkId)!;
+              const needsPreview = !p.image || p.image.startsWith('blob:');
+              const needsMaster = !p.artwork_url || p.artwork_url.startsWith('blob:');
+              if (needsPreview || needsMaster) {
+                return {
+                  ...p,
+                  image: needsPreview ? url : p.image,
+                  artwork_url: needsMaster ? url : p.artwork_url,
+                };
+              }
+            }
+            return p;
+          })
+        );
+      });
+    }
+
+    triggerNotification(customNotification || `${items.length} ${items.length === 1 ? 'poster' : 'posters'} added to bag!`);
+  }, [appliedCouponCode, appliedCoupon, triggerNotification, ensureCartOwnedBlobUrl]);
 
   const removeFromCart = useCallback((id: number) => {
     setCartItems(prev => {
       const itemToRemove = prev.find(item => item.id === id);
       const targetId = itemToRemove?.originalId || id;
       const filtered = prev.filter(item => item.id !== targetId && item.originalId !== targetId && item.id !== id);
+
+      // Clean up CartContext-owned URL if no other active cart item uses the same customArtworkId (B3)
+      const removedItems = prev.filter(item => item.id === targetId || item.originalId === targetId || item.id === id);
+      removedItems.forEach(removed => {
+        if (removed.customArtworkId) {
+          const stillUsed = filtered.some(rem => rem.customArtworkId === removed.customArtworkId);
+          if (!stillUsed) {
+            const url = cartBlobUrlsRef.current.get(removed.customArtworkId);
+            if (url) {
+              try {
+                URL.revokeObjectURL(url);
+              } catch {
+                // Safe fallback
+              }
+              cartBlobUrlsRef.current.delete(removed.customArtworkId);
+            }
+          }
+        }
+      });
+
       return syncCartState(filtered, appliedCouponCode, appliedCoupon);
     });
   }, [appliedCouponCode, appliedCoupon]);
@@ -619,6 +830,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [appliedCouponCode, appliedCoupon]);
 
   const clearCart = useCallback(() => {
+    // Revoke all CartContext-owned object URLs upon cart clear (B3)
+    cartBlobUrlsRef.current.forEach(url => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        // Safe fallback
+      }
+    });
+    cartBlobUrlsRef.current.clear();
+
     setCartItems([]);
     removeCoupon();
   }, [removeCoupon]);
@@ -643,9 +864,176 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return cartItems.reduce((acc, item) => acc + item.quantity, 0);
   }, [cartItems]);
 
+  // Route-aware hydration helper: guarantees custom artwork blobs are restored when cart mounts or updates (B2)
+  // Phase 3B: Strictly skips items that already possess verified permanent HTTPS cloud URLs
+  const refreshCartBlobs = useCallback(async () => {
+    const legacyItems = cartItems.filter(
+      i => Boolean(i.customArtworkId) && (
+        !i.artwork_url ||
+        i.artwork_url.startsWith('blob:') ||
+        !i.image ||
+        i.image.startsWith('blob:')
+      )
+    );
+    if (legacyItems.length === 0) return;
+
+    let hasUpdates = false;
+    for (const item of legacyItems) {
+      const id = item.customArtworkId!;
+      let url = cartBlobUrlsRef.current.get(id);
+      if (!url) {
+        try {
+          const blob = await getCustomArtworkBlob(id);
+          if (blob) {
+            url = URL.createObjectURL(blob);
+            cartBlobUrlsRef.current.set(id, url);
+          }
+        } catch (e) {
+          console.warn('[CartContext] Failed to hydrate blob for', id, e);
+        }
+      }
+      if (url) {
+        const needsPreview = !item.image || item.image.startsWith('blob:');
+        const needsMaster = !item.artwork_url || item.artwork_url.startsWith('blob:');
+        if ((needsPreview && item.image !== url) || (needsMaster && item.artwork_url !== url)) {
+          hasUpdates = true;
+        }
+      }
+    }
+
+    if (hasUpdates) {
+      setCartItems(prev =>
+        prev.map(item => {
+          if (item.customArtworkId && cartBlobUrlsRef.current.has(item.customArtworkId)) {
+            const url = cartBlobUrlsRef.current.get(item.customArtworkId)!;
+            const needsPreview = !item.image || item.image.startsWith('blob:');
+            const needsMaster = !item.artwork_url || item.artwork_url.startsWith('blob:');
+            if (needsPreview || needsMaster) {
+              return {
+                ...item,
+                image: needsPreview ? url : item.image,
+                artwork_url: needsMaster ? url : item.artwork_url,
+              };
+            }
+          }
+          return item;
+        })
+      );
+    }
+  }, [cartItems]);
+
+  // Phase 3B: Hydrate & migrate legacy custom artwork blobs from IndexedDB upon provider load / page refresh
+  useEffect(() => {
+    let active = true;
+    async function hydrateCartCustomBlobs() {
+      // Only process legacy items that lack verified permanent cloud URLs
+      const legacyItems = cartItems.filter(
+        i => Boolean(i.customArtworkId) && (
+          !i.artwork_url ||
+          i.artwork_url.startsWith('blob:') ||
+          !i.image ||
+          i.image.startsWith('blob:')
+        )
+      );
+      if (legacyItems.length === 0) return;
+
+      const legacyIds: string[] = Array.from(new Set(legacyItems.map(i => i.customArtworkId!)));
+      const blobUpdates = new Map<string, string>();
+      const missingIds = new Set<string>();
+
+      for (const id of legacyIds) {
+        try {
+          const blob = await getCustomArtworkBlob(id);
+          if (blob && active) {
+            const oldUrl = cartBlobUrlsRef.current.get(id);
+            if (oldUrl) {
+              try { URL.revokeObjectURL(oldUrl); } catch {}
+            }
+            const newUrl = URL.createObjectURL(blob);
+            cartBlobUrlsRef.current.set(id, newUrl);
+            blobUpdates.set(id, newUrl);
+
+            // If user is authenticated, lazily migrate blob to Supabase Storage cloud URLs in background
+            if (user?.id) {
+              const matchedItem = legacyItems.find(i => i.customArtworkId === id);
+              processPosterKitCustomUpload(blob, {
+                userId: user.id,
+                customArtworkId: id,
+                customArtworkFileName: matchedItem?.customArtworkFileName,
+              }).then(res => {
+                if (res.artwork_url && res.image && active) {
+                  setCartItems(prev => {
+                    const migrated = prev.map(p =>
+                      p.customArtworkId === id
+                        ? { ...p, artwork_url: res.artwork_url!, image: res.image!, artworkMissing: false }
+                        : p
+                    );
+                    return syncCartState(migrated, appliedCouponCode, appliedCoupon);
+                  });
+                }
+              }).catch(err => {
+                console.warn('[CartContext] Background legacy cloud migration failed (will retry):', err);
+              });
+            }
+          } else if (!blob && active) {
+            // Blob missing from IndexedDB (e.g. cleared cache / new device)
+            missingIds.add(id);
+          }
+        } catch {
+          missingIds.add(id);
+        }
+      }
+
+      if ((blobUpdates.size > 0 || missingIds.size > 0) && active) {
+        setCartItems(prev =>
+          prev.map(item => {
+            if (item.customArtworkId && missingIds.has(item.customArtworkId)) {
+              return { ...item, artworkMissing: true };
+            }
+            if (item.customArtworkId && blobUpdates.has(item.customArtworkId)) {
+              const newUrl = blobUpdates.get(item.customArtworkId)!;
+              const needsPreview = !item.image || item.image.startsWith('blob:');
+              const needsMaster = !item.artwork_url || item.artwork_url.startsWith('blob:');
+              if (needsPreview || needsMaster) {
+                return {
+                  ...item,
+                  image: needsPreview ? newUrl : item.image,
+                  artwork_url: needsMaster ? newUrl : item.artwork_url,
+                  artworkMissing: false,
+                };
+              }
+            }
+            return item;
+          })
+        );
+      }
+    }
+
+    hydrateCartCustomBlobs();
+
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
+
+  // Clean up all CartContext-owned blob URLs on provider unmount (B3)
+  useEffect(() => {
+    return () => {
+      cartBlobUrlsRef.current.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch {
+          // Safe fallback
+        }
+      });
+      cartBlobUrlsRef.current.clear();
+    };
+  }, []);
+
   const contextValue = useMemo(() => ({
     cartItems, 
     addToCart, 
+    addMultipleToCart,
     removeFromCart, 
     updateQuantity, 
     toggleSelection, 
@@ -662,10 +1050,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     applyCoupon,
     removeCoupon,
     selectFreePosterDesign,
-    removeFreePosterDesign
+    removeFreePosterDesign,
+    refreshCartBlobs,
+    posterKitCouponModal,
+    openPosterKitCouponModal,
+    dismissPosterKitCouponModal
   }), [
     cartItems, 
     addToCart, 
+    addMultipleToCart,
     removeFromCart, 
     updateQuantity, 
     toggleSelection, 
@@ -682,12 +1075,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     applyCoupon,
     removeCoupon,
     selectFreePosterDesign,
-    removeFreePosterDesign
+    removeFreePosterDesign,
+    refreshCartBlobs,
+    posterKitCouponModal,
+    openPosterKitCouponModal,
+    dismissPosterKitCouponModal
   ]);
 
   return (
     <CartContext.Provider value={contextValue}>
       {children}
+      <PosterKitCouponModal
+        isOpen={Boolean(posterKitCouponModal?.isOpen)}
+        mode={posterKitCouponModal?.mode}
+        onClose={dismissPosterKitCouponModal}
+      />
     </CartContext.Provider>
   );
 }

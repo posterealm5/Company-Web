@@ -23,6 +23,10 @@ export interface Coupon {
   is_active?: boolean;
 }
 
+export function isPosterKitItem(item: CartItem): boolean {
+  return Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+}
+
 export function getCartItemUnitPrice(item: CartItem): number {
   const selectedSize = item.selected_size || item.size;
   const selectedMaterial = item.selected_material || item.material;
@@ -80,16 +84,23 @@ export const COUPONS: Coupon[] = [
   }
 ];
 
+export interface CouponValidationResult {
+  isValid: boolean;
+  error?: string;
+  isPosterKitOnly?: boolean;
+  hasPosterKitItems?: boolean;
+}
+
 /**
  * Validates a coupon against the current selected cart items.
- * Returns { isValid: boolean; error?: string }
+ * Returns { isValid: boolean; error?: string; isPosterKitOnly?: boolean; hasPosterKitItems?: boolean }
  */
 export function validateCoupon(
   coupon: Coupon,
   selectedItems: CartItem[],
   currentUserId?: string,
   userRedemptionCount?: number
-): { isValid: boolean; error?: string } {
+): CouponValidationResult {
   const now = new Date();
 
   // 1. Coupon Exists is handled before calling this
@@ -151,7 +162,6 @@ export function validateCoupon(
 
   // Get paid items (non-free)
   const paidItems = selectedItems.filter(item => !item.isFreeItem);
-  const paidCount = paidItems.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = paidItems.reduce((acc, item) => acc + (item.line_total || (item.price * item.quantity)), 0);
 
   // 7. Check minimum subtotal
@@ -165,10 +175,25 @@ export function validateCoupon(
   // 8. Check minimum quantity (only for buy_x_get_y now)
   if (coupon.type === 'buy_x_get_y') {
     const buyQty = coupon.buyQty || 0;
-    if (paidCount < buyQty) {
+    const paidRegularItems = paidItems.filter(item => !isPosterKitItem(item));
+    const paidRegularCount = paidRegularItems.reduce((acc, item) => acc + item.quantity, 0);
+    const hasPosterKitItems = paidItems.some(item => isPosterKitItem(item));
+
+    // Poster Kit only: no eligible regular posters
+    if (paidRegularCount === 0 && hasPosterKitItems) {
+      return {
+        isValid: false,
+        error: 'Coupon not applicable to Poster Kit',
+        isPosterKitOnly: true,
+        hasPosterKitItems: true,
+      };
+    }
+
+    if (paidRegularCount < buyQty) {
       return { 
         isValid: false, 
-        error: `Buy ${buyQty} posters to activate this coupon. Currently you have ${paidCount} selected.` 
+        error: `Buy ${buyQty} posters to activate this coupon. Currently you have ${paidRegularCount} selected.`,
+        hasPosterKitItems: hasPosterKitItems,
       };
     }
   }
@@ -183,7 +208,8 @@ export function validateCoupon(
     }
   }
 
-  return { isValid: true };
+  const hasPosterKit = paidItems.some(item => isPosterKitItem(item));
+  return { isValid: true, hasPosterKitItems: hasPosterKit };
 }
 
 /**
@@ -209,7 +235,7 @@ export function calculateCouponDiscount(
   }
 
   if (coupon.type === 'buy_x_get_y') {
-    const freeItems = selectedItems.filter(item => item.isFreeItem);
+    const freeItems = selectedItems.filter(item => item.isFreeItem && !isPosterKitItem(item));
     return freeItems.reduce((acc, item) => acc + (item.line_total || (item.price * item.quantity)), 0);
   }
 

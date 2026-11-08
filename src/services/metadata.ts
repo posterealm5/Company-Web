@@ -237,3 +237,26 @@ export const getNonIndexableMetadata = (pageName: string, pathname: string): SEO
     noindex: true
   };
 };
+
+export const getPosterKitMetadata = (): SEOMetadata => {
+  const title = 'Poster Kit Layout Designer | Posterealm';
+  const description = 'Visually arrange and plan your room decor on a realistic wall with Posterealm Poster Kit designer. Choose A6, A5, A4, and A3 poster sizes and plan your perfect wall layout.';
+  const canonical = `${SITE_URL}/poster-kit`;
+
+  return {
+    title,
+    description,
+    canonical,
+    ogTitle: title,
+    ogDescription: description,
+    ogImage: DEFAULT_IMAGE,
+    ogUrl: canonical,
+    ogType: 'website',
+    ogSiteName: SITE_NAME,
+    twitterCard: 'summary_large_image',
+    twitterTitle: title,
+    twitterDescription: description,
+    twitterImage: DEFAULT_IMAGE
+  };
+};
+

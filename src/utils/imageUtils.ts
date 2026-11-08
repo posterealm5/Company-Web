@@ -27,6 +27,18 @@ export const getStorefrontImage = (
   const isThumb = size === 100 || size === 'thumbnail';
   const isPreview = size === 800 || size === 'preview';
 
+  // For Poster Kit collection items, resolve the 400px card variant for thumbnails (or preview if unavailable)
+  // so thumbnails remain sharp and bandwidth-efficient instead of falling back to multi-megabyte original mockups
+  const isPosterKitCollection = Boolean(
+    (product as any).isPosterKit || (product as any).posterKit || (product as any).origin === 'poster_kit'
+  ) && ((product as any).artwork_source === 'collection' || Boolean((product as any).productId));
+
+  if (isPosterKitCollection && isThumb) {
+    if (product.image_card_url) return product.image_card_url;
+    if (product.image_preview_url) return product.image_preview_url;
+    return product.image || '';
+  }
+
   if (isThumb && product.image_thumbnail_url) {
     return product.image_thumbnail_url;
   }
@@ -91,5 +103,34 @@ export const getOptimizedImageUrl = (url: string, width?: number, height?: numbe
     }
   }
 
+  return url;
+};
+
+/**
+ * Resolves an optimized, high-fidelity image URL for the Poster Kit wall preview.
+ * - Leaves local blob: and data: URLs unchanged (0 network egress).
+ * - Leaves Supabase storage URLs stable without cache-busting.
+ * - Applies stable high-quality parameters (w=1200, q=85, auto=format) to external Unsplash URLs.
+ */
+export const getOptimizedWallArtworkUrl = (url?: string | null): string => {
+  if (!url) return '';
+  if (url.startsWith('blob:') || url.startsWith('data:')) {
+    return url;
+  }
+  if (url.includes('/storage/v1/object/public/')) {
+    return url;
+  }
+  if (url.includes('images.unsplash.com')) {
+    try {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('w', '1200');
+      urlObj.searchParams.set('q', '85');
+      urlObj.searchParams.set('auto', 'format');
+      urlObj.searchParams.set('fit', 'max');
+      return urlObj.toString();
+    } catch {
+      return url;
+    }
+  }
   return url;
 };

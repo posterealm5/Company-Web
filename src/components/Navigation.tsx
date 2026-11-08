@@ -41,6 +41,7 @@ export const Navbar: React.FC<{ isShifted?: boolean }> = ({ isShifted }) => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Customize', path: '/customize' },
+    { name: 'Poster Kit', path: '/poster-kit' },
     { name: 'Collections', path: '/collections' },
     { name: 'How it Works', path: '/how-it-works' },
   ];
@@ -310,6 +311,7 @@ export const Footer = () => {
             <h3 className="text-lg font-bold uppercase mb-6 text-brand-red">Shop</h3>
             <ul className="space-y-4 text-gray-400 dark:text-zinc-400">
               <li><Link to="/customize" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Custom Designs</Link></li>
+              <li><Link to="/poster-kit" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Poster Kit Layouts</Link></li>
               <li><Link to="/collections" className="hover:text-white dark:hover:text-zinc-100 transition-colors">All Posters</Link></li>
               <li><Link to="/collections" className="hover:text-white dark:hover:text-zinc-100 transition-colors">New Arrivals</Link></li>
               <li><Link to="/collections" className="hover:text-white dark:hover:text-zinc-100 transition-colors">Bestsellers</Link></li>

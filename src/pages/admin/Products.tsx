@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Package, 
   Plus, 
@@ -15,7 +15,11 @@ import {
   Check,
   Upload,
   Loader2,
-  Sparkles
+  Sparkles,
+  Image as ImageIcon,
+  AlertTriangle,
+  FileCheck,
+  RefreshCw
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { Product } from '../../types/database';
@@ -31,11 +35,21 @@ import {
   bulkGenerateSEOForCategory,
   type SEOValidationError 
 } from '../../services/seo';
+import {
+  resolveOriginalPosterArtwork,
+  fetchVerifiedStorageArtworks,
+  uploadProductOriginalArtwork,
+  removeProductOriginalArtwork,
+  persistProductArtworkUrl,
+  validateArtworkFile,
+  MAX_ARTWORK_SIZE_BYTES
+} from '../../services/posterArtwork';
 
 const AdminProducts: React.FC = () => {
   const ITEMS_PER_PAGE = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
+  const [storageArtworksMap, setStorageArtworksMap] = useState<Map<string | number, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,7 +57,14 @@ const AdminProducts: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'basic' | 'seo'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'seo' | 'artwork'>('basic');
+  const [artworkFile, setArtworkFile] = useState<File | null>(null);
+  const [artworkPreviewUrl, setArtworkPreviewUrl] = useState<string | null>(null);
+  const [artworkUploading, setArtworkUploading] = useState(false);
+  const [pendingStorageUrl, setPendingStorageUrl] = useState<string | null>(null);
+  const [artworkMessage, setArtworkMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isDraggingArtwork, setIsDraggingArtwork] = useState(false);
+  const artworkInputRef = useRef<HTMLInputElement>(null);
   const [seoState, setSeoState] = useState({
     display_name: '',
     slug: '',
@@ -55,16 +76,28 @@ const AdminProducts: React.FC = () => {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkResult, setBulkResult] = useState<string | null>(null);
 
-  const openEditModal = (product: Partial<Product>) => {
-    setEditingProduct(product);
+  const openEditModal = (product: Partial<Product>, initialTab: 'basic' | 'seo' | 'artwork' = 'basic') => {
+    const resolvedArt = resolveOriginalPosterArtwork(product as Product, storageArtworksMap);
+    const initialArtworkUrl = product.artwork_url || (resolvedArt.isAvailable ? resolvedArt.artworkUrl : null);
+    setEditingProduct({
+      ...product,
+      artwork_url: initialArtworkUrl,
+    });
     setSeoState({
       display_name: product.display_name || '',
       slug: product.slug || '',
       meta_description: product.meta_description || '',
       alt_text: product.alt_text || ''
     });
-    setActiveTab('basic');
+    setActiveTab(initialTab);
     setValidationErrors([]);
+    setArtworkFile(null);
+    if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(artworkPreviewUrl);
+    }
+    setArtworkPreviewUrl(null);
+    setPendingStorageUrl(null);
+    setArtworkMessage(null);
     setIsModalOpen(true);
   };
 
@@ -74,6 +107,91 @@ const AdminProducts: React.FC = () => {
     setValidationErrors(errors);
     setIsValidating(false);
     return errors;
+  };
+
+  const handleArtworkFileSelected = (file: File) => {
+    setArtworkMessage(null);
+    setPendingStorageUrl(null);
+    const validation = validateArtworkFile(file);
+    if (!validation.isValid) {
+      setArtworkMessage({ type: 'error', text: validation.error || 'Invalid artwork file' });
+      return;
+    }
+    if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(artworkPreviewUrl);
+    }
+    const blobUrl = URL.createObjectURL(file);
+    setArtworkFile(file);
+    setArtworkPreviewUrl(blobUrl);
+  };
+
+  const handleUploadArtwork = async () => {
+    if (!artworkFile || !editingProduct?.id || artworkUploading) return;
+    setArtworkUploading(true);
+    setArtworkMessage(null);
+
+    const uploadRes = await uploadProductOriginalArtwork(editingProduct.id, artworkFile);
+
+    if (uploadRes.url && uploadRes.dbSaved) {
+      const newUrl = uploadRes.url;
+      const updatedMap = new Map(storageArtworksMap);
+      updatedMap.set(editingProduct.id, newUrl);
+      updatedMap.set(String(editingProduct.id), newUrl);
+      setStorageArtworksMap(updatedMap);
+      setEditingProduct(prev => prev ? { ...prev, artwork_url: newUrl } : prev);
+      setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, artwork_url: newUrl } : p));
+      setArtworkMessage({ 
+        type: 'success', 
+        text: `Standalone artwork uploaded and saved to Product #${editingProduct.id} successfully! Ready in Poster Kit.` 
+      });
+      setArtworkFile(null);
+      if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(artworkPreviewUrl);
+      }
+      setArtworkPreviewUrl(null);
+      setPendingStorageUrl(null);
+    } else {
+      if (uploadRes.storageUrl) {
+        setPendingStorageUrl(uploadRes.storageUrl);
+      }
+      setArtworkMessage({ 
+        type: 'error', 
+        text: uploadRes.error || 'Failed to complete artwork upload.' 
+      });
+    }
+    setArtworkUploading(false);
+  };
+
+  const handleRetryDatabaseSave = async () => {
+    if (!pendingStorageUrl || !editingProduct?.id || artworkUploading) return;
+    setArtworkUploading(true);
+    setArtworkMessage(null);
+
+    const res = await persistProductArtworkUrl(editingProduct.id, pendingStorageUrl);
+    if (res.success) {
+      const updatedMap = new Map(storageArtworksMap);
+      updatedMap.set(editingProduct.id, pendingStorageUrl);
+      updatedMap.set(String(editingProduct.id), pendingStorageUrl);
+      setStorageArtworksMap(updatedMap);
+      setEditingProduct(prev => prev ? { ...prev, artwork_url: pendingStorageUrl } : prev);
+      setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, artwork_url: pendingStorageUrl } : p));
+      setArtworkMessage({ 
+        type: 'success', 
+        text: `Artwork reference successfully persisted to Product #${editingProduct.id}! Ready in Poster Kit.` 
+      });
+      setArtworkFile(null);
+      if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(artworkPreviewUrl);
+      }
+      setArtworkPreviewUrl(null);
+      setPendingStorageUrl(null);
+    } else {
+      setArtworkMessage({
+        type: 'error',
+        text: `Failed to persist to database: ${res.error}. Please retry or check database permissions.`
+      });
+    }
+    setArtworkUploading(false);
   };
 
   const handleGenerateSEO = () => {
@@ -127,18 +245,28 @@ const AdminProducts: React.FC = () => {
   const fetchProducts = async () => {
     setLoading(true);
     setError(false);
-    const { data, error: fetchErr } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (fetchErr) {
-      console.error('Error fetching products:', fetchErr);
+    try {
+      const [{ data, error: fetchErr }, storageArtworks] = await Promise.all([
+        supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false }),
+        fetchVerifiedStorageArtworks(),
+      ]);
+      
+      if (fetchErr) {
+        console.error('Error fetching products:', fetchErr);
+        setError(true);
+      } else if (data) {
+        setProducts(data);
+      }
+      setStorageArtworksMap(storageArtworks || new Map());
+    } catch (err) {
+      console.error('Failed to load products and artworks:', err);
       setError(true);
-    } else if (data) {
-      setProducts(data);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (error) {
@@ -312,6 +440,7 @@ const AdminProducts: React.FC = () => {
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Product</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Category</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Price</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Artwork (Print)</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Visibility</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Promotions</th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
@@ -320,18 +449,22 @@ const AdminProducts: React.FC = () => {
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center">
+                  <td colSpan={7} className="px-6 py-20 text-center">
                     <Loader2 className="animate-spin text-brand-red w-10 h-10 mx-auto" />
                   </td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">
+                  <td colSpan={7} className="px-6 py-20 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">
                     No posters found in the vault.
                   </td>
                 </tr>
               ) : (
-                paginatedProducts.map((p) => (
+                paginatedProducts.map((p) => {
+                  const artInfo = resolveOriginalPosterArtwork(p, storageArtworksMap);
+                  const hasArtwork = artInfo.isAvailable && Boolean(artInfo.artworkUrl);
+
+                  return (
                   <tr key={p.id} className="hover:bg-gray-50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
@@ -354,6 +487,38 @@ const AdminProducts: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-bold">₹{p.price}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      {hasArtwork ? (
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 border border-green-200 text-[10px] font-black uppercase tracking-wider">
+                            <Check size={12} className="stroke-[3]" />
+                            Clean Art Ready
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(p, 'artwork')}
+                            className="text-[10px] font-mono text-gray-500 hover:text-brand-red underline cursor-pointer"
+                            title="Manage or replace original print artwork"
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold uppercase tracking-wider">
+                            No Artwork
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(p, 'artwork')}
+                            className="text-[10px] font-black text-brand-red hover:underline uppercase cursor-pointer"
+                            title="Upload original standalone artwork for Poster Kit"
+                          >
+                            + Upload
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <button 
@@ -401,8 +566,9 @@ const AdminProducts: React.FC = () => {
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
+                );
+              })
+            )}
             </tbody>
           </table>
         </div>
@@ -488,9 +654,16 @@ const AdminProducts: React.FC = () => {
                 <button 
                   type="button"
                   onClick={() => setActiveTab('seo')}
-                  className={`flex-1 py-3 font-black uppercase text-xs tracking-widest transition-colors ${activeTab === 'seo' ? 'bg-white text-brand-black border-b-4 border-brand-red' : 'text-gray-500 hover:bg-gray-100'}`}
+                  className={`flex-1 py-3 font-black uppercase text-xs tracking-widest border-r-2 border-brand-black transition-colors ${activeTab === 'seo' ? 'bg-white text-brand-black border-b-4 border-brand-red' : 'text-gray-500 hover:bg-gray-100'}`}
                 >
                   SEO Settings
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setActiveTab('artwork')}
+                  className={`flex-1 py-3 font-black uppercase text-xs tracking-widest transition-colors ${activeTab === 'artwork' ? 'bg-white text-brand-black border-b-4 border-brand-red' : 'text-gray-500 hover:bg-gray-100'}`}
+                >
+                  Poster Kit Artwork
                 </button>
               </div>
 
@@ -507,7 +680,6 @@ const AdminProducts: React.FC = () => {
                     slug: seoState.slug,
                     meta_description: seoState.meta_description,
                     alt_text: seoState.alt_text,
-                    seo_keywords: seoState.seo_keywords
                   };
 
                   const errors = await triggerValidation(currentSeo);
@@ -520,6 +692,13 @@ const AdminProducts: React.FC = () => {
 
                   const newImageUrl = formData.get('image') as string;
                   const isImageChanged = editingProduct?.id ? editingProduct.image !== newImageUrl : true;
+
+                  // Preserve original standalone artwork reference
+                  const existingProd = products.find(p => p.id === editingProduct?.id);
+                  const preservedArtworkUrl = 
+                    editingProduct?.artwork_url !== undefined
+                      ? editingProduct.artwork_url
+                      : (existingProd?.artwork_url ?? (editingProduct?.id ? storageArtworksMap.get(editingProduct.id) : null) ?? null);
 
                   const productData = {
                     name: formData.get('name') as string,
@@ -540,7 +719,9 @@ const AdminProducts: React.FC = () => {
                     display_name: currentSeo.display_name || null,
                     slug: currentSeo.slug || null,
                     meta_description: currentSeo.meta_description || null,
-                    alt_text: currentSeo.alt_text || null
+                    alt_text: currentSeo.alt_text || null,
+                    // Preserve original standalone artwork reference
+                    artwork_url: preservedArtworkUrl
                   };
 
                   let savedProductId: number | null = null;
@@ -561,6 +742,13 @@ const AdminProducts: React.FC = () => {
                       .single();
                     if (newProd) savedProductId = newProd.id;
                     dbError = error;
+                  }
+
+                  if (savedProductId && preservedArtworkUrl) {
+                    const updatedMap = new Map(storageArtworksMap);
+                    updatedMap.set(savedProductId, preservedArtworkUrl);
+                    updatedMap.set(String(savedProductId), preservedArtworkUrl);
+                    setStorageArtworksMap(updatedMap);
                   }
 
                   if (dbError || !savedProductId) {
@@ -769,6 +957,281 @@ const AdminProducts: React.FC = () => {
                         <p key={i} className="text-[10px] font-bold text-brand-red uppercase">{err.message}</p>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Poster Kit Artwork Tab Content */}
+                  <div className={`space-y-6 ${activeTab === 'artwork' ? 'block' : 'hidden'}`}>
+                    <div className="bg-gray-50 p-4 border-2 border-brand-black space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="p-1 bg-brand-red text-white">
+                          <ImageIcon size={16} />
+                        </span>
+                        <h4 className="font-black uppercase text-xs text-brand-black tracking-wider">
+                          Poster Kit Original Print Artwork
+                        </h4>
+                      </div>
+                      <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
+                        The Poster Kit renders clean, standalone poster artwork on its virtual wall. 
+                        <strong> Storefront room mockups (room-scenes with walls, desks, or decor) are strictly excluded.</strong>
+                        {' '}Upload high-resolution print files (JPEG, PNG, WebP up to 20MB) to make this design available in the Poster Kit.
+                      </p>
+                    </div>
+
+                    {!editingProduct?.id ? (
+                      <div className="p-8 bg-gray-50 border-2 border-dashed border-gray-300 text-center space-y-2">
+                        <AlertTriangle size={24} className="text-amber-500 mx-auto" />
+                        <p className="font-black uppercase text-xs text-gray-700">Save Poster First</p>
+                        <p className="text-[11px] text-gray-500 max-w-sm mx-auto">
+                          Please fill in basic details on the Basic Info tab and click &ldquo;Add to Vault&rdquo; to generate a product ID. 
+                          You can then upload and link verified print artwork immediately.
+                        </p>
+                      </div>
+                    ) : (
+                      (() => {
+                        const art = resolveOriginalPosterArtwork(editingProduct as Product, storageArtworksMap);
+                        const isAvailable = art.isAvailable && Boolean(art.artworkUrl);
+
+                        return (
+                          <div className="space-y-5">
+                            {/* Current Artwork Status */}
+                            <div className="flex items-start justify-between gap-4 p-4 border-2 bg-white">
+                              <div className="flex items-center gap-3">
+                                <div className="w-16 h-20 bg-[#FAF9F6] border border-gray-300 flex items-center justify-center p-1 shrink-0 overflow-hidden shadow-xs">
+                                  {isAvailable ? (
+                                    <img
+                                      src={art.artworkUrl!}
+                                      alt={editingProduct.name || 'Artwork'}
+                                      className="w-full h-full object-contain pointer-events-none"
+                                    />
+                                  ) : (
+                                    <span className="text-[9px] font-mono text-gray-400 text-center">No Art</span>
+                                  )}
+                                </div>
+                                <div className="space-y-1 min-w-0">
+                                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400">Poster Kit Status:</span>
+                                  <div>
+                                    {isAvailable ? (
+                                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 text-xs font-black uppercase tracking-wider">
+                                        <Check size={13} className="stroke-[3]" /> Clean Art Active
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold uppercase tracking-wider">
+                                        <AlertTriangle size={13} /> Artwork Unavailable (Protected)
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[10px] text-gray-500 font-mono truncate max-w-xs">
+                                    {isAvailable ? art.artworkUrl : 'Room mockups are excluded from Poster Kit'}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {isAvailable && (
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    if (!confirm(`Are you sure you want to remove original artwork for #${editingProduct.id}? This will make it unavailable in the Poster Kit.`)) return;
+                                    setArtworkUploading(true);
+                                    setArtworkMessage(null);
+                                    const res = await removeProductOriginalArtwork(editingProduct.id!);
+                                    if (res.success) {
+                                      const updatedMap = new Map(storageArtworksMap);
+                                      updatedMap.delete(editingProduct.id!);
+                                      updatedMap.delete(String(editingProduct.id));
+                                      setStorageArtworksMap(updatedMap);
+                                      setEditingProduct({ ...editingProduct, artwork_url: null });
+                                      setProducts(products.map(p => p.id === editingProduct.id ? { ...p, artwork_url: null } : p));
+                                      setArtworkMessage({ type: 'success', text: 'Original artwork removed safely.' });
+                                    } else {
+                                      setArtworkMessage({ type: 'error', text: res.error || 'Failed to remove artwork' });
+                                    }
+                                    setArtworkUploading(false);
+                                  }}
+                                  disabled={artworkUploading}
+                                  className="px-3 py-1.5 text-xs text-brand-red border border-brand-red/30 hover:bg-brand-red hover:text-white font-black uppercase transition-colors shrink-0 cursor-pointer"
+                                >
+                                  Remove Art
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Top Feedback Messages */}
+                            {artworkMessage && !artworkFile && !pendingStorageUrl && (
+                              <div className={`p-3.5 border-2 text-xs font-bold uppercase flex items-center justify-between ${
+                                artworkMessage.type === 'success' 
+                                  ? 'bg-green-50 text-green-800 border-green-300' 
+                                  : 'bg-red-50 text-brand-red border-brand-red'
+                              }`}>
+                                <div className="flex items-start gap-2">
+                                  {artworkMessage.type === 'success' ? (
+                                    <Check size={16} className="text-green-600 shrink-0 mt-0.5 stroke-[3]" />
+                                  ) : (
+                                    <AlertTriangle size={16} className="text-brand-red shrink-0 mt-0.5" />
+                                  )}
+                                  <span className="leading-snug">{artworkMessage.text}</span>
+                                </div>
+                                <button 
+                                  type="button" 
+                                  onClick={() => setArtworkMessage(null)} 
+                                  className="font-black hover:opacity-75 cursor-pointer ml-3 text-sm p-1"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Storage Succeeded but Database Failed Alert with Direct Retry */}
+                            {pendingStorageUrl && (
+                              <div className="p-3.5 bg-amber-50 border-2 border-amber-300 text-xs space-y-2">
+                                <div className="flex items-center gap-2 text-amber-800 font-black uppercase">
+                                  <AlertTriangle size={15} />
+                                  <span>Storage Uploaded — Database Persistence Pending</span>
+                                </div>
+                                <p className="text-[11px] text-amber-800 font-medium">
+                                  The clean artwork file was uploaded to Supabase Storage, but writing the link to Product #{editingProduct.id} in the database was not confirmed. Click below to retry database persistence without re-uploading:
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={handleRetryDatabaseSave}
+                                  disabled={artworkUploading}
+                                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black uppercase text-xs tracking-wider flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                                >
+                                  {artworkUploading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                                  Retry Database Persistence
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Upload / Replace Dropzone */}
+                            <div
+                              onDragOver={(e) => { e.preventDefault(); setIsDraggingArtwork(true); }}
+                              onDragLeave={() => setIsDraggingArtwork(false)}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                setIsDraggingArtwork(false);
+                                const file = e.dataTransfer.files?.[0];
+                                if (file) handleArtworkFileSelected(file);
+                              }}
+                              className={`p-6 border-2 border-dashed transition-all text-center flex flex-col items-center justify-center bg-gray-50 ${
+                                isDraggingArtwork ? 'border-brand-red bg-red-50/40' : 'border-gray-300'
+                              }`}
+                            >
+                              <input
+                                ref={artworkInputRef}
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleArtworkFileSelected(file);
+                                }}
+                                className="hidden"
+                              />
+                              <div className="w-12 h-12 bg-white border-2 border-brand-black flex items-center justify-center mb-2 shadow-xs">
+                                <Upload size={20} className="text-brand-red" />
+                              </div>
+                              <p className="font-black uppercase text-xs text-brand-black mb-1">
+                                {isAvailable ? 'Replace Standalone Print Artwork' : 'Upload Standalone Print Artwork'}
+                              </p>
+                              <p className="text-[11px] text-gray-500 max-w-sm mb-3">
+                                Drag &amp; drop file here, or click to browse. Supports JPEG, PNG, or WebP up to 20 MB. Stored at <code className="font-mono text-gray-700">posters/artworks/{editingProduct.id}.ext</code>.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => artworkInputRef.current?.click()}
+                                disabled={artworkUploading}
+                                className="px-4 py-2 bg-white border-2 border-brand-black text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-black hover:text-white transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                              >
+                                Choose Image File
+                              </button>
+                            </div>
+
+                            {/* Selected File Stage & Upload Trigger */}
+                            {artworkFile && (
+                              <div className="p-4 bg-white border-2 border-brand-black space-y-3">
+                                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <FileCheck size={16} className="text-green-600 shrink-0" />
+                                    <span className="text-xs font-mono font-bold truncate max-w-xs">{artworkFile.name}</span>
+                                    <span className="text-[10px] font-mono text-gray-400">
+                                      ({(artworkFile.size / (1024 * 1024)).toFixed(2)} MB)
+                                    </span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setArtworkFile(null);
+                                      if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+                                        URL.revokeObjectURL(artworkPreviewUrl);
+                                      }
+                                      setArtworkPreviewUrl(null);
+                                      setArtworkMessage(null);
+                                    }}
+                                    disabled={artworkUploading}
+                                    className="text-xs text-gray-500 hover:text-brand-red font-bold uppercase cursor-pointer disabled:opacity-50"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+
+                                {artworkPreviewUrl && (
+                                  <div className="h-44 bg-[#FAF9F6] border border-gray-200 flex items-center justify-center p-2">
+                                    <img
+                                      src={artworkPreviewUrl}
+                                      alt="Staged Artwork Preview"
+                                      className="h-full object-contain pointer-events-none"
+                                    />
+                                  </div>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={handleUploadArtwork}
+                                  disabled={artworkUploading}
+                                  className="w-full py-3 bg-brand-red hover:bg-brand-black text-white font-black uppercase text-xs tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
+                                >
+                                  {artworkUploading ? (
+                                    <>
+                                      <Loader2 size={16} className="animate-spin" />
+                                      <span>Uploading to Storage &amp; Persisting to Database...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Upload size={16} />
+                                      <span>Confirm &amp; Apply Standalone Artwork</span>
+                                    </>
+                                  )}
+                                </button>
+
+                                {/* Action-Point Feedback Message */}
+                                {artworkMessage && (
+                                  <div className={`p-3.5 border-2 text-xs font-bold uppercase flex items-center justify-between ${
+                                    artworkMessage.type === 'success' 
+                                      ? 'bg-green-50 text-green-800 border-green-300' 
+                                      : 'bg-red-50 text-brand-red border-brand-red'
+                                  }`}>
+                                    <div className="flex items-start gap-2">
+                                      {artworkMessage.type === 'success' ? (
+                                        <Check size={16} className="text-green-600 shrink-0 mt-0.5 stroke-[3]" />
+                                      ) : (
+                                        <AlertTriangle size={16} className="text-brand-red shrink-0 mt-0.5" />
+                                      )}
+                                      <span className="leading-snug">{artworkMessage.text}</span>
+                                    </div>
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setArtworkMessage(null)} 
+                                      className="font-black hover:opacity-75 cursor-pointer ml-3 text-sm p-1"
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()
+                    )}
                   </div>
                 </form>
               </div>

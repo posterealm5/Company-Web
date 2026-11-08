@@ -82,11 +82,23 @@ async function runFullCatalogMigration() {
   console.log('STARTING PHASE 3: FULL-CATALOG STOREFRONT IMAGE MIGRATION');
   console.log('==================================================\n');
 
-  // Step 1: Fetch all products for backup manifest and resumability
-  const { data: allProducts, error: fetchErr } = await supabase
+  // Step 1: Fetch target products for migration (supports optional --ids=151,152,153,154,155)
+  const idsArg = process.argv.find(a => a.startsWith('--ids='));
+  const targetIds = idsArg
+    ? idsArg.split('=')[1].split(',').map(s => Number(s.trim())).filter(n => !isNaN(n))
+    : null;
+
+  let query = supabase
     .from('products')
     .select('id, name, genre, image, image_thumbnail_url, image_card_url, image_preview_url')
     .order('id', { ascending: true });
+
+  if (targetIds && targetIds.length > 0) {
+    console.log(`Targeting specific product IDs: [${targetIds.join(', ')}]\n`);
+    query = query.in('id', targetIds);
+  }
+
+  const { data: allProducts, error: fetchErr } = await query;
 
   if (fetchErr || !allProducts) {
     console.error('Failed to fetch catalog from database:', fetchErr);
@@ -198,7 +210,7 @@ async function runFullCatalogMigration() {
         const path400 = `storefront/${cleanGenre}/${cleanProdId}/${version}/400.webp`;
         const path800 = `storefront/${cleanGenre}/${cleanProdId}/${version}/800.webp`;
 
-        const cacheHeader = 'public, max-age=31536000, immutable';
+        const cacheHeader = '31536000';
 
         // Step 7: Upload all 3 variants
         const { error: err100 } = await supabase.storage.from('posters').upload(path100, buf100, {

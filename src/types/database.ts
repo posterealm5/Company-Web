@@ -21,6 +21,7 @@ export type Database = {
           image_thumbnail_url: string | null;
           image_card_url: string | null;
           image_preview_url: string | null;
+          artwork_url?: string | null;
           description: string;
           display_name: string | null;
           seo_title: string | null;
@@ -43,6 +44,7 @@ export type Database = {
           image_thumbnail_url?: string | null;
           image_card_url?: string | null;
           image_preview_url?: string | null;
+          artwork_url?: string | null;
           description: string;
           display_name?: string | null;
           seo_title?: string | null;
@@ -65,6 +67,7 @@ export type Database = {
           image_thumbnail_url?: string | null;
           image_card_url?: string | null;
           image_preview_url?: string | null;
+          artwork_url?: string | null;
           description?: string;
           display_name?: string | null;
           seo_title?: string | null;
@@ -107,6 +110,8 @@ export type Database = {
           cancelled_at: string | null;
           coupon_code: string | null;
           discount_amount: number | null;
+          schema_version: number;
+          client_order_token: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -136,6 +141,8 @@ export type Database = {
           cancelled_at?: string | null;
           coupon_code?: string | null;
           discount_amount?: number | null;
+          schema_version?: number;
+          client_order_token?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -165,6 +172,8 @@ export type Database = {
           cancelled_at?: string | null;
           coupon_code?: string | null;
           discount_amount?: number | null;
+          schema_version?: number;
+          client_order_token?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -554,6 +563,117 @@ export type Database = {
         };
         Relationships: any[];
       };
+      custom_artworks: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          storage_master_path: string;
+          storage_preview_path: string | null;
+          sha256: string;
+          file_size: number;
+          mime_type: string;
+          integrity_status: 'uploaded' | 'incomplete' | 'missing' | 'archived';
+          hash_verified: boolean;
+          verified_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          storage_master_path: string;
+          storage_preview_path?: string | null;
+          sha256: string;
+          file_size: number;
+          mime_type: string;
+          integrity_status?: 'uploaded' | 'incomplete' | 'missing' | 'archived';
+          hash_verified?: boolean;
+          verified_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          storage_master_path?: string;
+          storage_preview_path?: string | null;
+          sha256?: string;
+          file_size?: number;
+          mime_type?: string;
+          integrity_status?: 'uploaded' | 'incomplete' | 'missing' | 'archived';
+          hash_verified?: boolean;
+          verified_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: any[];
+      };
+      order_custom_artworks: {
+        Row: {
+          id: number;
+          order_id: number;
+          cart_item_id: string;
+          custom_artwork_id: string;
+          user_id: string | null;
+          fulfillment_status: 'order_confirmed' | 'in_fulfillment' | 'fulfilled' | 'cancelled';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          order_id: number;
+          cart_item_id: string;
+          custom_artwork_id: string;
+          user_id?: string | null;
+          fulfillment_status?: 'order_confirmed' | 'in_fulfillment' | 'fulfilled' | 'cancelled';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          order_id?: number;
+          cart_item_id?: string;
+          custom_artwork_id?: string;
+          user_id?: string | null;
+          fulfillment_status?: 'order_confirmed' | 'in_fulfillment' | 'fulfilled' | 'cancelled';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: any[];
+      };
+      poster_kit_layouts: {
+        Row: {
+          id: string;
+          user_id: string;
+          item_count: number;
+          items: any[];
+          subtotal: number;
+          status: 'active' | 'ordered' | 'expired';
+          created_at: string;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          item_count: number;
+          items: any[];
+          subtotal: number;
+          status?: 'active' | 'ordered' | 'expired';
+          created_at?: string;
+          expires_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          item_count?: number;
+          items?: any[];
+          subtotal?: number;
+          status?: 'active' | 'ordered' | 'expired';
+          created_at?: string;
+          expires_at?: string;
+        };
+        Relationships: any[];
+      };
     };
     Views: {};
     Functions: {
@@ -603,6 +723,13 @@ export type CouponRow = Database['public']['Tables']['coupons']['Row'];
 export type CouponInsert = Database['public']['Tables']['coupons']['Insert'];
 export type CouponUserRow = Database['public']['Tables']['coupon_users']['Row'];
 
+export type CustomArtworkRow = Database['public']['Tables']['custom_artworks']['Row'];
+export type CustomArtworkInsert = Database['public']['Tables']['custom_artworks']['Insert'];
+export type OrderCustomArtworkRow = Database['public']['Tables']['order_custom_artworks']['Row'];
+export type OrderCustomArtworkInsert = Database['public']['Tables']['order_custom_artworks']['Insert'];
+export type PosterKitLayoutRow = Database['public']['Tables']['poster_kit_layouts']['Row'];
+export type PosterKitLayoutInsert = Database['public']['Tables']['poster_kit_layouts']['Insert'];
+
 export interface DailyVisitItem {
   date: string;
   visits: number;
@@ -636,4 +763,13 @@ export interface OrderItem {
   custom_price?: number;
   isFreeItem?: boolean;
   couponCode?: string;
+
+  // Poster Kit origin and tracking fields
+  isPosterKit?: boolean;
+  posterKit?: boolean;
+  origin?: string;
+  customArtworkId?: string;
+  customArtworkFileName?: string;
+  artwork_url?: string;
+  productId?: number;
 }
