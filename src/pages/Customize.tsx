@@ -68,12 +68,33 @@ export default function Customize() {
   }, []);
 
   const processUpload = async (file: File) => {
-    // 1. Format and MIME validation
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-    const ext = file.name.split('.').pop()?.toLowerCase();
+    // 1. Strict format, MIME, and size validation
+    if (!file || !file.name) {
+      triggerNotification("Please select a valid image file.");
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
     const validExts = ['jpg', 'jpeg', 'png', 'webp'];
-    if (!validTypes.includes(file.type) && (!ext || !validExts.includes(ext))) {
+
+    const isExtValid = validExts.includes(ext);
+    const isTypeValid = validTypes.includes(file.type);
+    const isConsistent =
+      (ext === 'png' && file.type === 'image/png') ||
+      ((ext === 'jpg' || ext === 'jpeg') && file.type === 'image/jpeg') ||
+      (ext === 'webp' && file.type === 'image/webp');
+
+    if (!isExtValid || !isTypeValid || !isConsistent) {
       triggerNotification("Please select a valid image file (PNG, JPG, or WebP).");
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    const MAX_CUSTOM_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB limit
+    if (file.size <= 0 || file.size > MAX_CUSTOM_SIZE_BYTES) {
+      triggerNotification("File size must be greater than 0 and under 15 MB.");
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }

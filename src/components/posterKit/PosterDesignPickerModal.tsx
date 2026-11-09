@@ -286,14 +286,29 @@ export const PosterDesignPickerModal: React.FC<PosterDesignPickerModalProps> = (
   const validateAndSelectFile = (file: File) => {
     setUploadError(null);
 
-    const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
-    const isAllowedType =
-      ALLOWED_IMAGE_TYPES.includes(file.type) || ALLOWED_EXTENSIONS.includes(fileExt);
+    if (!file || !file.name) {
+      setUploadError('Please select a valid image file.');
+      return;
+    }
 
-    if (!isAllowedType) {
+    const fileExt = '.' + (file.name.split('.').pop() || '').toLowerCase();
+    const hasValidExt = ALLOWED_EXTENSIONS.includes(fileExt);
+    const hasValidType = ALLOWED_IMAGE_TYPES.includes(file.type);
+
+    const isConsistent =
+      (fileExt === '.png' && file.type === 'image/png') ||
+      ((fileExt === '.jpg' || fileExt === '.jpeg') && file.type === 'image/jpeg') ||
+      (fileExt === '.webp' && file.type === 'image/webp');
+
+    if (!hasValidExt || !hasValidType || !isConsistent) {
       setUploadError(
-        'Unsupported file format. Please upload a JPEG, PNG, or WebP image.'
+        'Unsupported file format. Please upload a valid JPEG, PNG, or WebP image.'
       );
+      return;
+    }
+
+    if (file.size <= 0) {
+      setUploadError('The selected file is empty (0 bytes).');
       return;
     }
 

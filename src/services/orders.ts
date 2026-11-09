@@ -6,9 +6,21 @@ import type { Order, OrderInsert, OrderItem } from '../types/database';
  * Handles all order-related database operations.
  */
 
-/** Create a new order */
+/** Create a new order (Strictly restricted to Cash on Delivery from client) */
 export async function createOrder(order: OrderInsert): Promise<Order | null> {
   if (!isSupabaseConfigured()) return null;
+
+  // Security Guard: Client-side insertion is strictly restricted to Cash on Delivery.
+  // Online orders must be authoritatively created by backend/Edge Function verification.
+  if (order.payment_method !== 'COD' || order.payment_status === 'Paid') {
+    console.error('Security Violation: Online or Paid orders cannot be created directly by client.');
+    return null;
+  }
+
+  if (!order.total || order.total <= 0 || !order.subtotal || order.subtotal <= 0) {
+    console.error('Security Violation: Order total and subtotal must be positive.');
+    return null;
+  }
 
   const { data, error } = await supabase
     .from('orders')
@@ -105,9 +117,13 @@ export async function cancelOrderByCustomer(
     };
   }
 
-  // Get current user to retrieve their UUID for the cancelled_by column
+  // Security Guard: Prevent IDOR - customers can only cancel their own orders
   const { data: { user } } = await supabase.auth.getUser();
-  const cancelled_by = user?.id || currentOrder.user_id;
+  if (!user || (currentOrder.user_id && user.id !== currentOrder.user_id)) {
+    return { success: false, error: 'Unauthorized: You do not have permission to cancel this order.' };
+  }
+
+  const cancelled_by = user.id;
 
   const payload = { 
     status: 'cancelled' as const, 
@@ -123,7 +139,21 @@ export async function cancelOrderByCustomer(
   
   
 
-  // 2. Perform status update to 'cancelled' with cancelled_by and cancelled_at fields
+  // 2. Attempt cancellation via secure RPC first (atomic & privileged check)
+  try {
+    const { data: rpcData, error: rpcError } = await (supabase.rpc as any)(
+      'cancel_order_by_customer',
+      { p_order_id: id }
+    );
+
+    if (!rpcError && rpcData) {
+      return { success: true, data: rpcData as Order };
+    }
+  } catch (rpcErr) {
+    // Fall back to direct update if RPC is not yet migrated
+  }
+
+  // Fallback: Perform status update to 'cancelled' with cancelled_by and cancelled_at fields
   const { data, error } = await supabase
     .from('orders')
     .update(payload)

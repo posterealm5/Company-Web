@@ -94,9 +94,20 @@ ALTER TABLE public.addresses ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable read access for all users" ON public.products
     FOR SELECT USING (is_active = true);
 
--- Orders: Users can read their own orders. Anyone can insert (for guest checkout).
-CREATE POLICY "Enable insert for everyone" ON public.orders
-    FOR INSERT WITH CHECK (true);
+-- Orders: Users can read their own orders. Only valid COD orders or backend service_role can insert.
+CREATE POLICY "Enable insert for valid orders" ON public.orders
+    FOR INSERT WITH CHECK (
+        (auth.role() = 'service_role')
+        OR
+        (
+            payment_method = 'COD' AND
+            payment_status = 'Pending' AND
+            status IN ('pending', 'confirmed') AND
+            total > 0 AND
+            subtotal > 0 AND
+            (auth.uid() IS NULL OR user_id = auth.uid())
+        )
+    );
 
 CREATE POLICY "Enable read access for owners" ON public.orders
     FOR SELECT USING (auth.uid() = user_id);

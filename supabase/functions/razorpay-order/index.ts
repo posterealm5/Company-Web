@@ -63,6 +63,14 @@ function getPosterKitUnitPrice(size: string, material: string): number {
   return sizePricing[mat] ?? sizePricing.matte ?? 0;
 }
 
+function parseValidQuantity(qty: any): number {
+  const num = Math.floor(Number(qty));
+  if (!Number.isFinite(num) || num <= 0) {
+    throw new Error(`Invalid item quantity: ${qty}`);
+  }
+  return num;
+}
+
 function calculateSinglePosterPrice(size: string, material: string): number {
   const sz = (size || '').toUpperCase();
   const normId = normalizeMaterialId(material);
@@ -112,7 +120,7 @@ serve(async (req) => {
     // Calculate subtotal from products in cart using backend-defined single poster pricing rules
     let calculatedSubtotal = 0;
     const paidItems = cartItems.filter(item => !item.isFreeItem);
-    const totalPaidQuantity = paidItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
+    const totalPaidQuantity = paidItems.reduce((acc, item) => acc + parseValidQuantity(item.quantity), 0);
 
     if (!paidItems || paidItems.length === 0 || totalPaidQuantity === 0) {
       throw new Error("Cart must contain at least one paid product.");
@@ -136,7 +144,7 @@ serve(async (req) => {
       const size = item.size || item.selected_size || 'A5';
       const material = item.material || item.selected_material || 'Matte';
       const unitPrice = isPk ? getPosterKitUnitPrice(size, material) : calculateSinglePosterPrice(size, material);
-      const quantity = item.quantity || 1;
+      const quantity = parseValidQuantity(item.quantity);
       const itemSubtotal = unitPrice * quantity;
 
       console.log(`--- Item #${idx + 1} ---`);
@@ -215,7 +223,7 @@ serve(async (req) => {
       const size = item.size || item.selected_size || 'A5';
       const material = item.material || item.selected_material || 'Matte';
       const unitPrice = isPk ? getPosterKitUnitPrice(size, material) : calculateSinglePosterPrice(size, material);
-      calculatedSubtotal += unitPrice * (item.quantity || 1);
+      calculatedSubtotal += unitPrice * parseValidQuantity(item.quantity);
     }
 
     let calculatedDiscount = 0;
@@ -257,6 +265,19 @@ serve(async (req) => {
           console.warn(`[razorpay-order] Coupon ${couponCode} max redemptions reached`);
         }
 
+        if (coupon.max_redemptions_per_user !== null && coupon.max_redemptions_per_user !== undefined && userId) {
+          const { count: userRedemptions, error: countErr } = await supabase
+            .from('orders')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .eq('coupon_code', coupon.code);
+
+          if (!countErr && userRedemptions !== null && userRedemptions >= coupon.max_redemptions_per_user) {
+            couponValid = false;
+            console.warn(`[razorpay-order] User ${userId} has already redeemed coupon ${couponCode} ${userRedemptions} times (limit: ${coupon.max_redemptions_per_user})`);
+          }
+        }
+
         if (coupon.min_subtotal && calculatedSubtotal < Number(coupon.min_subtotal)) {
           couponValid = false;
           console.warn(`[razorpay-order] Coupon ${couponCode} minimum subtotal of ₹${coupon.min_subtotal} not met (current: ₹${calculatedSubtotal})`);
@@ -269,50 +290,63 @@ serve(async (req) => {
           } else if (coupon.type === 'fixed') {
             calculatedDiscount = coupon.value || 0;
           } else if (coupon.type === 'buy_x_get_y') {
-            // Find majority size and material of paid items
-            const sizeCounts: Record<string, number> = {};
-            const materialCounts: Record<string, number> = {};
-
-            paidItems.forEach(item => {
-              const qty = item.quantity || 1;
-              const sz = item.size || item.selected_size || 'A3';
-              const mat = item.material || item.selected_material || 'Matte';
-              sizeCounts[sz] = (sizeCounts[sz] || 0) + qty;
-              materialCounts[mat] = (materialCounts[mat] || 0) + qty;
+            // STRICT SECURITY & BUSINESS RULE:
+            // Buy X Get Y coupons must never discount Poster Kit items,
+            // and Poster Kit items must not count towards qualifying quantities.
+            const eligibleRegularItems = paidItems.filter(item => {
+              const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+              return !isPk;
             });
-
-            let majoritySize = 'A3';
-            let maxSizeCount = 0;
-            for (const [size, count] of Object.entries(sizeCounts)) {
-              if (count > maxSizeCount) {
-                maxSizeCount = count;
-                majoritySize = size;
-              } else if (count === maxSizeCount) {
-                if (getPosterBasePrice(size) < getPosterBasePrice(majoritySize)) {
-                  majoritySize = size;
-                }
-              }
-            }
-
-            let majorityMaterial = 'Matte';
-            let maxMatCount = 0;
-            for (const [material, count] of Object.entries(materialCounts)) {
-              if (count > maxMatCount) {
-                maxMatCount = count;
-                majorityMaterial = material;
-              } else if (count === maxMatCount) {
-                if (getMaterialPremium(material) < getMaterialPremium(majorityMaterial)) {
-                  majorityMaterial = material;
-                }
-              }
-            }
-
+            const eligibleQuantity = eligibleRegularItems.reduce((acc, item) => acc + parseValidQuantity(item.quantity), 0);
             const buyQty = coupon.buy_qty || 1;
             const freeQty = coupon.free_qty || 0;
-            const freeCount = Math.min(Math.max(totalPaidQuantity - buyQty, 0), freeQty);
-            const freeItemUnitPrice = calculateSinglePosterPrice(majoritySize, majorityMaterial);
-            calculatedDiscount = freeCount * freeItemUnitPrice;
-            bundleDiscount = calculatedDiscount;
+
+            if (eligibleQuantity >= buyQty && freeQty > 0) {
+              const sizeCounts: Record<string, number> = {};
+              const materialCounts: Record<string, number> = {};
+
+              eligibleRegularItems.forEach(item => {
+                const qty = parseValidQuantity(item.quantity);
+                const sz = item.size || item.selected_size || 'A3';
+                const mat = item.material || item.selected_material || 'Matte';
+                sizeCounts[sz] = (sizeCounts[sz] || 0) + qty;
+                materialCounts[mat] = (materialCounts[mat] || 0) + qty;
+              });
+
+              let majoritySize = 'A3';
+              let maxSizeCount = 0;
+              for (const [size, count] of Object.entries(sizeCounts)) {
+                if (count > maxSizeCount) {
+                  maxSizeCount = count;
+                  majoritySize = size;
+                } else if (count === maxSizeCount) {
+                  if (getPosterBasePrice(size) < getPosterBasePrice(majoritySize)) {
+                    majoritySize = size;
+                  }
+                }
+              }
+
+              let majorityMaterial = 'Matte';
+              let maxMatCount = 0;
+              for (const [material, count] of Object.entries(materialCounts)) {
+                if (count > maxMatCount) {
+                  maxMatCount = count;
+                  majorityMaterial = material;
+                } else if (count === maxMatCount) {
+                  if (getMaterialPremium(material) < getMaterialPremium(majorityMaterial)) {
+                    majorityMaterial = material;
+                  }
+                }
+              }
+
+              const freeCount = Math.min(Math.max(eligibleQuantity - buyQty, 0), freeQty);
+              const freeItemUnitPrice = calculateSinglePosterPrice(majoritySize, majorityMaterial);
+              calculatedDiscount = freeCount * freeItemUnitPrice;
+              bundleDiscount = calculatedDiscount;
+            } else {
+              calculatedDiscount = 0;
+              bundleDiscount = 0;
+            }
           }
         }
       } else {

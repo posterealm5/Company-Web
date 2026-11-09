@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import Razorpay from "npm:razorpay";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -60,6 +61,14 @@ function getPosterKitUnitPrice(size: string, material: string): number {
   const sizePricing = POSTER_KIT_PRICING[sz];
   if (!sizePricing) return 0;
   return sizePricing[mat] ?? sizePricing.matte ?? 0;
+}
+
+function parseValidQuantity(qty: any): number {
+  const num = Math.floor(Number(qty));
+  if (!Number.isFinite(num) || num <= 0) {
+    throw new Error(`Invalid item quantity: ${qty}`);
+  }
+  return num;
 }
 
 function calculateSinglePosterPrice(size: string, material: string): number {
@@ -149,6 +158,25 @@ serve(async (req) => {
     // 2. Prevent duplicate verification and duplicate order creation
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+    // 2b. Authenticate caller and determine verified user_id (prevents user ID spoofing)
+    const authHeader = req.headers.get('Authorization') || req.headers.get('authorization');
+    let verifiedUserId: string | null = null;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("VITE_SUPABASE_ANON_KEY") || "";
+      if (token && token !== anonKey) {
+        try {
+          const { data: { user: authUser } } = await supabase.auth.getUser(token);
+          if (authUser) {
+            verifiedUserId = authUser.id;
+          }
+        } catch {
+          // Token invalid or expired
+        }
+      }
+    }
+    const finalUserId = verifiedUserId || null;
+
     const { data: existingOrder, error: fetchError } = await supabase
       .from('orders')
       .select('id')
@@ -173,7 +201,7 @@ serve(async (req) => {
     // 3. Validate totals on the backend
     let calculatedSubtotal = 0;
     const paidItems = cartItems.filter(item => !item.isFreeItem);
-    const totalPaidQuantity = paidItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
+    const totalPaidQuantity = paidItems.reduce((acc, item) => acc + parseValidQuantity(item.quantity), 0);
 
     if (!paidItems || paidItems.length === 0 || totalPaidQuantity === 0) {
       throw new Error("Cart must contain at least one paid product.");
@@ -245,7 +273,7 @@ serve(async (req) => {
       const size = item.size || item.selected_size || 'A5';
       const material = item.material || item.selected_material || 'Matte';
       const unitPrice = isPk ? getPosterKitUnitPrice(size, material) : calculateSinglePosterPrice(size, material);
-      calculatedSubtotal += unitPrice * (item.quantity || 1);
+      calculatedSubtotal += unitPrice * parseValidQuantity(item.quantity);
     }
 
     let calculatedDiscount = 0;
@@ -270,6 +298,18 @@ serve(async (req) => {
         if (coupon.start_date && now < new Date(coupon.start_date)) couponValid = false;
         if (coupon.end_date && now > new Date(coupon.end_date)) couponValid = false;
         if (coupon.max_redemptions !== null && (coupon.current_redemptions || 0) >= coupon.max_redemptions) couponValid = false;
+        if (coupon.max_redemptions_per_user !== null && coupon.max_redemptions_per_user !== undefined && finalUserId) {
+          const { count: userRedemptions, error: countErr } = await supabase
+            .from('orders')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', finalUserId)
+            .eq('coupon_code', coupon.code);
+
+          if (!countErr && userRedemptions !== null && userRedemptions >= coupon.max_redemptions_per_user) {
+            couponValid = false;
+            console.warn(`[razorpay-verify] User ${finalUserId} has already redeemed coupon ${couponCode} ${userRedemptions} times (limit: ${coupon.max_redemptions_per_user})`);
+          }
+        }
         if (coupon.min_subtotal && calculatedSubtotal < Number(coupon.min_subtotal)) {
           couponValid = false;
           console.warn(`[razorpay-verify] Coupon ${couponCode} minimum subtotal of ₹${coupon.min_subtotal} not met (current: ₹${calculatedSubtotal})`);
@@ -283,48 +323,61 @@ serve(async (req) => {
           } else if (coupon.type === 'fixed') {
             calculatedDiscount = coupon.value || 0;
           } else if (coupon.type === 'buy_x_get_y') {
-            const sizeCounts: Record<string, number> = {};
-            const materialCounts: Record<string, number> = {};
-
-            paidItems.forEach(item => {
-              const qty = item.quantity || 1;
-              const sz = item.size || 'A3';
-              const mat = item.material || 'Matte';
-              sizeCounts[sz] = (sizeCounts[sz] || 0) + qty;
-              materialCounts[mat] = (materialCounts[mat] || 0) + qty;
+            // STRICT SECURITY & BUSINESS RULE:
+            // Buy X Get Y coupons must never discount Poster Kit items,
+            // and Poster Kit items must not count towards qualifying quantities.
+            const eligibleRegularItems = paidItems.filter(item => {
+              const isPk = Boolean(item.isPosterKit || item.posterKit || item.origin === 'poster_kit');
+              return !isPk;
             });
-
-            let majoritySize = 'A3';
-            let maxSizeCount = 0;
-            for (const [size, count] of Object.entries(sizeCounts)) {
-              if (count > maxSizeCount) {
-                maxSizeCount = count;
-                majoritySize = size;
-              } else if (count === maxSizeCount) {
-                if (getPosterBasePrice(size) < getPosterBasePrice(majoritySize)) {
-                  majoritySize = size;
-                }
-              }
-            }
-
-            let majorityMaterial = 'Matte';
-            let maxMatCount = 0;
-            for (const [material, count] of Object.entries(materialCounts)) {
-              if (count > maxMatCount) {
-                maxMatCount = count;
-                majorityMaterial = material;
-              } else if (count === maxMatCount) {
-                if (getMaterialPremium(material) < getMaterialPremium(majorityMaterial)) {
-                  majorityMaterial = material;
-                }
-              }
-            }
-
+            const eligibleQuantity = eligibleRegularItems.reduce((acc, item) => acc + parseValidQuantity(item.quantity), 0);
             const buyQty = coupon.buy_qty || 1;
             const freeQty = coupon.free_qty || 0;
-            const freeCount = Math.min(Math.max(totalPaidQuantity - buyQty, 0), freeQty);
-            const freeItemUnitPrice = calculateSinglePosterPrice(majoritySize, majorityMaterial);
-            calculatedDiscount = freeCount * freeItemUnitPrice;
+
+            if (eligibleQuantity >= buyQty && freeQty > 0) {
+              const sizeCounts: Record<string, number> = {};
+              const materialCounts: Record<string, number> = {};
+
+              eligibleRegularItems.forEach(item => {
+                const qty = parseValidQuantity(item.quantity);
+                const sz = item.size || 'A3';
+                const mat = item.material || 'Matte';
+                sizeCounts[sz] = (sizeCounts[sz] || 0) + qty;
+                materialCounts[mat] = (materialCounts[mat] || 0) + qty;
+              });
+
+              let majoritySize = 'A3';
+              let maxSizeCount = 0;
+              for (const [size, count] of Object.entries(sizeCounts)) {
+                if (count > maxSizeCount) {
+                  maxSizeCount = count;
+                  majoritySize = size;
+                } else if (count === maxSizeCount) {
+                  if (getPosterBasePrice(size) < getPosterBasePrice(majoritySize)) {
+                    majoritySize = size;
+                  }
+                }
+              }
+
+              let majorityMaterial = 'Matte';
+              let maxMatCount = 0;
+              for (const [material, count] of Object.entries(materialCounts)) {
+                if (count > maxMatCount) {
+                  maxMatCount = count;
+                  majorityMaterial = material;
+                } else if (count === maxMatCount) {
+                  if (getMaterialPremium(material) < getMaterialPremium(majorityMaterial)) {
+                    majorityMaterial = material;
+                  }
+                }
+              }
+
+              const freeCount = Math.min(Math.max(eligibleQuantity - buyQty, 0), freeQty);
+              const freeItemUnitPrice = calculateSinglePosterPrice(majoritySize, majorityMaterial);
+              calculatedDiscount = freeCount * freeItemUnitPrice;
+            } else {
+              calculatedDiscount = 0;
+            }
           }
         }
       }
@@ -332,12 +385,34 @@ serve(async (req) => {
 
     const calculatedNetSubtotal = Math.max(0, calculatedSubtotal - calculatedDiscount);
     const calculatedTotal = Math.max(0, calculatedNetSubtotal + SHIPPING_CHARGE);
+    const expectedAmountInPaise = Math.round(calculatedTotal * 100);
 
-    console.log(`[razorpay-verify] Verified amount on backend: ₹${calculatedTotal}`);
+    console.log(`[razorpay-verify] Verified amount on backend: ₹${calculatedTotal} (${expectedAmountInPaise} paise)`);
+
+    // 3b. Authoritative Gateway Verification: Verify actual order amount and payment on Razorpay
+    const key_id = Deno.env.get("RAZORPAY_KEY_ID") || Deno.env.get("VITE_RAZORPAY_KEY_ID");
+    if (key_id && secret) {
+      try {
+        const razorpay = new Razorpay({ key_id, key_secret: secret });
+        const rzpOrder = await razorpay.orders.fetch(razorpay_order_id);
+        if (!rzpOrder) {
+          throw new Error(`Order ${razorpay_order_id} could not be retrieved from Razorpay`);
+        }
+
+        // Assert paid order amount matches calculated backend cart total exactly
+        if (Number(rzpOrder.amount) !== expectedAmountInPaise) {
+          console.error(`[razorpay-verify] SECURITY ALERT: Amount mismatch! Razorpay Order Amount: ${rzpOrder.amount} paise, Backend Calculated Total: ${expectedAmountInPaise} paise`);
+          throw new Error(`Security validation failed: Razorpay order amount (₹${Number(rzpOrder.amount) / 100}) does not match required total (₹${calculatedTotal})`);
+        }
+      } catch (gatewayErr: any) {
+        console.error("[razorpay-verify] Gateway verification error:", gatewayErr.message);
+        throw new Error(gatewayErr.message || "Failed to verify payment with gateway");
+      }
+    }
 
     // 4. Create Database Order
     const dbOrderData = {
-      user_id: userId || null,
+      user_id: finalUserId,
       items: cartItems,
       status: 'confirmed',
       customer_name: customerInfo.name,

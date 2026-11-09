@@ -607,8 +607,9 @@ export function getResponsivePosterPlacement(
     : 1.0;
 
   if (effectiveVp && effectiveVp < 768) {
-    const effectiveSpreadX = countFactor < 1.0 ? 1.0 + (1.75 - 1.0) * countFactor : 1.75;
-    const effectiveSpreadY = countFactor < 1.0 ? 1.0 + (1.15 - 1.0) * countFactor : 1.15;
+    // Proportional group scaling: spread scales with countFactor so relative spacing and positions are preserved
+    const effectiveSpreadX = 1.75 * countFactor;
+    const effectiveSpreadY = 1.15 * countFactor;
     const targetCenterY = 38.0;
     scaledCx = 50 + (cx - 50) * effectiveSpreadX;
     scaledCy = targetCenterY + (cy - 33) * effectiveSpreadY;
@@ -721,8 +722,9 @@ export function toCanonicalPosterPlacement(
     : 1.0;
 
   if (effectiveVp && effectiveVp < 768) {
-    const effectiveSpreadX = countFactor < 1.0 ? 1.0 + (1.75 - 1.0) * countFactor : 1.75;
-    const effectiveSpreadY = countFactor < 1.0 ? 1.0 + (1.15 - 1.0) * countFactor : 1.15;
+    // Proportional group scaling: spread scales with countFactor matching getResponsivePosterPlacement
+    const effectiveSpreadX = 1.75 * countFactor;
+    const effectiveSpreadY = 1.15 * countFactor;
     const targetCenterY = 38.0;
     canonicalCx = 50 + (renderedCx - 50) / effectiveSpreadX;
     canonicalCy = 33 + (renderedCy - targetCenterY) / effectiveSpreadY;

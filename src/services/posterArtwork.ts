@@ -200,16 +200,34 @@ export const ALLOWED_ARTWORK_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
 
 /**
  * Validates file type and size for clean poster artwork uploads.
+ * Strictly verifies BOTH MIME type and extension to prevent file spoofing.
  */
 export function validateArtworkFile(file: File): { isValid: boolean; error?: string } {
-  const ext = '.' + file.name.split('.').pop()?.toLowerCase();
-  const isTypeValid =
-    ALLOWED_ARTWORK_TYPES.includes(file.type) || ALLOWED_ARTWORK_EXTENSIONS.includes(ext);
+  if (!file || !file.name) {
+    return { isValid: false, error: 'No file provided for upload.' };
+  }
 
-  if (!isTypeValid) {
+  const ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+  const hasValidExt = ALLOWED_ARTWORK_EXTENSIONS.includes(ext);
+  const hasValidType = ALLOWED_ARTWORK_TYPES.includes(file.type);
+
+  // Validate extension to MIME type consistency
+  const isConsistent =
+    (ext === '.png' && file.type === 'image/png') ||
+    ((ext === '.jpg' || ext === '.jpeg') && file.type === 'image/jpeg') ||
+    (ext === '.webp' && file.type === 'image/webp');
+
+  if (!hasValidExt || !hasValidType || !isConsistent) {
     return {
       isValid: false,
       error: 'Invalid file format. Please upload a high-resolution JPEG, PNG, or WebP image.',
+    };
+  }
+
+  if (file.size <= 0) {
+    return {
+      isValid: false,
+      error: 'File is empty (0 bytes). Please upload a valid image file.',
     };
   }
 
