@@ -870,7 +870,7 @@ export default function PosterKit() {
         <div className="mb-4 sm:mb-6 text-left">
           <div className="mb-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-brand-red text-white text-[10px] sm:text-[11px] font-black uppercase tracking-widest comic-border border-black dark:border-zinc-800">
-              <Sparkles size={12} /> Poster Kit Designer
+              <Sparkles size={12} /> Poster Grid Designer
             </span>
           </div>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-brand-black dark:text-zinc-100 mb-2 leading-tight">
@@ -2273,7 +2273,7 @@ export default function PosterKit() {
                     Minimum Layout Required
                   </h3>
                   <p id="min-layout-message" className="text-gray-500 dark:text-zinc-400 font-medium text-xs leading-relaxed">
-                    Your Poster Kit must contain at least 3 poster grids. Add more posters or keep at least 3 grids in your layout.
+                    Your Poster Grid must contain at least 3 posters. Add more posters or keep at least 3 posters in your layout.
                   </p>
                 </div>
 
@@ -2344,7 +2344,7 @@ export default function PosterKit() {
                     SIGN IN REQUIRED
                   </h3>
                   <p id="guest-auth-message" className="text-gray-500 dark:text-zinc-400 font-medium text-xs leading-relaxed">
-                    Please sign in to upload and save your custom artwork to your Poster Kit.
+                    Please sign in to upload and save your custom artwork to your Poster Grid.
                   </p>
                 </div>
 

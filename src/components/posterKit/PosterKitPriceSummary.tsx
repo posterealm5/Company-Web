@@ -79,10 +79,10 @@ export const PosterKitPriceSummary: React.FC<PosterKitPriceSummaryProps> = ({
     }
     const cartItems = posters.map(createPosterKitCartItem);
     if (addMultipleToCart) {
-      addMultipleToCart(cartItems, `Added ${posters.length} Poster Kit ${posters.length === 1 ? 'poster' : 'posters'} to your bag! 🛒`);
+      addMultipleToCart(cartItems, `Added ${posters.length} Poster Grid ${posters.length === 1 ? 'poster' : 'posters'} to your bag! 🛒`);
     } else {
       cartItems.forEach((item) => addToCart(item));
-      triggerNotification?.(`Added ${posters.length} Poster Kit posters to your bag! 🛒`);
+      triggerNotification?.(`Added ${posters.length} Poster Grid posters to your bag! 🛒`);
     }
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2500);
@@ -258,7 +258,7 @@ export const PosterKitPriceSummary: React.FC<PosterKitPriceSummaryProps> = ({
               {/* Informative footer disclaimer note */}
               <div className="mt-1.5 pt-1.5 border-t border-neutral-100 dark:border-zinc-800 flex items-center justify-between gap-2 text-[10px] text-neutral-400 dark:text-zinc-500 font-mono">
                 <span className="truncate">
-                  * All unit prices in INR (₹). Poster Kit print subtotal only.
+                  * All unit prices in INR (₹). Poster Grid print subtotal only.
                 </span>
                 <span className="shrink-0 font-bold uppercase">
                   {invoice.totalQuantity} {invoice.totalQuantity === 1 ? 'Poster' : 'Posters'}

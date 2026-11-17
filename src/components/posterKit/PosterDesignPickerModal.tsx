@@ -147,7 +147,7 @@ export const PosterDesignPickerModal: React.FC<PosterDesignPickerModalProps> = (
       setProducts(data || []);
       setStorageArtworksMap(storageArtworks || new Map());
     } catch (err: any) {
-      console.error('Failed to load collections for Poster Kit:', err);
+      console.error('Failed to load collections for Poster Grid:', err);
       setProductsError('Unable to load collection posters. Please try again.');
     } finally {
       setIsLoadingProducts(false);
@@ -606,7 +606,7 @@ export const PosterDesignPickerModal: React.FC<PosterDesignPickerModalProps> = (
                 <div className="flex items-start sm:items-center gap-2 px-3 py-2 bg-neutral-100 dark:bg-zinc-800/80 border border-neutral-300 dark:border-zinc-700 text-neutral-700 dark:text-zinc-300 text-xs">
                   <Info size={14} className="shrink-0 text-brand-red mt-0.5 sm:mt-0" />
                   <p className="leading-snug text-[11px] sm:text-xs">
-                    <strong>Original Designs Only:</strong> Poster Kit renders clean, original poster artwork directly from Supabase Storage. Storefront room mockups (room walls, desks, and figurines) are strictly excluded.
+                    <strong>Original Designs Only:</strong> Poster Grid renders clean, original poster artwork directly from Supabase Storage. Storefront room mockups (room walls, desks, and figurines) are strictly excluded.
                   </p>
                 </div>
 
@@ -646,10 +646,10 @@ export const PosterDesignPickerModal: React.FC<PosterDesignPickerModalProps> = (
                       </div>
                       <h3 className="font-display font-black text-base uppercase">Original Standalone Artwork Required</h3>
                       <p className="text-xs text-neutral-600 dark:text-zinc-300 max-w-md leading-relaxed">
-                        All 155 storefront catalog items currently use room-scene mockups (walls, desks, figurines, and decor). To keep the virtual wall realistic and pristine, storefront mockups are strictly excluded from the Poster Kit.
+                        All 155 storefront catalog items currently use room-scene mockups (walls, desks, figurines, and decor). To keep the virtual wall realistic and pristine, storefront mockups are strictly excluded from the Poster Grid.
                       </p>
                       <p className="text-xs text-neutral-500 dark:text-zinc-400 max-w-md">
-                        Administrators can upload standalone print artwork via the <strong>Admin Vault &gt; Poster Kit Artwork</strong>.
+                        Administrators can upload standalone print artwork via the <strong>Admin Vault &gt; Poster Grid Artwork</strong>.
                       </p>
                       <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
                         <button

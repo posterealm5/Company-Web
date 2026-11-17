@@ -89,7 +89,7 @@ console.log('\n--- 2. Coupon Validation & Eligibility ---');
   const vPkOnly = validateCoupon(b5g2f, fivePosterKit);
   assert(!vPkOnly.isValid, '5 Poster Kit items alone are rejected for B5G2F');
   assert(vPkOnly.isPosterKitOnly === true, 'vPkOnly sets isPosterKitOnly flag');
-  assert(vPkOnly.error === 'Coupon not applicable to Poster Kit', 'Error message matches specification');
+  assert(vPkOnly.error === 'Coupon not applicable to Poster Grid', 'Error message matches specification');
 
   // Test Case 3: Poster Kit only + Percentage-off coupon (accepted)
   const vPkPercent = validateCoupon(save10, fivePosterKit);
@@ -162,18 +162,18 @@ console.log('\n--- 4. PosterKitCouponModal Component & Design Specification ---'
 
   // Check required heading
   assert(
-    modalContent.includes('Coupon Not Applicable to Poster Kit'),
-    'Modal contains exact heading: "Coupon Not Applicable to Poster Kit"'
+    modalContent.includes('Coupon Not Applicable to Poster Grid'),
+    'Modal contains exact heading: "Coupon Not Applicable to Poster Grid"'
   );
 
   // Check required poster kit only message
   const expectedPkOnlyMsg =
-    'This Buy X Get Y offer is valid only on eligible individual posters. Poster Kit products are excluded from this promotion. You can use an eligible percentage-off coupon on your Poster Kit instead.';
-  assert(modalContent.includes(expectedPkOnlyMsg), 'Modal contains exact Poster Kit only message');
+    'This Buy X Get Y offer is valid only on eligible individual posters. Poster Grid products are excluded from this promotion. You can use an eligible percentage-off coupon on your Poster Grid instead.';
+  assert(modalContent.includes(expectedPkOnlyMsg), 'Modal contains exact Poster Grid only message');
 
   // Check required mixed cart message
   const expectedMixedMsg =
-    'Your Buy X Get Y offer applies only to eligible individual posters. Poster Kit products in your cart are excluded from this promotion.';
+    'Your Buy X Get Y offer applies only to eligible individual posters. Poster Grid products in your cart are excluded from this promotion.';
   assert(modalContent.includes(expectedMixedMsg), 'Modal contains exact mixed cart message');
 
   // Check required button text

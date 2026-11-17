@@ -142,7 +142,7 @@ const AdminProducts: React.FC = () => {
       setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, artwork_url: newUrl } : p));
       setArtworkMessage({ 
         type: 'success', 
-        text: `Standalone artwork uploaded and saved to Product #${editingProduct.id} successfully! Ready in Poster Kit.` 
+        text: `Standalone artwork uploaded and saved to Product #${editingProduct.id} successfully! Ready in Poster Grid.` 
       });
       setArtworkFile(null);
       if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
@@ -177,7 +177,7 @@ const AdminProducts: React.FC = () => {
       setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, artwork_url: pendingStorageUrl } : p));
       setArtworkMessage({ 
         type: 'success', 
-        text: `Artwork reference successfully persisted to Product #${editingProduct.id}! Ready in Poster Kit.` 
+        text: `Artwork reference successfully persisted to Product #${editingProduct.id}! Ready in Poster Grid.` 
       });
       setArtworkFile(null);
       if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
@@ -513,7 +513,7 @@ const AdminProducts: React.FC = () => {
                             type="button"
                             onClick={() => openEditModal(p, 'artwork')}
                             className="text-[10px] font-black text-brand-red hover:underline uppercase cursor-pointer"
-                            title="Upload original standalone artwork for Poster Kit"
+                            title="Upload original standalone artwork for Poster Grid"
                           >
                             + Upload
                           </button>
@@ -663,7 +663,7 @@ const AdminProducts: React.FC = () => {
                   onClick={() => setActiveTab('artwork')}
                   className={`flex-1 py-3 font-black uppercase text-xs tracking-widest transition-colors ${activeTab === 'artwork' ? 'bg-white text-brand-black border-b-4 border-brand-red' : 'text-gray-500 hover:bg-gray-100'}`}
                 >
-                  Poster Kit Artwork
+                  Poster Grid Artwork
                 </button>
               </div>
 
@@ -959,7 +959,7 @@ const AdminProducts: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Poster Kit Artwork Tab Content */}
+                  {/* Poster Grid Artwork Tab Content */}
                   <div className={`space-y-6 ${activeTab === 'artwork' ? 'block' : 'hidden'}`}>
                     <div className="bg-gray-50 p-4 border-2 border-brand-black space-y-2">
                       <div className="flex items-center gap-2">
@@ -967,13 +967,13 @@ const AdminProducts: React.FC = () => {
                           <ImageIcon size={16} />
                         </span>
                         <h4 className="font-black uppercase text-xs text-brand-black tracking-wider">
-                          Poster Kit Original Print Artwork
+                          Poster Grid Original Print Artwork
                         </h4>
                       </div>
                       <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
-                        The Poster Kit renders clean, standalone poster artwork on its virtual wall. 
+                        The Poster Grid renders clean, standalone poster artwork on its virtual wall. 
                         <strong> Storefront room mockups (room-scenes with walls, desks, or decor) are strictly excluded.</strong>
-                        {' '}Upload high-resolution print files (JPEG, PNG, WebP up to 20MB) to make this design available in the Poster Kit.
+                        {' '}Upload high-resolution print files (JPEG, PNG, WebP up to 20MB) to make this design available in the Poster Grid.
                       </p>
                     </div>
 
@@ -1008,7 +1008,7 @@ const AdminProducts: React.FC = () => {
                                   )}
                                 </div>
                                 <div className="space-y-1 min-w-0">
-                                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400">Poster Kit Status:</span>
+                                  <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400">Poster Grid Status:</span>
                                   <div>
                                     {isAvailable ? (
                                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 text-xs font-black uppercase tracking-wider">
@@ -1021,7 +1021,7 @@ const AdminProducts: React.FC = () => {
                                     )}
                                   </div>
                                   <p className="text-[10px] text-gray-500 font-mono truncate max-w-xs">
-                                    {isAvailable ? art.artworkUrl : 'Room mockups are excluded from Poster Kit'}
+                                    {isAvailable ? art.artworkUrl : 'Room mockups are excluded from Poster Grid'}
                                   </p>
                                 </div>
                               </div>
@@ -1030,7 +1030,7 @@ const AdminProducts: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={async () => {
-                                    if (!confirm(`Are you sure you want to remove original artwork for #${editingProduct.id}? This will make it unavailable in the Poster Kit.`)) return;
+                                    if (!confirm(`Are you sure you want to remove original artwork for #${editingProduct.id}? This will make it unavailable in the Poster Grid.`)) return;
                                     setArtworkUploading(true);
                                     setArtworkMessage(null);
                                     const res = await removeProductOriginalArtwork(editingProduct.id!);

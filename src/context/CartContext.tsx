@@ -539,7 +539,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Cart contains ONLY Poster Kit items
       if (hasPosterKit && paidRegularCount === 0) {
         setPosterKitCouponModal({ isOpen: true, mode: 'poster_kit_only' });
-        return { success: false, error: 'Coupon not applicable to Poster Kit' };
+        return { success: false, error: 'Coupon not applicable to Poster Grid' };
       }
 
       // Mixed Cart: both regular posters and Poster Kit items

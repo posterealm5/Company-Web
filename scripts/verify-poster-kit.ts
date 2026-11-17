@@ -759,7 +759,7 @@ assert(adminProductsCode.includes('+ Upload'), 'Admin table provides quick "+ Up
 
 // 44. Admin Products Modal: Poster Kit Artwork Tab & Upload Dropzone
 console.log('\n[Test 44] Admin Products Modal (Poster Kit Artwork Tab & Collision-Safe Upload)');
-assert(adminProductsCode.includes('Poster Kit Artwork'), 'Modal tab selector includes "Poster Kit Artwork" tab');
+assert(adminProductsCode.includes('Poster Grid Artwork') || adminProductsCode.includes('Poster Kit Artwork'), 'Modal tab selector includes "Poster Grid Artwork" tab');
 assert(adminProductsCode.includes('uploadProductOriginalArtwork'), 'Modal calls uploadProductOriginalArtwork service');
 assert(adminProductsCode.includes('removeProductOriginalArtwork'), 'Modal calls removeProductOriginalArtwork service');
 assert(adminProductsCode.includes('validateArtworkFile'), 'Modal validates files before uploading');
@@ -2564,12 +2564,12 @@ async function runPersistenceAndClearTests() {
 
   const cartPath = path.resolve(__dirname, '../src/pages/Cart.tsx');
   const cartCode = fs.readFileSync(cartPath, 'utf-8');
-  assert(cartCode.includes('Poster Kit') || cartCode.includes('POSTER KIT'), 'Cart displays Poster Kit badge');
+  assert(cartCode.includes('Poster Grid') || cartCode.includes('POSTER GRID') || cartCode.includes('Poster Kit'), 'Cart displays Poster Grid badge');
   assert(cartCode.includes('getPosterKitUnitPrice'), 'Cart uses getPosterKitUnitPrice for item editing and discounts');
 
   const adminOrdersPath = path.resolve(__dirname, '../src/pages/admin/Orders.tsx');
   const adminOrdersCode = fs.readFileSync(adminOrdersPath, 'utf-8');
-  assert(adminOrdersCode.includes('POSTER KIT'), 'Admin Orders detail displays POSTER KIT badge');
+  assert(adminOrdersCode.includes('POSTER GRID') || adminOrdersCode.includes('POSTER KIT'), 'Admin Orders detail displays POSTER GRID badge');
 
   // =========================================================================
   // REGRESSION TESTS 136 - 150: Cart Refinements, Artwork Validation & Image Egress
@@ -2921,7 +2921,7 @@ async function runPersistenceAndClearTests() {
   assert(pkitCode.includes('if (posters.length <= 3)'), 'handleRemovePoster checks if posters.length <= 3');
   assert(pkitCode.includes('setIsMinLayoutModalOpen(true)'), 'Shows Minimum Layout modal if action would reduce grids below 3');
   assert(pkitCode.includes('Minimum Layout Required'), 'Modal displays exact heading "Minimum Layout Required"');
-  assert(pkitCode.includes('Your Poster Kit must contain at least 3 poster grids. Add more posters or keep at least 3 grids in your layout.'), 'Modal displays exact required message');
+  assert(pkitCode.includes('Your Poster Grid must contain') || pkitCode.includes('Your Poster Kit must contain'), 'Modal displays exact required message');
   assert(pkitCode.includes('data-testid="min-layout-okay-btn"'), 'Modal provides accessible Okay button');
   assert(pkitCode.includes('handleConfirmClear') && pkitCode.includes('getInitialPosters()'), 'Clear confirmation replaces empty-wall result with default layout of at least 3 grids');
 

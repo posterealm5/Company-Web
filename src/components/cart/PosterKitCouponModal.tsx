@@ -31,8 +31,8 @@ export const PosterKitCouponModal: React.FC<PosterKitCouponModalProps> = ({
 
   const message =
     mode === 'mixed'
-      ? 'Your Buy X Get Y offer applies only to eligible individual posters. Poster Kit products in your cart are excluded from this promotion.'
-      : 'This Buy X Get Y offer is valid only on eligible individual posters. Poster Kit products are excluded from this promotion. You can use an eligible percentage-off coupon on your Poster Kit instead.';
+      ? 'Your Buy X Get Y offer applies only to eligible individual posters. Poster Grid products in your cart are excluded from this promotion.'
+      : 'This Buy X Get Y offer is valid only on eligible individual posters. Poster Grid products are excluded from this promotion. You can use an eligible percentage-off coupon on your Poster Grid instead.';
 
   return (
     <AnimatePresence>
@@ -72,7 +72,7 @@ export const PosterKitCouponModal: React.FC<PosterKitCouponModalProps> = ({
                   id="poster-kit-coupon-modal-title"
                   className="text-lg font-display font-bold uppercase tracking-wider text-brand-black dark:text-zinc-100"
                 >
-                  Coupon Not Applicable to Poster Kit
+                  Coupon Not Applicable to Poster Grid
                 </h3>
               </div>
               <button

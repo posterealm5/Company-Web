@@ -857,7 +857,7 @@ const AdminOrders: React.FC = () => {
                                   {displayName}
                                   {isPosterKit && (
                                     <span className="bg-brand-black text-white text-[8px] font-black px-1.5 py-0.5 rounded-xs tracking-wider uppercase">
-                                      POSTER KIT
+                                      POSTER GRID
                                     </span>
                                   )}
                                 </p>

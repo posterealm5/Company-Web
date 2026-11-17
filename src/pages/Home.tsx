@@ -178,10 +178,10 @@ const Hero: React.FC<HeroProps> = ({
               <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-sm sm:text-base text-gray-300 font-medium">
                 <span>Looking to create a wall collection?</span>
                 <Link
-                  to="/poster-kit"
+                  to="/poster-grid"
                   className="group inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-brand-red hover:bg-[#c92a37] text-white font-display text-sm sm:text-base uppercase tracking-wider font-bold transition-all transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shadow-sm"
                 >
-                  <span>Build Your Poster Kit</span>
+                  <span>Build Your Poster Grid</span>
                   <ArrowRight size={15} className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </div>
@@ -732,11 +732,11 @@ export default function Home() {
                   </span>
                 </Link>
                 <Link
-                  to="/poster-kit"
+                  to="/poster-grid"
                   className="w-full sm:w-auto inline-block"
                 >
                   <span className="w-full sm:w-auto px-8 sm:px-10 py-4.5 sm:py-5 bg-black text-white font-display text-xl sm:text-2xl uppercase tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center gap-2.5 whitespace-nowrap">
-                    Visual Wall Kit <ArrowRight size={22} className="stroke-[2.5] shrink-0" />
+                    Visual Wall Grid <ArrowRight size={22} className="stroke-[2.5] shrink-0" />
                   </span>
                 </Link>
               </div>

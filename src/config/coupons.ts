@@ -183,7 +183,7 @@ export function validateCoupon(
     if (paidRegularCount === 0 && hasPosterKitItems) {
       return {
         isValid: false,
-        error: 'Coupon not applicable to Poster Kit',
+        error: 'Coupon not applicable to Poster Grid',
         isPosterKitOnly: true,
         hasPosterKitItems: true,
       };

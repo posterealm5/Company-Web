@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { Navbar, Footer } from './components/Navigation';
 import { OfferTicker } from './components/OfferTicker';
@@ -54,6 +54,12 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+// Backward-compatible redirect from legacy /poster-kit to canonical /poster-grid preserving search params & hash
+function PosterKitRedirect() {
+  const location = useLocation();
+  return <Navigate to={{ pathname: '/poster-grid', search: location.search, hash: location.hash }} replace />;
 }
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -166,7 +172,8 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
             <Route path="/customize" element={<ErrorBoundary><Customize /></ErrorBoundary>} />
-            <Route path="/poster-kit" element={<ErrorBoundary><PosterKit /></ErrorBoundary>} />
+            <Route path="/poster-grid" element={<ErrorBoundary><PosterKit /></ErrorBoundary>} />
+            <Route path="/poster-kit" element={<PosterKitRedirect />} />
             <Route path="/collections" element={
               <ErrorBoundary>
                 <Collections />

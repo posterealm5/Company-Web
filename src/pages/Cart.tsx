@@ -413,7 +413,7 @@ export default function Cart() {
                     </div>
                     {(item.isPosterKit || item.posterKit || item.origin === 'poster_kit') && (
                       <div className="bg-red-50 dark:bg-red-950/40 text-brand-red px-2.5 py-1 text-[9px] font-black uppercase tracking-wider border border-brand-red/30">
-                        Poster Kit
+                        Poster Grid
                       </div>
                     )}
                     {item.artworkMissing && (

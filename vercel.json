@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/poster-kit",
+      "destination": "/poster-grid",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

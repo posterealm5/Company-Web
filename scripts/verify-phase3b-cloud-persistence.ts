@@ -228,6 +228,7 @@ async function runTests() {
     'PosterKit.tsx displays centered dialog with title "SIGN IN REQUIRED"'
   );
   assert(
+    posterKitContent.includes('Please sign in to upload and save your custom artwork to your Poster Grid.') ||
     posterKitContent.includes('Please sign in to upload and save your custom artwork to your Poster Kit.'),
     'PosterKit.tsx displays expected explanatory message'
   );

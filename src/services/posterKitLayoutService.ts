@@ -65,7 +65,7 @@ export function validateLayoutPayload(input: PersistPosterKitLayoutInput): { isV
   if (input.items.length < 3) {
     return {
       isValid: false,
-      error: `Poster Kit layout requires at least 3 items (received ${input.items.length})`,
+      error: `Poster Grid layout requires at least 3 items (received ${input.items.length})`,
     };
   }
 
@@ -354,7 +354,7 @@ export function matchLayoutToOneToOneCartUnits(
     return {
       matched: false,
       reason: 'count_mismatch',
-      error: `Layout has ${posters.length} posters, but bag contains ${units.length} Poster Kit items`,
+      error: `Layout has ${posters.length} posters, but bag contains ${units.length} Poster Grid items`,
     };
   }
 
@@ -516,7 +516,7 @@ export async function persistCheckoutPosterKitLayout(
     return {
       success: false,
       reason: 'insufficient_items',
-      error: `Poster Kit layout requires at least 3 items in bag (found ${units.length})`,
+      error: `Poster Grid layout requires at least 3 items in bag (found ${units.length})`,
     };
   }
 
@@ -537,7 +537,7 @@ export async function persistCheckoutPosterKitLayout(
     return {
       success: false,
       reason: 'no_saved_layout_found',
-      error: 'No saved Poster Kit wall layout found on this device',
+      error: 'No saved Poster Grid wall layout found on this device',
     };
   }
 

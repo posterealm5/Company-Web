@@ -238,10 +238,10 @@ export const getNonIndexableMetadata = (pageName: string, pathname: string): SEO
   };
 };
 
-export const getPosterKitMetadata = (): SEOMetadata => {
-  const title = 'Poster Kit Layout Designer | Posterealm';
-  const description = 'Visually arrange and plan your room decor on a realistic wall with Posterealm Poster Kit designer. Choose A6, A5, A4, and A3 poster sizes and plan your perfect wall layout.';
-  const canonical = `${SITE_URL}/poster-kit`;
+export const getPosterGridMetadata = (): SEOMetadata => {
+  const title = 'Poster Grid Layout Designer | Posterealm';
+  const description = 'Visually arrange and plan your room decor on a realistic wall with Posterealm Poster Grid designer. Choose A6, A5, A4, and A3 poster sizes and plan your perfect wall layout.';
+  const canonical = `${SITE_URL}/poster-grid`;
 
   return {
     title,
@@ -259,4 +259,7 @@ export const getPosterKitMetadata = (): SEOMetadata => {
     twitterImage: DEFAULT_IMAGE
   };
 };
+
+// Backward-compatible alias
+export const getPosterKitMetadata = getPosterGridMetadata;
 
