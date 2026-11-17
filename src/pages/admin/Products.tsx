@@ -28,6 +28,7 @@ import { uploadStorefrontVariants } from '../../utils/imageOptimizer';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { ErrorState } from '../../components/ui/ErrorState';
+import { useNotification } from '../../context/NotificationContext';
 import { 
   generateProductSEO, 
   validateSEOData, 
@@ -46,6 +47,7 @@ import {
 } from '../../services/posterArtwork';
 
 const AdminProducts: React.FC = () => {
+  const { triggerNotification } = useNotification();
   const ITEMS_PER_PAGE = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
@@ -61,6 +63,7 @@ const AdminProducts: React.FC = () => {
   const [artworkFile, setArtworkFile] = useState<File | null>(null);
   const [artworkPreviewUrl, setArtworkPreviewUrl] = useState<string | null>(null);
   const [artworkUploading, setArtworkUploading] = useState(false);
+  const [isArtworkStaged, setIsArtworkStaged] = useState(false);
   const [pendingStorageUrl, setPendingStorageUrl] = useState<string | null>(null);
   const [artworkMessage, setArtworkMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isDraggingArtwork, setIsDraggingArtwork] = useState(false);
@@ -75,6 +78,18 @@ const AdminProducts: React.FC = () => {
   const [isValidating, setIsValidating] = useState(false);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkResult, setBulkResult] = useState<string | null>(null);
+
+  const closeModal = () => {
+    if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(artworkPreviewUrl);
+    }
+    setArtworkFile(null);
+    setArtworkPreviewUrl(null);
+    setIsArtworkStaged(false);
+    setPendingStorageUrl(null);
+    setArtworkMessage(null);
+    setIsModalOpen(false);
+  };
 
   const openEditModal = (product: Partial<Product>, initialTab: 'basic' | 'seo' | 'artwork' = 'basic') => {
     const resolvedArt = resolveOriginalPosterArtwork(product as Product, storageArtworksMap);
@@ -96,6 +111,7 @@ const AdminProducts: React.FC = () => {
       URL.revokeObjectURL(artworkPreviewUrl);
     }
     setArtworkPreviewUrl(null);
+    setIsArtworkStaged(false);
     setPendingStorageUrl(null);
     setArtworkMessage(null);
     setIsModalOpen(true);
@@ -123,43 +139,27 @@ const AdminProducts: React.FC = () => {
     const blobUrl = URL.createObjectURL(file);
     setArtworkFile(file);
     setArtworkPreviewUrl(blobUrl);
+    setIsArtworkStaged(false);
   };
 
-  const handleUploadArtwork = async () => {
-    if (!artworkFile || !editingProduct?.id || artworkUploading) return;
-    setArtworkUploading(true);
-    setArtworkMessage(null);
+  const handleConfirmApplyArtwork = () => {
+    if (!artworkFile || !artworkPreviewUrl) return;
+    setIsArtworkStaged(true);
+    setArtworkMessage({
+      type: 'success',
+      text: `Standalone artwork "${artworkFile.name}" confirmed and applied! Click "Update Vault" below to upload and save.`
+    });
+    triggerNotification('Artwork Confirmed', `Artwork confirmed for Product #${editingProduct?.id}. Click "Update Vault" to save.`, 'success');
+  };
 
-    const uploadRes = await uploadProductOriginalArtwork(editingProduct.id, artworkFile);
-
-    if (uploadRes.url && uploadRes.dbSaved) {
-      const newUrl = uploadRes.url;
-      const updatedMap = new Map(storageArtworksMap);
-      updatedMap.set(editingProduct.id, newUrl);
-      updatedMap.set(String(editingProduct.id), newUrl);
-      setStorageArtworksMap(updatedMap);
-      setEditingProduct(prev => prev ? { ...prev, artwork_url: newUrl } : prev);
-      setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, artwork_url: newUrl } : p));
-      setArtworkMessage({ 
-        type: 'success', 
-        text: `Standalone artwork uploaded and saved to Product #${editingProduct.id} successfully! Ready in Poster Grid.` 
-      });
-      setArtworkFile(null);
-      if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(artworkPreviewUrl);
-      }
-      setArtworkPreviewUrl(null);
-      setPendingStorageUrl(null);
-    } else {
-      if (uploadRes.storageUrl) {
-        setPendingStorageUrl(uploadRes.storageUrl);
-      }
-      setArtworkMessage({ 
-        type: 'error', 
-        text: uploadRes.error || 'Failed to complete artwork upload.' 
-      });
+  const handleCancelStagedArtwork = () => {
+    setArtworkFile(null);
+    if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(artworkPreviewUrl);
     }
-    setArtworkUploading(false);
+    setArtworkPreviewUrl(null);
+    setIsArtworkStaged(false);
+    setArtworkMessage(null);
   };
 
   const handleRetryDatabaseSave = async () => {
@@ -179,17 +179,21 @@ const AdminProducts: React.FC = () => {
         type: 'success', 
         text: `Artwork reference successfully persisted to Product #${editingProduct.id}! Ready in Poster Grid.` 
       });
+      triggerNotification('Database Saved', `Artwork reference persisted to Product #${editingProduct.id}!`, 'success');
       setArtworkFile(null);
       if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
         URL.revokeObjectURL(artworkPreviewUrl);
       }
       setArtworkPreviewUrl(null);
+      setIsArtworkStaged(false);
       setPendingStorageUrl(null);
     } else {
+      const errMsg = `Failed to persist to database: ${res.error}. Please retry or check database permissions.`;
       setArtworkMessage({
         type: 'error',
-        text: `Failed to persist to database: ${res.error}. Please retry or check database permissions.`
+        text: errMsg
       });
+      triggerNotification('Database Error', errMsg, 'error');
     }
     setArtworkUploading(false);
   };
@@ -624,7 +628,7 @@ const AdminProducts: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
+              onClick={closeModal}
               className="absolute inset-0 bg-brand-black/60 backdrop-blur-sm"
             />
             <motion.div
@@ -637,7 +641,7 @@ const AdminProducts: React.FC = () => {
                 <h3 className="text-xl font-black uppercase tracking-widest">
                   {editingProduct?.id ? 'Edit Poster' : 'Forge New Poster'}
                 </h3>
-                <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors text-white">
+                <button onClick={closeModal} className="w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors text-white">
                   <X size={24} />
                 </button>
               </div>
@@ -693,12 +697,48 @@ const AdminProducts: React.FC = () => {
                   const newImageUrl = formData.get('image') as string;
                   const isImageChanged = editingProduct?.id ? editingProduct.image !== newImageUrl : true;
 
-                  // Preserve original standalone artwork reference
+                  let targetArtworkUrl: string | null = editingProduct?.artwork_url ?? null;
+                  const targetProductId = editingProduct?.id;
+
+                  // 1. If an artwork file has been staged/confirmed for an existing product, upload to Storage and persist
+                  if (artworkFile && targetProductId) {
+                    setArtworkUploading(true);
+                    setArtworkMessage(null);
+
+                    const uploadRes = await uploadProductOriginalArtwork(targetProductId, artworkFile);
+
+                    if (!uploadRes.url || !uploadRes.dbSaved) {
+                      // Keep modal open, preserve selected file and preview, show readable error
+                      setArtworkUploading(false);
+                      setIsSaving(false);
+                      setActiveTab('artwork'); // direct administrator to artwork tab
+
+                      if (uploadRes.storageUrl) {
+                        setPendingStorageUrl(uploadRes.storageUrl);
+                      }
+
+                      const errorMsg = uploadRes.error || 'Failed to upload standalone artwork to Storage.';
+                      setArtworkMessage({
+                        type: 'error',
+                        text: errorMsg
+                      });
+                      triggerNotification('Artwork Upload Failed', errorMsg, 'error');
+                      return; // Modal stays open with preview intact so admin can retry!
+                    }
+
+                    const newUrl = uploadRes.url;
+                    targetArtworkUrl = newUrl;
+                    setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, artwork_url: newUrl } : p));
+                    const updatedMap = new Map(storageArtworksMap);
+                    updatedMap.set(targetProductId, newUrl);
+                    updatedMap.set(String(targetProductId), newUrl);
+                    setStorageArtworksMap(updatedMap);
+                    setArtworkUploading(false);
+                  }
+
+                  // 2. Preserve original standalone artwork reference
                   const existingProd = products.find(p => p.id === editingProduct?.id);
-                  const preservedArtworkUrl = 
-                    editingProduct?.artwork_url !== undefined
-                      ? editingProduct.artwork_url
-                      : (existingProd?.artwork_url ?? (editingProduct?.id ? storageArtworksMap.get(editingProduct.id) : null) ?? null);
+                  const preservedArtworkUrl = targetArtworkUrl ?? (existingProd?.artwork_url ?? (editingProduct?.id ? storageArtworksMap.get(editingProduct.id) : null) ?? null);
 
                   const productData = {
                     name: formData.get('name') as string,
@@ -742,19 +782,28 @@ const AdminProducts: React.FC = () => {
                       .single();
                     if (newProd) savedProductId = newProd.id;
                     dbError = error;
-                  }
 
-                  if (savedProductId && preservedArtworkUrl) {
-                    const updatedMap = new Map(storageArtworksMap);
-                    updatedMap.set(savedProductId, preservedArtworkUrl);
-                    updatedMap.set(String(savedProductId), preservedArtworkUrl);
-                    setStorageArtworksMap(updatedMap);
+                    // If new product was created and had artwork attached:
+                    if (savedProductId && artworkFile) {
+                      const uploadRes = await uploadProductOriginalArtwork(savedProductId, artworkFile);
+                      if (uploadRes.url && uploadRes.dbSaved) {
+                        targetArtworkUrl = uploadRes.url;
+                      }
+                    }
                   }
 
                   if (dbError || !savedProductId) {
-                    alert(dbError?.message || 'Failed to save product');
                     setIsSaving(false);
+                    triggerNotification('Database Error', dbError?.message || 'Failed to save product', 'error');
                     return;
+                  }
+
+                  if (savedProductId && (preservedArtworkUrl || targetArtworkUrl)) {
+                    const activeUrl = targetArtworkUrl || preservedArtworkUrl!;
+                    const updatedMap = new Map(storageArtworksMap);
+                    updatedMap.set(savedProductId, activeUrl);
+                    updatedMap.set(String(savedProductId), activeUrl);
+                    setStorageArtworksMap(updatedMap);
                   }
 
                   // Post-save storefront WebP variant generation (new product creation or image URL replacement)
@@ -783,9 +832,17 @@ const AdminProducts: React.FC = () => {
                     }
                   }
 
-                  fetchProducts();
-                  setIsModalOpen(false);
+                  await fetchProducts();
+                  closeModal();
                   setIsSaving(false);
+
+                  triggerNotification(
+                    'Vault Updated',
+                    editingProduct?.id
+                      ? `Product #${savedProductId} and Poster Grid artwork successfully updated!`
+                      : `Product #${savedProductId} successfully added to vault!`,
+                    'success'
+                  );
                 }}>
                   {/* Basic Info Tab Content */}
                   <div className={`space-y-6 ${activeTab === 'basic' ? 'block' : 'hidden'}`}>
@@ -994,10 +1051,18 @@ const AdminProducts: React.FC = () => {
                         return (
                           <div className="space-y-5">
                             {/* Current Artwork Status */}
-                            <div className="flex items-start justify-between gap-4 p-4 border-2 bg-white">
+                            <div className={`flex items-start justify-between gap-4 p-4 border-2 bg-white ${
+                              isArtworkStaged ? 'border-brand-red bg-red-50/20' : 'border-gray-200'
+                            }`}>
                               <div className="flex items-center gap-3">
                                 <div className="w-16 h-20 bg-[#FAF9F6] border border-gray-300 flex items-center justify-center p-1 shrink-0 overflow-hidden shadow-xs">
-                                  {isAvailable ? (
+                                  {isArtworkStaged && artworkPreviewUrl ? (
+                                    <img
+                                      src={artworkPreviewUrl}
+                                      alt={artworkFile?.name || 'Staged Artwork'}
+                                      className="w-full h-full object-contain pointer-events-none"
+                                    />
+                                  ) : isAvailable ? (
                                     <img
                                       src={art.artworkUrl!}
                                       alt={editingProduct.name || 'Artwork'}
@@ -1010,7 +1075,11 @@ const AdminProducts: React.FC = () => {
                                 <div className="space-y-1 min-w-0">
                                   <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400">Poster Grid Status:</span>
                                   <div>
-                                    {isAvailable ? (
+                                    {isArtworkStaged ? (
+                                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black uppercase tracking-wider">
+                                        <Check size={13} className="stroke-[3]" /> Clean Art Staged (Pending Save)
+                                      </span>
+                                    ) : isAvailable ? (
                                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 text-xs font-black uppercase tracking-wider">
                                         <Check size={13} className="stroke-[3]" /> Clean Art Active
                                       </span>
@@ -1021,12 +1090,16 @@ const AdminProducts: React.FC = () => {
                                     )}
                                   </div>
                                   <p className="text-[10px] text-gray-500 font-mono truncate max-w-xs">
-                                    {isAvailable ? art.artworkUrl : 'Room mockups are excluded from Poster Grid'}
+                                    {isArtworkStaged 
+                                      ? `Staged: ${artworkFile?.name} (Click "Update Vault" to save)`
+                                      : isAvailable 
+                                        ? art.artworkUrl 
+                                        : 'Room mockups are excluded from Poster Grid'}
                                   </p>
                                 </div>
                               </div>
 
-                              {isAvailable && (
+                              {isAvailable && !isArtworkStaged && (
                                 <button
                                   type="button"
                                   onClick={async () => {
@@ -1042,13 +1115,15 @@ const AdminProducts: React.FC = () => {
                                       setEditingProduct({ ...editingProduct, artwork_url: null });
                                       setProducts(products.map(p => p.id === editingProduct.id ? { ...p, artwork_url: null } : p));
                                       setArtworkMessage({ type: 'success', text: 'Original artwork removed safely.' });
+                                      triggerNotification('Artwork Removed', `Original artwork removed for #${editingProduct.id}`, 'success');
                                     } else {
                                       setArtworkMessage({ type: 'error', text: res.error || 'Failed to remove artwork' });
+                                      triggerNotification('Removal Failed', res.error || 'Failed to remove artwork', 'error');
                                     }
                                     setArtworkUploading(false);
                                   }}
-                                  disabled={artworkUploading}
-                                  className="px-3 py-1.5 text-xs text-brand-red border border-brand-red/30 hover:bg-brand-red hover:text-white font-black uppercase transition-colors shrink-0 cursor-pointer"
+                                  disabled={artworkUploading || isSaving}
+                                  className="px-3 py-1.5 text-xs text-brand-red border border-brand-red/30 hover:bg-brand-red hover:text-white font-black uppercase transition-colors shrink-0 cursor-pointer disabled:opacity-50"
                                 >
                                   Remove Art
                                 </button>
@@ -1093,7 +1168,7 @@ const AdminProducts: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={handleRetryDatabaseSave}
-                                  disabled={artworkUploading}
+                                  disabled={artworkUploading || isSaving}
                                   className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black uppercase text-xs tracking-wider flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
                                 >
                                   {artworkUploading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
@@ -1138,14 +1213,14 @@ const AdminProducts: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => artworkInputRef.current?.click()}
-                                disabled={artworkUploading}
+                                disabled={artworkUploading || isSaving}
                                 className="px-4 py-2 bg-white border-2 border-brand-black text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-black hover:text-white transition-all cursor-pointer shadow-xs disabled:opacity-50"
                               >
                                 Choose Image File
                               </button>
                             </div>
 
-                            {/* Selected File Stage & Upload Trigger */}
+                            {/* Selected File Stage & Confirm/Apply Trigger */}
                             {artworkFile && (
                               <div className="p-4 bg-white border-2 border-brand-black space-y-3">
                                 <div className="flex items-center justify-between border-b border-gray-200 pb-2">
@@ -1158,15 +1233,8 @@ const AdminProducts: React.FC = () => {
                                   </div>
                                   <button
                                     type="button"
-                                    onClick={() => {
-                                      setArtworkFile(null);
-                                      if (artworkPreviewUrl && artworkPreviewUrl.startsWith('blob:')) {
-                                        URL.revokeObjectURL(artworkPreviewUrl);
-                                      }
-                                      setArtworkPreviewUrl(null);
-                                      setArtworkMessage(null);
-                                    }}
-                                    disabled={artworkUploading}
+                                    onClick={handleCancelStagedArtwork}
+                                    disabled={artworkUploading || isSaving}
                                     className="text-xs text-gray-500 hover:text-brand-red font-bold uppercase cursor-pointer disabled:opacity-50"
                                   >
                                     Cancel
@@ -1174,33 +1242,46 @@ const AdminProducts: React.FC = () => {
                                 </div>
 
                                 {artworkPreviewUrl && (
-                                  <div className="h-44 bg-[#FAF9F6] border border-gray-200 flex items-center justify-center p-2">
+                                  <div className="h-44 bg-[#FAF9F6] border border-gray-200 flex items-center justify-center p-2 relative">
                                     <img
                                       src={artworkPreviewUrl}
                                       alt="Staged Artwork Preview"
                                       className="h-full object-contain pointer-events-none"
                                     />
+                                    {isArtworkStaged && (
+                                      <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 flex items-center gap-1 shadow-sm">
+                                        <Check size={12} className="stroke-[3]" /> Staged
+                                      </div>
+                                    )}
                                   </div>
                                 )}
 
-                                <button
-                                  type="button"
-                                  onClick={handleUploadArtwork}
-                                  disabled={artworkUploading}
-                                  className="w-full py-3 bg-brand-red hover:bg-brand-black text-white font-black uppercase text-xs tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
-                                >
-                                  {artworkUploading ? (
-                                    <>
-                                      <Loader2 size={16} className="animate-spin" />
-                                      <span>Uploading to Storage &amp; Persisting to Database...</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Upload size={16} />
-                                      <span>Confirm &amp; Apply Standalone Artwork</span>
-                                    </>
-                                  )}
-                                </button>
+                                {isArtworkStaged ? (
+                                  <div className="p-3 bg-green-50 border-2 border-green-300 text-green-800 text-xs font-bold uppercase flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <Check size={16} className="text-green-600 shrink-0 stroke-[3]" />
+                                      <span>Artwork Confirmed &amp; Staged for Product #{editingProduct.id}! Click &ldquo;Update Vault&rdquo; below to save.</span>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => artworkInputRef.current?.click()}
+                                      disabled={artworkUploading || isSaving}
+                                      className="text-xs text-brand-black hover:text-brand-red font-black uppercase underline cursor-pointer ml-2 shrink-0 disabled:opacity-50"
+                                    >
+                                      Change
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={handleConfirmApplyArtwork}
+                                    disabled={artworkUploading || isSaving}
+                                    className="w-full py-3 bg-brand-red hover:bg-brand-black text-white font-black uppercase text-xs tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
+                                  >
+                                    <Check size={16} />
+                                    <span>Confirm &amp; Apply Standalone Artwork</span>
+                                  </button>
+                                )}
 
                                 {/* Action-Point Feedback Message */}
                                 {artworkMessage && (
@@ -1238,19 +1319,30 @@ const AdminProducts: React.FC = () => {
 
               <div className="p-4 md:p-8 bg-gray-50 border-t-2 border-brand-black flex gap-4">
                 <button 
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 font-black uppercase text-sm comic-border border-gray-200 hover:bg-gray-200 transition-colors"
+                  type="button"
+                  onClick={closeModal}
+                  disabled={isSaving || artworkUploading}
+                  className="flex-1 py-4 font-black uppercase text-sm comic-border border-gray-200 hover:bg-gray-200 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   form="product-form"
-                  disabled={isSaving}
-                  className="flex-1 py-4 bg-brand-black text-white font-black uppercase text-sm comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                  disabled={isSaving || artworkUploading}
+                  className="flex-1 py-4 bg-brand-black text-white font-black uppercase text-sm comic-border border-white hover:bg-brand-red transition-all flex items-center justify-center gap-3 disabled:opacity-50 cursor-pointer"
                 >
-                  {isSaving ? <Loader2 size={20} className="animate-spin" /> : <Check size={20} />}
-                  {editingProduct?.id ? 'Update Vault' : 'Add to Vault'}
+                  {(isSaving || artworkUploading) ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      <span>{artworkFile ? 'Uploading Artwork & Saving...' : 'Saving to Vault...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check size={20} />
+                      <span>{editingProduct?.id ? 'Update Vault' : 'Add to Vault'}</span>
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>
